@@ -1,0 +1,46 @@
+{
+  "name": "ummon",
+  "description": "The best project ever.",
+  "version": "0.0.0",
+  "homepage": "https://github.com/punkave/ummon",
+  "author": {
+    "name": "Matt McManus",
+    "email": "mcmanus@punkave.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/punkave/ummon.git"
+  },
+  "bugs": {
+    "url": "https://github.com/punkave/ummon/issues"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/punkave/ummon/blob/master/LICENSE-MIT"
+    }
+  ],
+  "main": "index",
+  "engines": {
+    "node": ">= 0.10.0"
+  },
+  "scripts": {
+    "test": "tap test"
+  },
+  "devDependencies": {
+    "grunt-contrib-jshint": "~0.1.1",
+    "grunt-contrib-watch": "~0.2.0",
+    "grunt": "~0.4.1",
+    "tap": "~0.4.1",
+    "grunt-shell": "~0.2.2"
+  },
+  "keywords": [],
+  "dependencies": {
+    "optimist": "~0.4.0",
+    "colors": "~0.6.0-1",
+    "winston": "~0.6.2",
+    "underscore": "~1.4.4",
+    "moment": "~2.0.0",
+    "dependency-foo": "~0.1.1"
+  }
+}
