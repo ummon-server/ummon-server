@@ -54,5 +54,5 @@ test('Add a task to the default collection', function(t){
     }
   });
 
-  t.ok(server.collections.default.sleep, 'The server should exists');
+  t.ok(server.collections.default.tasks.sleep, 'The server should exists');
 });
