@@ -7,8 +7,7 @@ module.exports = function(grunt) {
     // Grunt shell: https://github.com/sindresorhus/grunt-shell#documentation
     shell: {
       test: {
-        // command: 'npm test',
-        command: 'node test/ummon_test.js',
+        command: 'npm test',
         options: {
             stdout: true,
             stderr: true,
