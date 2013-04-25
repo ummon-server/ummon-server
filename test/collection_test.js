@@ -29,30 +29,48 @@ var test = require("tap").test;
 //   t.end(); // but it must match the plan!
 // });
 
-var ummon = require('..');
+var collection = require('../lib/collection.js');
 
-var server = ummon.createServer();
-
+var testCollection = collection('default');
 
 //                    Construct!
 // - - - - - - - - - - - - - - - - - - - - - - - - - 
 test('construct an instance of ummon', function(t){
   t.plan(1);
 
-  t.ok(server, 'The server should exists');
+  t.ok(testCollection, 'The server should exists');
 });
 
-test('Add a task to the default collection', function(t){
-  t.plan(1);
 
-  server.addTask('default', 'sleep', {
-    "cwd": "/var/www/website2/",
-    "command": "sleep 5 && echo 'Task Finished'",
-    "arguments": ["--verbose", "--env=staging"],
-    "trigger": {
-      "time": "*/10 * * * *"
+
+//                Add a task to the list!
+// - - - - - - - - - - - - - - - - - - - - - - - - - 
+// 
+var sampleTask = {
+  "cwd": "/var/www/website2/",
+  "command": "sleep 5 && echo 'Task Finished'",
+  "arguments": ["--verbose", "--env=staging"],
+  "trigger": {
+    "time": "*/10 * * * *"
+  }
+};
+ 
+test('Test successfully adding a task to task list', function(t){
+  t.plan(3);
+
+  testCollection.add('sleep', sampleTask);
+
+  t.ok(testCollection.tasks.sleep, 'There should be a sleep task');
+  t.equal(testCollection.tasks.sleep.cwd, '/var/www/website2/', 'The tasks cwd should be correct: /var/www/website2/');
+  
+  t.test('Test failing to add a duplicate task to task list', function(t){
+    t.plan(2);
+    try {
+      testCollection.add('sleep', sampleTask);
+    } 
+    catch(e) {
+      t.ok(e, 'There should be an error object');
+      t.equal(e.message, 'A task with that name already exists in collection:default','The error message should be correct');
     }
   });
-
-  t.ok(server.collections.default.sleep, 'The server should exists');
 });
