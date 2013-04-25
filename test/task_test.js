@@ -2,8 +2,6 @@
 
 var test = require("tap").test;
 
-// var thingie, superEasy;
-
 // test("make sure the thingie is a thing", function (t) {
 //   t.equal(thingie, "thing", "thingie should be thing");
 //   t.type(thingie, "string", "type of thingie is string");
@@ -29,15 +27,37 @@ var test = require("tap").test;
 //   t.end(); // but it must match the plan!
 // });
 
-var ummon = require('..');
-
-var server = ummon.createServer();
-
+var task = require('../lib/task.js');
 
 //                    Construct!
 // - - - - - - - - - - - - - - - - - - - - - - - - - 
-test('construct an instance of ummon', function(t){
+test('Test successfully creating a task', function(t){
   t.plan(1);
 
-  t.ok(server, 'The server should exists');
+  var testTask = task('sleep5', {
+    "cwd": "/var/www/website2/",
+    "command": "sleep 5 && echo 'Task Finished'",
+    "arguments": ["--verbose", "--env=staging"],
+    "trigger": {
+      "time": "*/10 * * * *"
+    }
+  });
+
+  t.ok(testTask, 'The test object should exist');
+});
+
+test('Test creating a task that errors', function(t){
+  t.plan(2);
+
+  var testTask = false;
+  try {
+    testTask = task('sleep5', {
+      "cwd": "/var/www/website2/",
+      "command": "sleep 5 && echo 'Task Finished'"
+    });
+  } 
+  catch(e) {
+    t.ok(e, 'There should be an error');
+    t.equal(e.message, 'A task must have at least one trigger','There should be an error');
+  }
 });
