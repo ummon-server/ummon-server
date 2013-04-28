@@ -29,30 +29,51 @@ var test = require("tap").test;
 //   t.end(); // but it must match the plan!
 // });
 
-var ummon = require('..');
-
-var server = ummon.createServer();
+var ummon = require('..').createServer();
 
 
-//                    Construct!
-// - - - - - - - - - - - - - - - - - - - - - - - - - 
 test('construct an instance of ummon', function(t){
   t.plan(1);
 
-  t.ok(server, 'The server should exists');
+  t.ok(ummon, 'The server should exists');
 });
+
 
 test('Add a task to the default collection', function(t){
   t.plan(1);
 
-  server.addTask('default', 'sleep', {
-    "cwd": "/var/www/website2/",
-    "command": "sleep 5 && echo 'Task Finished'",
-    "arguments": ["--verbose", "--env=staging"],
+  ummon.createTask('default', 'sleep', {
+    "cwd": "~/src/ummon",
+    "command": "for count in one two three four five; do echo $count && sleep 1; done;",
+    // "arguments": ["--verbose", "--env=staging"],
     "trigger": {
       "time": "*/10 * * * *"
     }
   });
 
-  t.ok(server.collections.default.tasks.sleep, 'The server should exists');
+  t.ok(ummon.collections.default.tasks.sleep, 'The server should exists');
+});
+
+
+test('Add a task from the default collection to the queue', function(t){
+  t.plan(2);
+  ummon.MAX_WORKERS = 0;
+  ummon.queue.on('new', function(){
+    t.ok(true, 'The event emitter was emited called');
+  });
+
+  ummon.queue.push(ummon.collections.default.tasks.sleep);
+
+  t.equal(ummon.queue.items.length,1, 'There is one task in the queue');
+});
+
+
+
+test('Add a task from the default collection to the queue and run it', function(t){
+  t.plan(1);
+  ummon.MAX_WORKERS = 5;
+  
+  ummon.queue.push(ummon.collections.default.tasks.sleep);
+
+  t.equal(ummon.queue.items.length,1, 'There is one task in the queue');
 });

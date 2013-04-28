@@ -29,38 +29,26 @@ var test = require("tap").test;
 //   t.end(); // but it must match the plan!
 // });
 
-var queue = require('../lib/queue.js');
-
-var testQueue = queue();
+var worker = require('../lib/worker.js');
 
 
-//                    Construct!
+//                Add a task to the list!
 // - - - - - - - - - - - - - - - - - - - - - - - - - 
-test('construct an instance of a queue', function(t){
+// 
+var sampleTask = {
+  "cwd": "/var/www/website2/",
+  "command": "sleep 1 && echo Finished"
+};
+ 
+test('Test successfully running code with a worker', function(t){
   t.plan(2);
 
-  t.ok(testQueue, 'The queue is instatiated');
-  t.equal(testQueue.items.length, 0, 'The queue is empty');
-});
+  var sleep = worker(sampleTask);
 
+  t.type(sleep.pid, "number", 'There is a pid that is a number');
 
-test('Test adding some items to the queue', function(t){
-  t.plan(1);
-
-  testQueue.push('one');
-  testQueue.push('two');
-  testQueue.push('three');
-  testQueue.push('four');
-
-  t.equal(testQueue.items.length, 4, 'There are four items in the queue');
-});
-
-
-test('Test retreiving the next iterm from the queue', function(t){
-  t.plan(2);
-
-  var item = testQueue.getNext();
-
-  t.equal(testQueue.items.length, 3, 'There are now three items in the queue');
-  t.equal(item, 'one', 'The correct item was returned');
+  sleep.once('complete', function(code){
+    t.equal(code, 0, 'The task runs and returns it\'s exit code of 0');
+    t.end();
+  });
 });
