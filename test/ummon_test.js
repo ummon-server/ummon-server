@@ -1,6 +1,7 @@
 'use strict';
 
 var test = require("tap").test;
+var moment = require("moment");
 
 // var thingie, superEasy;
 
@@ -44,10 +45,10 @@ test('Add a task to the default collection', function(t){
 
   ummon.createTask('default', 'sleep', {
     "cwd": "~/src/ummon",
-    "command": "for count in one two three four five; do echo $count && sleep 1; done;",
-    // "arguments": ["--verbose", "--env=staging"],
+    "command": "echo Hello;",
     "trigger": {
-      "time": "*/10 * * * *"
+      "time": moment().add('s', 1).toDate()
+      // "time": "* * * * *"
     }
   });
 
