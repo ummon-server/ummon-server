@@ -48,13 +48,13 @@ test('construct an instance of ummon', function(t){
 // 
 var sampleTask = {
   "cwd": "/var/www/website2/",
-  "command": "sleep 5 && echo 'Task Finished'",
-  "arguments": ["--verbose", "--env=staging"],
+  "command": "sleep 1 && echo 'Task Finished'",
   "trigger": {
     "time": "*/10 * * * *"
   }
 };
  
+
 test('Test successfully adding a task to task list', function(t){
   t.plan(3);
 
@@ -73,4 +73,18 @@ test('Test successfully adding a task to task list', function(t){
       t.equal(e.message, 'A task with that name already exists in collection:default','The error message should be correct');
     }
   });
+});
+
+
+test('Test creating a dependant task', function(t){
+  t.plan(1);
+
+  testCollection.add('sleepmore', {
+    "command": "sleep 5 && echo 'Task Finished'",
+    "trigger": {
+      "after": "sleep"
+    }
+  });
+
+  t.equal(testCollection.dependencies.subject('sleepmore').dependencies[0], 'sleep', 'sleepmore is a dependant task of sleep');
 });
