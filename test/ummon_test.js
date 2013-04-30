@@ -40,41 +40,61 @@ test('construct an instance of ummon', function(t){
 });
 
 
-test('Add a task to the default collection', function(t){
-  t.plan(1);
+test('Adding a task and ensure the correct order', function(t){
+  t.plan(3);
+  ummon.MAX_WORKERS = 0; // Don't run the task
 
-  ummon.createTask('default', 'sleep', {
-    "cwd": "~/src/ummon",
-    "command": "echo Hello;",
-    "trigger": {
-      "time": moment().add('s', 1).toDate()
-      // "time": "* * * * *"
-    }
+
+  t.test('Create a task with a timed trigger and wait for it to add to the queue', function(t) {
+    t.plan(4);
+    ummon.createTask('default', 'hello', {
+      "command": "echo Hello;",
+      "trigger": {
+        "time": moment().add('s', 1).toDate()
+      }
+    });
+    
+    t.ok(ummon.collections.default.tasks.hello, 'There is a hello task');
+
+    ummon.queue.once('new', function(name){
+      t.ok(true, 'The new emitter was emited');
+      t.equal(name, 'hello', 'The task name was hello');
+    });
+
+    setTimeout(function(){
+      t.equal(ummon.queue.length(), 1, 'There is one task in the queue after 1 second');
+    }, '1100');
+
   });
 
-  t.ok(ummon.collections.default.tasks.sleep, 'The server should exists');
-});
-
-
-test('Add a task from the default collection to the queue', function(t){
-  t.plan(2);
-  ummon.MAX_WORKERS = 0;
-  ummon.queue.on('new', function(){
-    t.ok(true, 'The event emitter was emited called');
-  });
-
-  ummon.queue.push(ummon.collections.default.tasks.sleep);
-
-  t.equal(ummon.queue.items.length,1, 'There is one task in the queue');
-});
-
-
-
-test('Add a task from the default collection to the queue and run it', function(t){
-  t.plan(1);
-  ummon.MAX_WORKERS = 5;
   
-  ummon.queue.push(ummon.collections.default.tasks.sleep);
+  t.test('Create a dependant task', function(t) {
+    t.plan(1);
 
-  t.equal(ummon.queue.items.length,1, 'There is one task in the queue');
+    ummon.createTask('default', 'goodbye', {
+      "command": "echo goodbye;",
+      "trigger": {
+        "after": 'hello'
+      }
+    });
+
+    t.ok(ummon.collections.default.tasks.goodbye, 'There is a goodbye task');
+  });
+
+
+  t.test('Task hello is run, goodbye is queued and then run', function(t){
+    t.plan(3);
+    ummon.MAX_WORKERS = 5;
+    
+    ummon.runNextIfReady();
+
+    ummon.queue.once('new', function(name){
+      t.ok(true, 'The new emitter was emited');
+      t.equal(name, 'goodbye', 'The task name was goodbye');
+    });
+
+    setTimeout(function(){
+      t.equal(ummon.queue.length(), 0, 'The queue is now empty');
+    }, '500');
+  });
 });

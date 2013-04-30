@@ -76,15 +76,33 @@ test('Test successfully adding a task to task list', function(t){
 });
 
 
-test('Test creating a dependant task', function(t){
-  t.plan(1);
+test('Test creating dependant tasks', function(t){
+  t.plan(2);
 
-  testCollection.add('sleepmore', {
-    "command": "sleep 5 && echo 'Task Finished'",
-    "trigger": {
-      "after": "sleep"
-    }
+  t.test('Test creating a single dependant task', function(t){
+    t.plan(1);
+    testCollection.add('sleepmore', {
+      "command": "sleep 5 && echo 'Task Finished'",
+      "trigger": {
+        "after": "sleep"
+      }
+    });
+
+    t.equal(testCollection.dependencies.subject('sleepmore').dependencies[0], 'sleep', 'sleepmore is a dependant task of sleep');
   });
 
-  t.equal(testCollection.dependencies.subject('sleepmore').dependencies[0], 'sleep', 'sleepmore is a dependant task of sleep');
+  t.test('Test creating many dependant tasks', function(t){
+    t.plan(2);
+
+    testCollection.add('one', {"command": "echo one", "trigger": {"time": ""} });
+    testCollection.add('two', {"command": "echo two", "trigger": {"after": "one"} });
+    testCollection.add('twotwo', {"command": "echo twotwo", "trigger": {"after": "one"} });
+    testCollection.add('three', {"command": "echo three", "trigger": {"after": "two"} });
+    testCollection.add('four', {"command": "echo four", "trigger": {"after": "three"} });
+    testCollection.add('five', {"command": "echo five", "trigger": {"after": "four"} });
+    testCollection.add('six', {"command": "echo six", "trigger": {"after": "five"} });
+
+    t.similar(testCollection.dependencies.subject('one').references, ['two', 'twotwo'], 'task one is referenced by two tasks');
+    t.similar(testCollection.dependencies.subject('five').dependencies, ['four'], 'task five is dependant on task four');
+  });
 });
