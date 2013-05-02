@@ -53,10 +53,10 @@ test('Adding a task and ensure the correct order', function(t){
         "time": moment().add('s', 1).toDate()
       }
     });
-    
+
     t.ok(ummon.collections.default.tasks.hello, 'There is a hello task');
 
-    ummon.queue.once('new', function(name){
+    ummon.dispatcher.once('queue.new', function(name){
       t.ok(true, 'The new emitter was emited');
       t.equal(name, 'hello', 'The task name was hello');
     });
@@ -88,7 +88,7 @@ test('Adding a task and ensure the correct order', function(t){
     
     ummon.runNextIfReady();
 
-    ummon.queue.once('new', function(name){
+    ummon.dispatcher.once('queue.new', function(name){
       t.ok(true, 'The new emitter was emited');
       t.equal(name, 'goodbye', 'The task name was goodbye');
     });

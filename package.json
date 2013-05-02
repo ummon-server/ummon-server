@@ -42,6 +42,7 @@
     "underscore": "~1.4.4",
     "moment": "~2.0.0",
     "dependency-foo": "~0.1.1",
-    "cron": "~1.0.1"
+    "cron": "~1.0.1",
+    "eventemitter2": "~0.4.11"
   }
 }

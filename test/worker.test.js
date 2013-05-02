@@ -29,6 +29,7 @@ var test = require("tap").test;
 //   t.end(); // but it must match the plan!
 // });
 
+var ummon = require('..').createServer();
 var worker = require('../lib/worker.js');
 
 
@@ -43,11 +44,11 @@ var sampleTask = {
 test('Test successfully running code with a worker', function(t){
   t.plan(2);
 
-  var sleep = worker(sampleTask);
+  var sleep = worker(sampleTask, ummon);
 
   t.type(sleep.pid, "number", 'There is a pid that is a number');
 
-  sleep.once('complete', function(code){
+  ummon.dispatcher.once('worker.complete', function(code){
     t.equal(code, 0, 'The task runs and returns it\'s exit code of 0');
     t.end();
   });
