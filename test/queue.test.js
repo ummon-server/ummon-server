@@ -31,7 +31,9 @@ var test = require("tap").test;
 
 var queue = require('../lib/queue.js');
 
-var testQueue = queue();
+var dispatcher = { emit: function(name) {} }; // emulate event emitter
+
+var testQueue = queue(dispatcher);
 
 
 //                    Construct!
