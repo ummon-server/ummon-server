@@ -30,7 +30,7 @@ var moment = require("moment");
 //   t.end(); // but it must match the plan!
 // });
 
-var ummon = require('..').createServer();
+var ummon = require('..').create();
 
 
 test('construct an instance of ummon', function(t){

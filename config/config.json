@@ -1,4 +1,0 @@
-{
-  "max_workers": 5,
-  "tasks": "./config/tasks.json"
-}
