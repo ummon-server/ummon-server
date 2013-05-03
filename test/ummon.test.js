@@ -30,12 +30,12 @@ var moment = require("moment");
 //   t.end(); // but it must match the plan!
 // });
 
-var ummon = require('..').create();
+var ummon;
 
 
 test('construct an instance of ummon', function(t){
   t.plan(1);
-
+  ummon = require('..').create();
   t.ok(ummon, 'The server should exists');
 });
 
@@ -47,7 +47,8 @@ test('Adding a task and ensure the correct order', function(t){
 
   t.test('Create a task with a timed trigger and wait for it to add to the queue', function(t) {
     t.plan(4);
-    ummon.createTask('default', 'hello', {
+    ummon.createTask({
+      "name":"hello",
       "command": "echo Hello;",
       "trigger": {
         "time": moment().add('s', 1).toDate()
@@ -56,9 +57,9 @@ test('Adding a task and ensure the correct order', function(t){
 
     t.ok(ummon.collections.default.tasks.hello, 'There is a hello task');
 
-    ummon.dispatcher.once('queue.new', function(name){
+    ummon.dispatcher.once('queue.new', function(task){
       t.ok(true, 'The new emitter was emited');
-      t.equal(name, 'hello', 'The task name was hello');
+      t.equal(task.name, 'hello', 'The task name was hello');
     });
 
     setTimeout(function(){
@@ -71,7 +72,8 @@ test('Adding a task and ensure the correct order', function(t){
   t.test('Create a dependant task', function(t) {
     t.plan(1);
 
-    ummon.createTask('default', 'goodbye', {
+    ummon.createTask({
+      "name": "goodbye",
       "command": "echo goodbye;",
       "trigger": {
         "after": 'hello'
@@ -83,15 +85,15 @@ test('Adding a task and ensure the correct order', function(t){
 
 
   t.test('Task hello is run, goodbye is queued and then run', function(t){
-    t.plan(3);
+    t.plan(1);
     ummon.MAX_WORKERS = 5;
-    
-    ummon.runNextIfReady();
 
-    ummon.dispatcher.once('queue.new', function(name){
-      t.ok(true, 'The new emitter was emited');
-      t.equal(name, 'goodbye', 'The task name was goodbye');
-    });
+    // ummon.dispatcher.once('queue.new', function(task){
+    //   t.ok(true, 'The new emitter was emited');
+    //   t.equal(task.name, 'goodbye', 'The task name was goodbye');
+    // });
+
+    ummon.runNextIfReady();
 
     setTimeout(function(){
       t.equal(ummon.queue.length(), 0, 'The queue is now empty');

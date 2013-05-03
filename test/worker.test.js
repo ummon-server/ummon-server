@@ -29,7 +29,7 @@ var test = require("tap").test;
 //   t.end(); // but it must match the plan!
 // });
 
-var ummon = require('..').createServer();
+var ummon = require('..').create();
 var worker = require('../lib/worker.js');
 
 
