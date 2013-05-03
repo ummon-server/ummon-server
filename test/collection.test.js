@@ -47,6 +47,7 @@ test('construct an instance of ummon', function(t){
 // - - - - - - - - - - - - - - - - - - - - - - - - - 
 // 
 var sampleTask = {
+  "name": "sleep",
   "cwd": "/var/www/website2/",
   "command": "sleep 1 && echo 'Task Finished'",
   "trigger": {
@@ -58,7 +59,7 @@ var sampleTask = {
 test('Test successfully adding a task to task list', function(t){
   t.plan(3);
 
-  testCollection.add('sleep', sampleTask);
+  testCollection.add(sampleTask);
 
   t.ok(testCollection.tasks.sleep, 'There should be a sleep task');
   t.equal(testCollection.tasks.sleep.cwd, '/var/www/website2/', 'The tasks cwd should be correct: /var/www/website2/');
@@ -66,7 +67,7 @@ test('Test successfully adding a task to task list', function(t){
   t.test('Test failing to add a duplicate task to task list', function(t){
     t.plan(2);
     try {
-      testCollection.add('sleep', sampleTask);
+      testCollection.add(sampleTask);
     } 
     catch(e) {
       t.ok(e, 'There should be an error object');
@@ -81,7 +82,8 @@ test('Test creating dependant tasks', function(t){
 
   t.test('Test creating a single dependant task', function(t){
     t.plan(1);
-    testCollection.add('sleepmore', {
+    testCollection.add({
+      "name": "sleepmore",
       "command": "sleep 5 && echo 'Task Finished'",
       "trigger": {
         "after": "sleep"
@@ -94,13 +96,13 @@ test('Test creating dependant tasks', function(t){
   t.test('Test creating many dependant tasks', function(t){
     t.plan(2);
 
-    testCollection.add('one', {"command": "echo one", "trigger": {"time": ""} });
-    testCollection.add('two', {"command": "echo two", "trigger": {"after": "one"} });
-    testCollection.add('twotwo', {"command": "echo twotwo", "trigger": {"after": "one"} });
-    testCollection.add('three', {"command": "echo three", "trigger": {"after": "two"} });
-    testCollection.add('four', {"command": "echo four", "trigger": {"after": "three"} });
-    testCollection.add('five', {"command": "echo five", "trigger": {"after": "four"} });
-    testCollection.add('six', {"command": "echo six", "trigger": {"after": "five"} });
+    testCollection.add({"name":"one","command": "echo one", "trigger": {"time": ""} });
+    testCollection.add({"name":"two","command": "echo two", "trigger": {"after": "one"} });
+    testCollection.add({"name":"twotwo","command": "echo twotwo", "trigger": {"after": "one"} });
+    testCollection.add({"name":"three","command": "echo three", "trigger": {"after": "two"} });
+    testCollection.add({"name":"four","command": "echo four", "trigger": {"after": "three"} });
+    testCollection.add({"name":"five","command": "echo five", "trigger": {"after": "four"} });
+    testCollection.add({"name":"six","command": "echo six", "trigger": {"after": "five"} });
 
     t.similar(testCollection.dependencies.subject('one').references, ['two', 'twotwo'], 'task one is referenced by two tasks');
     t.similar(testCollection.dependencies.subject('five').dependencies, ['four'], 'task five is dependant on task four');
