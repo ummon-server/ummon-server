@@ -21,6 +21,7 @@
     }
   ],
   "main": "index",
+  "bin": "bin/ummon",
   "engines": {
     "node": ">= 0.10.0"
   },
