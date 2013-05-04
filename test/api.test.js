@@ -49,7 +49,7 @@ test('Show processes', function(t){
   var res = {};
   res.json = function(status, json) {
     t.type(json.count, 'number', 'The count should be a number');
-    t.type(json.workers, 'object', 'The workers should be an array'); // This should be an array. Why is it an object?
+    t.type(json.workers, 'object', 'The workers should be an object');
   };
 
   api.ps(req, res);
@@ -68,6 +68,55 @@ test('Create a task', function(t){
   
   api.createTask(req, res);
 });
+
+test('Show a task', function(t){
+  t.plan(3);
+
+  var req = { params: { "collection":"default", "task":"test"} };
+  var res = {};
+  
+  res.json = function(status, json) {
+    t.equal(status, 200, 'The status should be 200');
+    t.equal(json.task.name, 'test', 'The task name should be test');
+    t.equal(json.task.command, 'echo hello', 'The task command should be echo');
+  };
+
+  api.showTask(req, res);
+});
+
+
+test('Update a task', function(t){
+  t.plan(3);
+
+  var req = { params: { "collection":"default", "task":"test"}, body: {"name":"test", "command":"echo goodbye", "trigger": {"time":"* * * * *"}} };
+  var res = {};
+  
+  res.json = function(status, json) {
+
+    t.equal(status, 200, 'The status should be 200');
+    t.equal(json.task.name, 'test', 'The task name should be test');
+    t.equal(json.task.command, 'echo goodbye', 'The task command should be echo');
+  };
+
+  api.updateTask(req, res);
+});
+
+
+test('Delete a task', function(t){
+  t.plan(3);
+
+  var req = { params: { "collection":"default", "task":"test"} };
+  var res = {};
+  
+  res.json = function(status) {
+    t.equal(status, 200, 'The status should be 200');
+    t.notOk(ummon.timers["default.test"], 'The timer should be deleted');
+    t.notOk(ummon.collections["default"].tasks["test"], 'The task should be deleted');
+  };
+
+  api.deleteTask(req, res);
+});
+
 
 test('teardown', function(t){
   setImmediate(function() {

@@ -18,15 +18,19 @@ var server = restify.createServer({
 
 
 // Middlewarez
-server.use(restify.gzipResponse());
-server.use(restify.bodyParser());
+server.use(restify.acceptParser(server.acceptable));
 server.use(restify.requestLogger());
+server.use(restify.bodyParser());
+server.use(restify.gzipResponse());
 
 
 // The routes!
 server.get('/ps', api.ps);
 server.get('/status', api.status);
 server.post('/createTask', api.createTask);
+server.get('/:collection/:task', api.showTask);
+server.put('/:collection/:task', api.updateTask);
+server.del('/:collection/:task', api.deleteTask);
 
 
 server.listen(ummon.config.port, function() {
