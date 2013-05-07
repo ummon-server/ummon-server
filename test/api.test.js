@@ -37,7 +37,7 @@ test('Create a task', function(t){
   var res = {};
   res.json = function(status, json) {
     t.equal(status, 200, 'The status should be 200');
-    t.equal(json.message, 'Task test successfully created in the default collection', 'The message should be correct');
+    t.equal(json.message, 'Task default.test successfully created', 'The message should be correct');
   };
   
   api.createTask(req, res);
@@ -47,7 +47,7 @@ test('Create a task', function(t){
 test('Show a task', function(t){
   t.plan(3);
 
-  var req = { params: { "collection":"default", "task":"test"} };
+  var req = { params: { "taskid":"default.test"} };
   var res = {};
   
   res.json = function(status, json) {
@@ -63,11 +63,10 @@ test('Show a task', function(t){
 test('Update a task', function(t){
   t.plan(3);
 
-  var req = { params: { "collection":"default", "task":"test"}, body: {"name":"test", "command":"echo goodbye", "trigger": {"time":"* * * * *"}} };
+  var req = { params: { "taskid":"default.test"}, body: {"name":"test", "collection":"default", "command":"echo goodbye", "trigger": {"time":"* * * * *"}} };
   var res = {};
   
   res.json = function(status, json) {
-
     t.equal(status, 200, 'The status should be 200');
     t.equal(json.task.name, 'test', 'The task name should be test');
     t.equal(json.task.command, 'echo goodbye', 'The task command should be echo');
@@ -80,13 +79,13 @@ test('Update a task', function(t){
 test('Delete a task', function(t){
   t.plan(3);
 
-  var req = { params: { "collection":"default", "task":"test"} };
+  var req = { params: { "taskid":"default.test"} };
   var res = {};
   
   res.json = function(status) {
     t.equal(status, 200, 'The status should be 200');
     t.notOk(ummon.timers["default.test"], 'The timer should be deleted');
-    t.notOk(ummon.collections["default"].tasks["test"], 'The task should be deleted');
+    t.notOk(ummon.tasks["default.test"], 'The task should be deleted');
   };
 
   api.deleteTask(req, res);

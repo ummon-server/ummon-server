@@ -28,9 +28,9 @@ server.use(restify.gzipResponse());
 server.get('/ps', api.ps);
 server.get('/status', api.status);
 server.post('/createTask', api.createTask);
-server.get('/:collection/:task', api.showTask);
-server.put('/:collection/:task', api.updateTask);
-server.del('/:collection/:task', api.deleteTask);
+server.get('/:taskid', api.showTask);
+server.put('/:taskid', api.updateTask);
+server.del('/:taskid', api.deleteTask);
 
 
 server.listen(ummon.config.port, function() {
