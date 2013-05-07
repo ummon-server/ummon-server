@@ -42,7 +42,7 @@ test('construct an instance of ummon', function(t){
 
 test('Adding a task and ensure the correct order', function(t){
   t.plan(3);
-  ummon.MAX_WORKERS = 0; // Don't run the task
+  ummon.MAX_WORKERS = 0; // Don't run any task
 
 
   t.test('Create a task with a timed trigger and wait for it to add to the queue', function(t) {
@@ -55,11 +55,11 @@ test('Adding a task and ensure the correct order', function(t){
       }
     });
 
-    t.ok(ummon.collections.default.tasks.hello, 'There is a hello task');
+    t.ok(ummon.tasks['default.hello'], 'There is a hello task');
 
     ummon.dispatcher.once('queue.new', function(task){
       t.ok(true, 'The new emitter was emited');
-      t.equal(task.name, 'hello', 'The task name was hello');
+      t.equal(task.id, 'default.hello', 'The task name was hello');
     });
 
     setTimeout(function(){
@@ -80,7 +80,7 @@ test('Adding a task and ensure the correct order', function(t){
       }
     });
 
-    t.ok(ummon.collections.default.tasks.goodbye, 'There is a goodbye task');
+    t.ok(ummon.tasks['default.goodbye'], 'There is a goodbye task');
   });
 
 
@@ -99,4 +99,20 @@ test('Adding a task and ensure the correct order', function(t){
       t.equal(ummon.queue.length(), 0, 'The queue is now empty');
     }, '500');
   });
+});
+
+
+test('Test creating dependant tasks', function(t){
+  t.plan(2);
+
+  ummon.createTask({"name":"one","command": "echo one", "trigger": {"time": ""} });
+  ummon.createTask({"name":"two","command": "echo two", "trigger": {"after": "default.one"} });
+  ummon.createTask({"name":"twotwo","command": "echo twotwo", "trigger": {"after": "default.one"} });
+  ummon.createTask({"name":"three","command": "echo three", "trigger": {"after": "default.two"} });
+  ummon.createTask({"name":"four","command": "echo four", "trigger": {"after": "default.three"} });
+  ummon.createTask({"name":"five","command": "echo five", "trigger": {"after": "default.four"} });
+  ummon.createTask({"name":"six","command": "echo six", "trigger": {"after": "default.five"} });
+
+  t.similar(ummon.dependencies.subject('default.one').references, ['default.two', 'default.twotwo'], 'task one is referenced by two tasks');
+  t.similar(ummon.dependencies.subject('default.five').dependencies, ['default.four'], 'task five is dependant on task four');
 });
