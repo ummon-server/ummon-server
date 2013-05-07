@@ -113,6 +113,26 @@ test('Test creating dependant tasks', function(t){
   ummon.createTask({"name":"five","command": "echo five", "trigger": {"after": "default.four"} });
   ummon.createTask({"name":"six","command": "echo six", "trigger": {"after": "default.five"} });
 
-  t.similar(ummon.dependencies.subject('default.one').references, ['default.two', 'default.twotwo'], 'task one is referenced by two tasks');
-  t.similar(ummon.dependencies.subject('default.five').dependencies, ['default.four'], 'task five is dependant on task four');
+  t.equal(ummon.dependencies.subject('default.one').references[1], 'default.twotwo', 'task one is referenced by two tasks');
+  t.equal(ummon.dependencies.subject('default.five').dependencies[0], 'default.four', 'task five is dependant on task four');
+});
+
+
+test('Test updating a tasks', function(t){
+  t.plan(4);
+
+  var task = ummon.updateTask({"name":"twotwo","collection":"default","command": "echo twotwo", "trigger": {"time": ""} });
+
+  t.equal(task.command, "echo twotwo", "The method should return a new Task");
+  t.equal(ummon.dependencies.subject('default.one').references[0], 'default.two', 'The good reference remains');
+  t.notOk(ummon.dependencies.subject('default.one').references[1], 'The old reference was removed');
+  t.notOk(ummon.dependencies.subject('default.twotwo').dependencies[0], 'The task has no dependant tasks');
+});
+
+test('Delete a task and its dependencies', function(t){
+  t.plan(2);
+
+  ummon.deleteTask('default.five');
+  t.notOk(ummon.dependencies.subject('default.four').references[0], 'Task four has no more references');
+  t.notOk(ummon.dependencies.subject('default.five').dependencies[0], 'The task has no dependant tasks');
 });
