@@ -5,17 +5,27 @@
  * Module dependencies.
  */
 var restify = require('restify');
+var bunyan = require('bunyan');
 var ummon = require('./lib/ummon').create();
 
 var api = require('./lib/api')(ummon);
 
 
 var server = restify.createServer({
-  log: ummon.log,
   version: 0,
   name: 'Ummon',
+  log: bunyan.createLogger({
+    name: 'API',
+    stream: process.stdout
+  })
 });
 
+server.on('after', restify.auditLogger({
+  log: bunyan.createLogger({
+    name: 'audit',
+    stream: process.stdout
+  })
+}));
 
 // Middlewarez
 server.use(restify.acceptParser(server.acceptable));
