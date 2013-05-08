@@ -1,27 +1,26 @@
 {
-  "name": "ummon",
+  "name": "ummon-server",
   "description": "The best project ever.",
   "version": "0.0.0",
-  "homepage": "https://github.com/punkave/ummon",
+  "homepage": "https://github.com/punkave/ummon-server",
   "author": {
     "name": "Matt McManus",
     "email": "mcmanus@punkave.com"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/punkave/ummon.git"
+    "url": "git://github.com/punkave/ummon-server.git"
   },
   "bugs": {
-    "url": "https://github.com/punkave/ummon/issues"
+    "url": "https://github.com/punkave/ummon-server/issues"
   },
   "licenses": [
     {
       "type": "MIT",
-      "url": "https://github.com/punkave/ummon/blob/master/LICENSE-MIT"
+      "url": "https://github.com/punkave/ummon-server/blob/master/LICENSE-MIT"
     }
   ],
   "main": "index",
-  "bin": "bin/ummon",
   "engines": {
     "node": ">= 0.10.0"
   },
