@@ -36,9 +36,9 @@ var worker = require('../lib/worker.js');
 //                Add a task to the list!
 // - - - - - - - - - - - - - - - - - - - - - - - - - 
 // 
-var sampleTask = {
+var sampleTask = {"task":{
   "cwd": "/var/www/website2/",
-  "command": "sleep 1 && echo Finished"
+  "command": "sleep 1 && echo Finished"}
 };
  
 test('Test successfully running code with a worker', function(t){

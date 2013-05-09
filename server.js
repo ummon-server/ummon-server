@@ -35,12 +35,26 @@ server.use(restify.gzipResponse());
 
 
 // The routes!
+server.get('/ps/:pid', api.ps);
 server.get('/ps', api.ps);
+// server.post('/kill/:pid', api.kill);
 server.get('/status', api.status);
-server.post('/createTask', api.createTask);
-server.get('/:taskid', api.showTask);
-server.put('/:taskid', api.updateTask);
-server.del('/:taskid', api.deleteTask);
+server.post('/tasks/new', api.createTask);
+server.get('/tasks/:taskid', api.showTask);
+server.put('/tasks/:taskid', api.updateTask);
+server.del('/tasks/:taskid', api.deleteTask);
+server.get('/collection/:collection', api.showTasks);
+server.get('/tasks', api.showTasks);
+// server.post('/run/:taskid', api.run);
+// server.post('/run', api.run);
+// server.get('/log/:collection', api.showLog);
+// server.get('/log/:taskid', api.showLog);
+// server.get('/log/:jobid', api.showLog);
+// server.get('/log', api.showLog);
+// server.get('/tail/:collection', api.streamLog);
+// server.get('/tail/:taskid', api.streamLog);
+// server.get('/tail/:jobit', api.streamLog);
+// server.get('/tail', api.streamLog);
 
 
 server.listen(ummon.config.port, function() {

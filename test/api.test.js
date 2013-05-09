@@ -72,7 +72,7 @@ test('Update a task', function(t){
     t.equal(json.task.command, 'echo goodbye', 'The task command should be echo');
   };
 
-  api.updateTask(req, res);
+  api.updateTaskTemplate(req, res);
 });
 
 

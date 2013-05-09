@@ -64,5 +64,5 @@ test('Test retreiving the next iterm from the queue', function(t){
   var item = testQueue.getNext();
 
   t.equal(testQueue.items.length, 3, 'There are now three items in the queue');
-  t.equal(item, 'one', 'The correct item was returned');
+  t.equal(item.task, 'one', 'The correct item was returned');
 });
