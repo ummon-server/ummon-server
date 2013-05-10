@@ -1,6 +1,9 @@
 {
   "name":"ummon.server",
   "tasks": "./config/tasks.json",
-  "logdir": "./log",
+  "logging": {
+    "path":"./logs/ummon.log",
+    "level":"warn"
+  },
   "port":8888
 }
