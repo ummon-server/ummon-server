@@ -22,16 +22,18 @@ test('Test successfully creating a run', function(t){
 });
 
 test('Test successfully starting a run', function(t){
-  t.plan(2);
+  t.plan(3);
   t.equal(testRun.started, null, 'The run should not have an started time');
+  t.type(testRun.duration(), 'number', 'The run lenght should be a number');
   testRun.start();
   t.type(testRun.started, 'number', 'The run should have an started time');
 });
 
-test('Test successfully starting a run', function(t){
-  t.plan(3);
+test('Test successfully completing a run', function(t){
+  t.plan(4);
   t.equal(testRun.completed, null, 'The run should not have an completed time');
   testRun.complete(0);
+  t.type(testRun.duration(), 'number', 'The run length should be a number');
   t.type(testRun.completed, 'number', 'The run should have an completed time');
   t.equal(testRun.exitCode, 0, 'The run should have an exit code of 0');
 });

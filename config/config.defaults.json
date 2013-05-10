@@ -1,6 +1,7 @@
 {
   "name":"ummon.server",
   "tasks": "./config/tasks.json",
+  "defaultCollection": "default",
   "logging": {
     "path":"./logs/ummon.log",
     "level":"warn"

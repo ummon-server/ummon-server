@@ -85,13 +85,13 @@ test('Adding a task and ensure the correct order', function(t){
 
 
   t.test('Task hello is run, goodbye is queued and then run', function(t){
-    t.plan(1);
+    t.plan(3);
     ummon.MAX_WORKERS = 5;
 
-    // ummon.dispatcher.once('queue.new', function(task){
-    //   t.ok(true, 'The new emitter was emited');
-    //   t.equal(task.name, 'goodbye', 'The task name was goodbye');
-    // });
+    ummon.dispatcher.once('queue.new', function(run){
+      t.ok(true, 'The new emitter was emited');
+      t.equal(run.task.name, 'goodbye', 'The task name was goodbye');
+    });
 
     ummon.createWorkerIfReady();
 

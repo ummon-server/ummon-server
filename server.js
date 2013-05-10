@@ -20,12 +20,12 @@ var server = restify.createServer({
   })
 });
 
-server.on('after', restify.auditLogger({
-  log: bunyan.createLogger({
-    name: 'audit',
-    stream: process.stdout
-  })
-}));
+// server.on('after', restify.auditLogger({
+//   log: bunyan.createLogger({
+//     name: 'audit',
+//     stream: process.stdout
+//   })
+// }));
 
 // Middlewarez
 server.use(restify.acceptParser(server.acceptable));
@@ -43,8 +43,8 @@ server.post('/tasks/new', api.createTask);
 server.get('/tasks/:taskid', api.showTask);
 server.put('/tasks/:taskid', api.updateTask);
 server.del('/tasks/:taskid', api.deleteTask);
-server.get('/collection/:collection', api.showTasks);
 server.get('/tasks', api.showTasks);
+server.get('/collection/:collection', api.showTasks);
 // server.post('/run/:taskid', api.run);
 // server.post('/run', api.run);
 // server.get('/log/:collection', api.showLog);
