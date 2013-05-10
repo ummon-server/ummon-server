@@ -31,15 +31,15 @@ var test = require("tap").test;
 
 var ummon = require('..').create();
 var worker = require('../lib/worker.js');
+var run = require('../lib/run.js');
 
 
 //                Add a task to the list!
 // - - - - - - - - - - - - - - - - - - - - - - - - - 
 // 
-var sampleTask = {"task":{
-  "cwd": "/var/www/website2/",
-  "command": "sleep 1 && echo Finished"}
-};
+var sampleTask = run({
+  "command": "sleep 1 && echo Finished"
+});
  
 test('Test successfully running code with a worker', function(t){
   t.plan(2);
