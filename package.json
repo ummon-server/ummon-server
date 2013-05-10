@@ -28,15 +28,10 @@
     "test": "tap test"
   },
   "devDependencies": {
-    "grunt-contrib-jshint": "~0.1.1",
-    "grunt-contrib-watch": "~0.2.0",
-    "grunt": "~0.4.1",
     "tap": "~0.4.1",
-    "grunt-shell": "~0.2.2"
   },
   "keywords": [],
   "dependencies": {
-    "optimist": "~0.4.0",
     "colors": "~0.6.0-1",
     "underscore": "~1.4.4",
     "moment": "~2.0.0",
