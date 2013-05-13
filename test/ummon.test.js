@@ -139,6 +139,17 @@ test('Delete a task and its dependencies', function(t){
 });
 
 
+test('Create collections default values and retrieve a task that inherits them', function(t){
+  t.plan(1);
+
+  //ummon.setDefaults():
+  ummon.defaults.science = { 'cwd': '/user/bill' };
+  ummon.createTask({"collection":"science", "name":"nye","command": "echo \"The science guy!\"" });
+  var task = ummon.showTask('science.nye');
+  t.equal(task.cwd, '/user/bill', 'The nye task should have its cwd set by its collection defaults')
+});
+
+
 test('teardown', function(t){
   setImmediate(function() {
     process.exit();
