@@ -4,7 +4,7 @@
   "defaultCollection": "default",
   "logging": {
     "path":"./logs/ummon.log",
-    "level":"warn"
+    "level":"info"
   },
   "port":8888
 }
