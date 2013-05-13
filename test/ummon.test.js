@@ -154,19 +154,20 @@ test('Create collections default values and retrieve a task that inherits them',
 
 
 test('Autoload tasks from a json file', function(t){
-  t.plan(4);
+  t.plan(5);
 
-  var autoloadUmmon = require('..').create({"tasks":"./test/fixtures/tasks.json"});
+  var autoloadUmmon = require('..').create({"tasks":"./fixtures/tasks.json"});
 
-  t.equal(autoloadUmmon.defaults.sample.cwd,'/var/www/website/', 'The collection defaults were properly loaded');
+  t.equal(autoloadUmmon.defaults.sample.cwd, '/var/www/website/', 'The collection defaults were properly loaded');
   
   var task = autoloadUmmon.getTask('sample.task2');
-
+  t.ok(task, 'The task flippn loaded')
   t.equal(task.cwd,'/var/www/website/', 'The collection defaults were properly loaded');
   t.equal(task.command,'./symfony w2h:process-data', 'The task command is set');
   
   t.equal(autoloadUmmon.dependencies.subject('sample.task1').references[0],'sample.task2', 'Task dependancies were setup properly');
 });
+
 
 test('teardown', function(t){
   setImmediate(function() {
