@@ -140,15 +140,33 @@ test('Delete a task and its dependencies', function(t){
 
 
 test('Create collections default values and retrieve a task that inherits them', function(t){
-  t.plan(1);
+  t.plan(2);
 
   //ummon.setDefaults():
   ummon.defaults.science = { 'cwd': '/user/bill' };
   ummon.createTask({"collection":"science", "name":"nye","command": "echo \"The science guy!\"" });
-  var task = ummon.showTask('science.nye');
+  ummon.createTask({"collection":"science", "cwd":"/user/neil","name":"tyson","command": "echo \"The space guy!\"" });
+  var task = ummon.getTask('science.nye');
+  var task2 = ummon.getTask('science.tyson');
   t.equal(task.cwd, '/user/bill', 'The nye task should have its cwd set by its collection defaults')
+  t.equal(task2.cwd, '/user/neil', 'The tyson task should override the collection defaults')
 });
 
+
+test('Autoload tasks from a json file', function(t){
+  t.plan(4);
+
+  var autoloadUmmon = require('..').create({"tasks":"./test/fixtures/tasks.json"});
+
+  t.equal(autoloadUmmon.defaults.sample.cwd,'/var/www/website/', 'The collection defaults were properly loaded');
+  
+  var task = autoloadUmmon.getTask('sample.task2');
+
+  t.equal(task.cwd,'/var/www/website/', 'The collection defaults were properly loaded');
+  t.equal(task.command,'./symfony w2h:process-data', 'The task command is set');
+  
+  t.equal(autoloadUmmon.dependencies.subject('sample.task1').references[0],'sample.task2', 'Task dependancies were setup properly');
+});
 
 test('teardown', function(t){
   setImmediate(function() {
