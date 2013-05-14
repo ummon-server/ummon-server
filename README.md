@@ -1,6 +1,6 @@
 # ummon
 
-[![Build Status](https://secure.travis-ci.org/punkave/ummon.png?branch=master)](http://travis-ci.org/punkave/ummon) [![Code Climate](https://codeclimate.com/github/punkave/ummon-server.png)](https://codeclimate.com/github/punkave/ummon-server)
+[![Build Status](https://secure.travis-ci.org/punkave/ummon.png?branch=master)](http://travis-ci.org/punkave/ummon) [![Dependency Status](https://gemnasium.com/punkave/ummon-server.png)](https://gemnasium.com/punkave/ummon-server) [![Code Climate](https://codeclimate.com/github/punkave/ummon-server.png)](https://codeclimate.com/github/punkave/ummon-server)
 
 Documentation to come soon. Heavy development in process.
 
