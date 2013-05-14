@@ -3,35 +3,7 @@
 var test = require("tap").test;
 var moment = require("moment");
 
-// var thingie, superEasy;
-
-// test("make sure the thingie is a thing", function (t) {
-//   t.equal(thingie, "thing", "thingie should be thing");
-//   t.type(thingie, "string", "type of thingie is string");
-//   t.ok(true, "this is always true");
-//   t.notOk(false, "this is never true");
-//   t.test("a child test", function (t) {
-//     t.equal(this, superEasy, "right!?");
-//     t.similar(7, 2, "ever notice 7 is kinda like 2?", {todo: true});
-//     t.test("so skippable", {skip: true}, function (t) {
-//       t.plan(1); // only one test in this block
-//       t.ok(true, "but when the flag changes, it'll pass");
-//       // no need to end, since we had a plan.
-//     });
-//     t.end();
-//   });
-//   t.ok(99, "can also skip individual assertions", {skip: true});
-//   // end lets it know it's over.
-//   t.end();
-// });
-// test("another one", function (t) {
-//   t.plan(1);
-//   t.ok(true, "It's ok to plan, and also end.  Watch.");
-//   t.end(); // but it must match the plan!
-// });
-
 var ummon;
-
 
 test('construct an instance of ummon', function(t){
   t.plan(1);
@@ -148,8 +120,8 @@ test('Create collections default values and retrieve a task that inherits them',
   ummon.createTask({"collection":"science", "cwd":"/user/neil","name":"tyson","command": "echo \"The space guy!\"" });
   var task = ummon.getTask('science.nye');
   var task2 = ummon.getTask('science.tyson');
-  t.equal(task.cwd, '/user/bill', 'The nye task should have its cwd set by its collection defaults')
-  t.equal(task2.cwd, '/user/neil', 'The tyson task should override the collection defaults')
+  t.equal(task.cwd, '/user/bill', 'The nye task should have its cwd set by its collection defaults');
+  t.equal(task2.cwd, '/user/neil', 'The tyson task should override the collection defaults');
 });
 
 
@@ -161,7 +133,7 @@ test('Autoload tasks from a json file', function(t){
   t.equal(autoloadUmmon.defaults.sample.cwd, '/var/www/website/', 'The collection defaults were properly loaded');
   
   var task = autoloadUmmon.getTask('sample.task2');
-  t.ok(task, 'The task flippn loaded')
+  t.ok(task, 'The task flippn loaded');
   t.equal(task.cwd,'/var/www/website/', 'The collection defaults were properly loaded');
   t.equal(task.command,'./symfony w2h:process-data', 'The task command is set');
   
