@@ -48,8 +48,8 @@ test('Test successfully running code with a worker', function(t){
 
   t.type(sleep.pid, "number", 'There is a pid that is a number');
 
-  ummon.dispatcher.once('worker.complete', function(code){
-    t.equal(code, 0, 'The task runs and returns it\'s exit code of 0');
+  ummon.dispatcher.once('worker.complete', function(run){
+    t.equal(run.exitCode, 0, 'The task runs and returns it\'s exit code of 0');
     t.end();
   });
 });

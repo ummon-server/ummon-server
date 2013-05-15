@@ -1,5 +1,7 @@
 var test = require("tap").test;
 
+var stream = require('stream');
+
 var ummon = require('../lib/ummon').create();
 var api = require('../lib/api')(ummon);
 
@@ -89,6 +91,24 @@ test('Delete a task', function(t){
   };
 
   api.deleteTask(req, res);
+});
+
+test('Return a log', function(t){
+  t.plan(2);
+  var x = 0;
+  var req = { params: { collection: 'default' } };
+  var res = stream.PassThrough();
+
+  res.on('data', function(){
+    x++;
+  });
+
+  res.on('end', function(){
+    t.ok((x > 0), 'Data has been called');
+    t.ok(true, 'The end event was emitted');
+  });
+
+  api.showLog(req, res);
 });
 
 
