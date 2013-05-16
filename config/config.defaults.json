@@ -6,5 +6,6 @@
     "path":"./logs/ummon.log",
     "level":"debug"
   },
-  "port":8888
+  "port":8888,
+  "credentials": ["dzJoOnNjMWVuY2U="]
 }

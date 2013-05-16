@@ -32,7 +32,15 @@ server.use(restify.acceptParser(server.acceptable));
 server.use(restify.requestLogger());
 server.use(restify.bodyParser());
 server.use(restify.gzipResponse());
+server.use(restify.authorizationParser());
 
+server.use(function (req, res, next){
+  if (ummon.config.credentials.indexOf(req.authorization.credentials) !== -1){
+    next();
+  } else {
+    res.json(401, "Log in dummy. KWATZ!")
+  }
+})
 
 // The routes!
 server.get('/ps/:pid', api.ps);
