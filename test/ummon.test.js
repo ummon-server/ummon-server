@@ -11,73 +11,82 @@ test('construct an instance of ummon', function(t){
   t.ok(ummon, 'The server should exists');
 });
 
+var testRun;
 
-test('Adding a task and ensure the correct order', function(t){
-  t.plan(3);
+test('Create a task with a timed trigger and wait for it to add to the queue', function(t) {
+  t.plan(4);
   ummon.MAX_WORKERS = 0; // Don't run any task
 
+  ummon.createTask({
+    "name":"hello",
+    "command": "echo Hello;",
+    "trigger": {
+      "time": moment().add('ms', 100).toDate()
+    }
+  });
 
-  t.test('Create a task with a timed trigger and wait for it to add to the queue', function(t) {
-    t.plan(4);
-    ummon.createTask({
-      "name":"hello",
-      "command": "echo Hello;",
-      "trigger": {
-        "time": moment().add('s', 1).toDate()
-      }
-    });
+  t.ok(ummon.tasks['default.hello'], 'There is a hello task');
+  t.ok(ummon.timers['default.hello'], 'There is a hello task timer');
 
-    t.ok(ummon.tasks['default.hello'], 'There is a hello task');
+  ummon.dispatcher.once('queue.new', function(run){
+    testRun = run;
+    t.ok(true, 'The queue.new emitter was emited');
+    t.equal(run.task.id, 'default.hello', 'The task name was hello');
+  });
 
-    ummon.dispatcher.once('queue.new', function(run){
-      t.ok(true, 'The new emitter was emited');
-      t.equal(run.task.id, 'default.hello', 'The task name was hello');
-    });
+  setTimeout(function(){
+    t.equal(ummon.queue.length(), 1, 'There is one task in the queue after 1 second');
+  }, '101');
+
+});
+
+
+test('Create a dependant task', function(t) {
+  t.plan(2);
+
+  ummon.createTask({
+    "name": "goodbye",
+    "command": "echo goodbye;",
+    "trigger": {
+      "after": 'hello'
+    }
+  });
+
+  t.ok(ummon.tasks['default.goodbye'], 'There is a goodbye task');
+  t.equal(ummon.dependencies.subject('default.hello').references[0], 'default.goodbye', 'default.hello is a dependent task for goodbye');
+});
+
+
+test('Run the previously created tasks', function(t) {
+  t.plan(8);
+
+  ummon.dispatcher.on('queue.new', function(run){
+    t.ok(true, 'The queue.new emitter was emited');
+    t.equal(run.task.id, 'default.goodbye', 'The task default.goodbye was added to the queue after hello completed');
+    t.equal(run.triggeredBy, testRun.id, 'The task default.goodbye was triggered by hello\'s last run');
+  });
+
+  ummon.dispatcher.on('worker.complete', function(run){
+    t.ok(run, 'The worker.complete event was emited'); // Emitted twice for both tasks
 
     setTimeout(function(){
-      t.equal(ummon.queue.length(), 1, 'There is one task in the queue after 1 second');
-    }, '1100');
-
+      t.equal(Object.keys(ummon.workers).length, 0, 'The workers object is now empty');
+    }, '100');
   });
 
-  
-  t.test('Create a dependant task', function(t) {
-    t.plan(1);
+  ummon.MAX_WORKERS = 5;
+  ummon.createWorkerIfReady();
 
-    ummon.createTask({
-      "name": "goodbye",
-      "command": "echo goodbye;",
-      "trigger": {
-        "after": 'hello'
-      }
-    });
+  var pid = Object.keys(ummon.workers)[0];
 
-    t.ok(ummon.tasks['default.goodbye'], 'There is a goodbye task');
-  });
-
-
-  t.test('Task hello is run, goodbye is queued and then run', function(t){
-    t.plan(3);
-    ummon.MAX_WORKERS = 5;
-
-    ummon.dispatcher.once('queue.new', function(run){
-      t.ok(true, 'The new emitter was emited');
-      t.equal(run.task.name, 'goodbye', 'The task name was goodbye');
-    });
-
-    ummon.createWorkerIfReady();
-
-    setTimeout(function(){
-      t.equal(ummon.queue.length(), 0, 'The queue is now empty');
-    }, '500');
-  });
+  t.equal(ummon.workers[pid].run.id, testRun.id, 'The worker is in the list');
 });
 
 
 test('Test creating dependant tasks', function(t){
   t.plan(2);
 
-  ummon.createTask({"name":"one","command": "echo one", "trigger": {"time": moment().add('s', 1).toDate()} });
+  ummon.createTask({"name":"one","command": "echo one" });
   ummon.createTask({"name":"two","command": "echo two", "trigger": {"after": "default.one"} });
   ummon.createTask({"name":"twotwo","command": "echo twotwo", "trigger": {"after": "default.one"} });
   ummon.createTask({"name":"three","command": "echo three", "trigger": {"after": "default.two"} });
