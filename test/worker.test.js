@@ -38,7 +38,7 @@ var run = require('../lib/run.js');
 // - - - - - - - - - - - - - - - - - - - - - - - - - 
 // 
 var sampleTask = run({
-  "command": "sleep 1 && echo Finished"
+  "command": "echo Finished"
 });
  
 test('Test successfully running code with a worker', function(t){

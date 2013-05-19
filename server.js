@@ -32,15 +32,18 @@ server.use(restify.acceptParser(server.acceptable));
 server.use(restify.requestLogger());
 server.use(restify.bodyParser());
 server.use(restify.gzipResponse());
-server.use(restify.authorizationParser());
+// server.use(restify.authorizationParser());
 
-server.use(function (req, res, next){
-  if (ummon.config.credentials.indexOf(req.authorization.credentials) !== -1){
-    next();
-  } else {
-    res.json(401, "Log in dummy. KWATZ!")
-  }
-})
+server.pre(restify.pre.sanitizePath());
+server.use(restify.fullResponse());
+
+// server.use(function (req, res, next){
+//   if (ummon.config.credentials.indexOf(req.authorization.credentials) !== -1){
+//     next();
+//   } else {
+//     res.json(401, "Log in dummy. KWATZ!")
+//   }
+// })
 
 // The routes!
 server.get('/ps/:pid', api.ps);
@@ -48,9 +51,11 @@ server.get('/ps', api.ps);
 // server.post('/kill/:pid', api.kill);
 server.get('/status', api.status);
 server.post('/tasks/new', api.createTask);
+
 server.get('/tasks/:taskid', api.getTask);
 server.put('/tasks/:taskid', api.updateTask);
 server.del('/tasks/:taskid', api.deleteTask);
+
 server.get('/tasks', api.getTasks);
 server.get('/collection/:collection', api.getTasks);
 // server.post('/run/:taskid', api.run);
