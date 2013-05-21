@@ -134,6 +134,42 @@ test('Create collections default values and retrieve a task that inherits them',
 });
 
 
+test('Add an arbitrary command to the queue', function(t){
+  t.plan(14);
+  ummon.MAX_WORKERS = 0;
+  
+  ummon.dispatcher.on('queue.new', function(run){
+    t.ok(true, 'The queue.new emitter was emited'); //Should fire twice
+  });
+
+  // Run an existing task with no dependancies
+  ummon.runTask('science.nye', function(err, run){
+    t.notOk(err, 'There is no error when an existing task is manual run');
+    t.equal(run.task.id, 'science.nye', 'A right task was loaded');
+    t.equal(run.triggeredBy, 'manual', 'A run is marked as manual');
+  });
+  
+  // Run a task that will fail because of built in dependancies
+  ummon.runTask('default.six', function(err, run){
+    t.ok(err, 'There is an error when an enxisting task with a dependancy is run');
+    t.equal(err.message, 'The task default.six has a dependant task. Call that instead', 'The error says the right thing');
+    t.notOk(run, 'There is no run when an enxisting task with a dependancy is run');
+  });
+
+  // Force Run a task that has dependancies
+  ummon.runTask('default.six', true, function(err, run){
+    t.notOk(err, 'There is not an error when an enxisting task with a dependancy is forced to run');
+    t.equal(run.task.id, 'default.six', 'A right task was loaded');
+    t.ok(run, 'There is a run when an enxisting task with a dependancy is forced to run');
+  });
+
+  // Run a new, arbitrary command
+  ummon.runTask({'command':'echo hello'}, true, function(err, run){
+    t.notOk(err, 'There is no error when an arbitrary task is created');
+    t.ok(run, 'There is a run when an arbitrary task is created');
+  });
+});
+
 test('Autoload tasks from a json file', function(t){
   t.plan(5);
 
