@@ -41,7 +41,7 @@ test('Create a task with a timed trigger and wait for it to add to the queue', f
 });
 
 
-test('Create a dependant task', function(t) {
+test('Create a dependent task', function(t) {
   t.plan(2);
 
   ummon.createTask({
@@ -83,7 +83,7 @@ test('Run the previously created tasks', function(t) {
 });
 
 
-test('Test creating dependant tasks', function(t){
+test('Test creating dependent tasks', function(t){
   t.plan(2);
 
   ummon.createTask({"name":"one","command": "echo one" });
@@ -95,7 +95,7 @@ test('Test creating dependant tasks', function(t){
   ummon.createTask({"name":"six","command": "echo six", "trigger": {"after": "default.five"} });
 
   t.equal(ummon.dependencies.subject('default.one').references[1], 'default.twotwo', 'task one is referenced by two tasks');
-  t.equal(ummon.dependencies.subject('default.five').dependencies[0], 'default.four', 'task five is dependant on task four');
+  t.equal(ummon.dependencies.subject('default.five').dependencies[0], 'default.four', 'task five is dependent on task four');
 });
 
 
@@ -107,7 +107,7 @@ test('Test updating a tasks', function(t){
   t.equal(task.command, "echo twotwo", "The method should return a new Task");
   t.equal(ummon.dependencies.subject('default.one').references[0], 'default.two', 'The good reference remains');
   t.notOk(ummon.dependencies.subject('default.one').references[1], 'The old reference was removed');
-  t.notOk(ummon.dependencies.subject('default.twotwo').dependencies[0], 'The task has no dependant tasks');
+  t.notOk(ummon.dependencies.subject('default.twotwo').dependencies[0], 'The task has no dependent tasks');
 });
 
 
@@ -116,7 +116,7 @@ test('Delete a task and its dependencies', function(t){
 
   ummon.deleteTask('default.five');
   t.notOk(ummon.dependencies.subject('default.four').references[0], 'Task four has no more references');
-  t.notOk(ummon.dependencies.subject('default.five').dependencies[0], 'The task has no dependant tasks');
+  t.notOk(ummon.dependencies.subject('default.five').dependencies[0], 'The task has no dependent tasks');
 });
 
 
@@ -142,25 +142,25 @@ test('Add an arbitrary command to the queue', function(t){
     t.ok(true, 'The queue.new emitter was emited'); //Should fire twice
   });
 
-  // Run an existing task with no dependancies
+  // Run an existing task with no dependencies
   ummon.runTask('science.nye', function(err, run){
     t.notOk(err, 'There is no error when an existing task is manual run');
     t.equal(run.task.id, 'science.nye', 'A right task was loaded');
     t.equal(run.triggeredBy, 'manual', 'A run is marked as manual');
   });
   
-  // Run a task that will fail because of built in dependancies
+  // Run a task that will fail because of built in dependencies
   ummon.runTask('default.six', function(err, run){
-    t.ok(err, 'There is an error when an enxisting task with a dependancy is run');
-    t.equal(err.message, 'The task default.six has a dependant task. Call that instead', 'The error says the right thing');
-    t.notOk(run, 'There is no run when an enxisting task with a dependancy is run');
+    t.ok(err, 'There is an error when an enxisting task with a dependency is run');
+    t.equal(err.message, 'The task default.six has a dependent task. Call that instead', 'The error says the right thing');
+    t.notOk(run, 'There is no run when an enxisting task with a dependency is run');
   });
 
-  // Force Run a task that has dependancies
+  // Force Run a task that has dependencies
   ummon.runTask('default.six', true, function(err, run){
-    t.notOk(err, 'There is not an error when an enxisting task with a dependancy is forced to run');
+    t.notOk(err, 'There is not an error when an enxisting task with a dependency is forced to run');
     t.equal(run.task.id, 'default.six', 'A right task was loaded');
-    t.ok(run, 'There is a run when an enxisting task with a dependancy is forced to run');
+    t.ok(run, 'There is a run when an enxisting task with a dependency is forced to run');
   });
 
   // Run a new, arbitrary command
@@ -182,7 +182,7 @@ test('Autoload tasks from a json file', function(t){
   t.equal(task.cwd,'/var/www/website/', 'The collection defaults were properly loaded');
   t.equal(task.command,'./symfony w2h:process-data', 'The task command is set');
   
-  t.equal(autoloadUmmon.dependencies.subject('sample.task1').references[0],'sample.task2', 'Task dependancies were setup properly');
+  t.equal(autoloadUmmon.dependencies.subject('sample.task1').references[0],'sample.task2', 'Task dependencies were setup properly');
 });
 
 
