@@ -5,7 +5,9 @@
  * Module dependencies.
  */
 var restify = require('restify');
+var socketio = require('socket.io');
 var bunyan = require('bunyan');
+var _ = require('underscore');
 var ummon = require('./lib/ummon').create();
 
 var api = require('./lib/api')(ummon);
@@ -19,6 +21,7 @@ var server = restify.createServer({
     stream: process.stdout
   })
 });
+var io = socketio.listen(server);
 
 // server.on('after', restify.auditLogger({
 //   log: bunyan.createLogger({
@@ -32,6 +35,11 @@ server.use(restify.acceptParser(server.acceptable));
 server.use(restify.requestLogger());
 server.use(restify.bodyParser());
 server.use(restify.gzipResponse());
+server.use(restify.CORS({
+        origins: ['localhost', 'localhost:8888', 'localhost:3000'],   // defaults to ['*']
+        // credentials: true                  // defaults to false
+        // headers: ['x-foo']                 // sets expose-headers
+    }));
 // server.use(restify.authorizationParser());
 
 server.pre(restify.pre.sanitizePath());
@@ -68,6 +76,21 @@ server.get('/log', api.showLog);
 // server.get('/tail/:taskid', api.streamLog);
 // server.get('/tail/:jobit', api.streamLog);
 // server.get('/tail', api.streamLog);
+
+
+
+var getRuns = _.throttle(function(){ return ummon.getRuns() }, '500');
+
+io.set('log level', 1);
+io.sockets.on('connection', function (socket) {
+    socket.emit('send:tasks', ummon.getTasks());
+    
+    // Send runs 
+    // TODO: Is there a way to bind to multiple events with one listener?
+    ummon.dispatcher.on('worker.start', function(){ socket.emit('send:runs', getRuns()); });
+    ummon.dispatcher.on('worker.complete', function(){ socket.emit('send:runs', getRuns()); });
+    ummon.dispatcher.on('queue.new', function(){ socket.emit('send:runs', getRuns()); });
+});
 
 
 server.listen(ummon.config.port, function() {

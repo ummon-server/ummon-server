@@ -38,7 +38,7 @@ var run = require('../lib/run.js');
 // - - - - - - - - - - - - - - - - - - - - - - - - - 
 // 
 var sampleTask = run({
-  "command": "echo Finished"
+  "command": "sleep .1 && echo Finished"
 });
  
 test('Test successfully running code with a worker', function(t){
@@ -50,6 +50,5 @@ test('Test successfully running code with a worker', function(t){
 
   ummon.dispatcher.once('worker.complete', function(run){
     t.equal(run.exitCode, 0, 'The task runs and returns it\'s exit code of 0');
-    t.end();
   });
 });

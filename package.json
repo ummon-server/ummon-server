@@ -42,6 +42,7 @@
     "bunyan": "~0.21.1",
     "mkdirp": "~0.3.5",
     "uuid": "~1.4.1",
-    "event-stream": "~3.0.14"
+    "event-stream": "~3.0.14",
+    "socket.io": "~0.9.14"
   }
 }
