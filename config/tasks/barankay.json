@@ -1,0 +1,31 @@
+{
+  "name": "barankay",
+  "defaults": {
+    
+  },
+
+  "sequences": [
+    ["update-apis", "process-data", "apply-feedback"]
+  ],
+
+  "tasks": {
+    "update-apis": {
+      "command": "sleep 10; echo Pizza",
+      "trigger": {
+        "time": "* * * * *"
+      }
+    },
+    "process-data": {
+      "command": "sleep 10; echo Pizza"
+    },
+    "apply-feedback": {
+      "command": "sleep 10; echo Pizza"
+    },
+    "process-jobs": {
+      "command": "sleep 1; echo Pizza",
+      "trigger": {
+        "time": "* * * * *"
+      }
+    }
+  }
+}

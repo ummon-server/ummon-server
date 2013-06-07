@@ -1,0 +1,128 @@
+{ 
+  "barankay": {
+    "defaults": {
+      "cwd":"/var/www/waytohealth/versions/barankay"
+    },
+
+    "sequences": [
+      ["update-apis", "process-data", "apply-feedback"]
+    ],
+
+    "tasks": {
+      "update-apis": {
+        "command": "./symfony w2h:update-apis",
+        "trigger": {
+          "time": "*/10 * * * *"
+        }
+      },
+      "process-data": {
+        "command": "./symfony w2h:process-data"
+      },
+      "apply-feedback": {
+        "command": "./symfony w2h:apply-feedback"
+      },
+      "process-jobs": {
+        "command": "./symfony w2h:process-jobs",
+        "trigger": {
+          "time": "*/10 * * * *"
+        }
+      }
+    }
+  },
+
+
+  "kessler": {
+    "defaults": {
+      "cwd":"/var/www/waytohealth/versions/kessler"
+    },
+
+    "sequences": [
+      ["update-apis", "process-data", "apply-feedback"]
+    ],
+
+    "tasks": {
+      "update-apis": {
+        "command": "./symfony w2h:update-apis",
+        "trigger": {
+          "time": "*/10 * * * *"
+        }
+      },
+      "process-data": {
+        "command": "./symfony w2h:process-data"
+      },
+      "apply-feedback": {
+        "command": "./symfony w2h:apply-feedback"
+      },
+      "process-jobs": {
+        "command": "./symfony w2h:process-jobs",
+        "trigger": {
+          "time": "*/10 * * * *"
+        }
+      }
+    }
+  },
+
+
+  "obesity": {
+    "defaults": {
+      "cwd":"/var/www/waytohealth/versions/obesity"
+    },
+
+    "sequences": [
+      ["update-apis", "process-data", "apply-feedback"]
+    ],
+
+    "tasks": {
+      "update-apis": {
+        "command": "./symfony w2h:update-apis",
+        "trigger": {
+          "time": "*/10 * * * *"
+        }
+      },
+      "process-data": {
+        "command": "./symfony w2h:process-data"
+      },
+      "apply-feedback": {
+        "command": "./symfony w2h:apply-feedback"
+      },
+      "process-jobs": {
+        "command": "./symfony w2h:process-jobs",
+        "trigger": {
+          "time": "*/10 * * * *"
+        }
+      }
+    }
+  },
+
+
+  "cmmi": {
+    "defaults": {
+      "cwd":"/var/www/waytohealth/versions/cmmi"
+    },
+
+    "sequences": [
+      ["update-apis", "process-data", "apply-feedback"]
+    ],
+
+    "tasks": {
+      "update-apis": {
+        "command": "./symfony w2h:update-apis",
+        "trigger": {
+          "time": "*/10 * * * *"
+        }
+      },
+      "process-data": {
+        "command": "./symfony w2h:process-data"
+      },
+      "apply-feedback": {
+        "command": "./symfony w2h:apply-feedback"
+      },
+      "process-jobs": {
+        "command": "./symfony w2h:process-jobs",
+        "trigger": {
+          "time": "*/10 * * * *"
+        }
+      }
+    }
+  }
+}

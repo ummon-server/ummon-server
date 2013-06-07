@@ -170,19 +170,28 @@ test('Add an arbitrary command to the queue', function(t){
   });
 });
 
+
 test('Autoload tasks from a json file', function(t){
-  t.plan(5);
+  t.plan(8);
 
-  var autoloadUmmon = require('..').create({"tasks":"./fixtures/tasks.json"});
+  ummon.config.tasksDir = "./fixtures/tasks/*.json";
 
-  t.equal(autoloadUmmon.defaults.sample.cwd, '/var/www/website/', 'The collection defaults were properly loaded');
+  ummon.autoLoadTasks(function(err){
+    t.notOk(err, 'There should be no error');
+
+    t.equal(ummon.defaults.autosample.cwd, '/var/www/website/', 'The collection defaults were properly loaded');
   
-  var task = autoloadUmmon.getTask('sample.task2');
-  t.ok(task, 'The task flippn loaded');
-  t.equal(task.cwd,'/var/www/website/', 'The collection defaults were properly loaded');
-  t.equal(task.command,'./symfony w2h:process-data', 'The task command is set');
-  
-  t.equal(autoloadUmmon.dependencies.subject('sample.task1').references[0],'sample.task2', 'Task dependencies were setup properly');
+    var task = ummon.getTask('autosample.task2');
+    t.ok(task, 'The task flippn loaded');
+    t.equal(task.cwd,'/var/www/website/', 'The collection defaults were properly loaded');
+    t.equal(task.command,'./symfony w2h:process-data', 'The task command is set');
+    
+    t.ok(ummon.tasks['palace.pizza'], 'Second config file loaded and first collection loaded');
+    t.ok(ummon.tasks['farm.pretzel'], 'Second config file loaded and second collection loaded');
+
+    t.equal(ummon.dependencies.subject('autosample.task1').references[0],'autosample.task2', 'Task dependencies were setup properly');  
+  });
+
 });
 
 

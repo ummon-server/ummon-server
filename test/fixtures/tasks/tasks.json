@@ -1,5 +1,5 @@
 { 
-  "sample": {
+  "autosample": {
     "defaults": {
       "cwd":"/var/www/website/"
     },
