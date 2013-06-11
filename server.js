@@ -34,6 +34,7 @@ var io = socketio.listen(server);
 server.use(restify.acceptParser(server.acceptable));
 server.use(restify.requestLogger());
 server.use(restify.bodyParser());
+server.use(restify.queryParser());
 server.use(restify.gzipResponse());
 server.use(restify.CORS({
         origins: ['localhost', 'localhost:8888', 'localhost:3000'],   // defaults to ['*']
