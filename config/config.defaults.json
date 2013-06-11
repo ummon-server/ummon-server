@@ -1,6 +1,6 @@
 {
   "name":"ummon.server",
-  "tasksDir": "./config/tasks/*.json",
+  "tasksDir": "./config/tasks/",
   "defaultCollection": "default",
   "log": {
     "path":"./logs/ummon.log",
