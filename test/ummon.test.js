@@ -63,7 +63,7 @@ test('Run the previously created tasks', function(t) {
   ummon.dispatcher.on('queue.new', function(run){
     t.ok(true, 'The queue.new emitter was emited');
     t.equal(run.task.id, 'default.goodbye', 'The task default.goodbye was added to the queue after hello completed');
-    t.equal(run.triggeredBy, testRun.id, 'The task default.goodbye was triggered by hello\'s last run');
+    t.equal(run.triggeredBy.id, testRun.id, 'The task default.goodbye was triggered by hello\'s last run');
   });
 
   ummon.dispatcher.on('worker.complete', function(run){
