@@ -66,7 +66,7 @@ server.put('/tasks/:taskid', api.updateTask);
 server.del('/tasks/:taskid', api.deleteTask);
 
 server.get('/tasks', api.getTasks);
-server.get('/collection/:collection', api.getTasks);
+server.get('/collections/:collection', api.getTasks);
 // server.post('/run/:taskid', api.run);
 // server.post('/run', api.run);
 server.get('/log/collection/:collection', api.showLog);
