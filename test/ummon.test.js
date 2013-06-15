@@ -2,6 +2,7 @@
 
 var test = require("tap").test;
 var moment = require("moment");
+var async = require("async");
 
 var ummon;
 
@@ -14,7 +15,7 @@ test('construct an instance of ummon', function(t){
 var testRun;
 
 test('Create a task with a timed trigger and wait for it to add to the queue', function(t) {
-  t.plan(4);
+  t.plan(6);
   ummon.MAX_WORKERS = 0; // Don't run any task
 
   ummon.createTask({
@@ -23,10 +24,11 @@ test('Create a task with a timed trigger and wait for it to add to the queue', f
     "trigger": {
       "time": moment().add('ms', 100).toDate()
     }
+  }, function(err, task){
+    t.ok(task, 'The callback returns a task');
+    t.ok(ummon.tasks['default.hello'], 'There is a hello task');
+    t.ok(ummon.timers['default.hello'], 'There is a hello task timer');
   });
-
-  t.ok(ummon.tasks['default.hello'], 'There is a hello task');
-  t.ok(ummon.timers['default.hello'], 'There is a hello task timer');
 
   ummon.dispatcher.once('queue.new', function(run){
     testRun = run;
@@ -50,10 +52,10 @@ test('Create a dependent task', function(t) {
     "trigger": {
       "after": 'hello'
     }
+  }, function(err, task){
+    t.ok(ummon.tasks['default.goodbye'], 'There is a goodbye task');
+    t.equal(ummon.dependencies.subject('default.hello').references[0], 'default.goodbye', 'default.hello is a dependent task for goodbye');
   });
-
-  t.ok(ummon.tasks['default.goodbye'], 'There is a goodbye task');
-  t.equal(ummon.dependencies.subject('default.hello').references[0], 'default.goodbye', 'default.hello is a dependent task for goodbye');
 });
 
 
@@ -86,51 +88,58 @@ test('Run the previously created tasks', function(t) {
 test('Test creating dependent tasks', function(t){
   t.plan(2);
 
-  ummon.createTask({"name":"one","command": "echo one" });
-  ummon.createTask({"name":"two","command": "echo two", "trigger": {"after": "default.one"} });
-  ummon.createTask({"name":"twotwo","command": "echo twotwo", "trigger": {"after": "default.one"} });
-  ummon.createTask({"name":"three","command": "echo three", "trigger": {"after": "default.two"} });
-  ummon.createTask({"name":"four","command": "echo four", "trigger": {"after": "default.three"} });
-  ummon.createTask({"name":"five","command": "echo five", "trigger": {"after": "default.four"} });
-  ummon.createTask({"name":"six","command": "echo six", "trigger": {"after": "default.five"} });
-
-  t.equal(ummon.dependencies.subject('default.one').references[1], 'default.twotwo', 'task one is referenced by two tasks');
-  t.equal(ummon.dependencies.subject('default.five').dependencies[0], 'default.four', 'task five is dependent on task four');
+  async.series([
+    function(callback){ ummon.createTask({"name":"one","command": "echo one" }, callback); },
+    function(callback){ ummon.createTask({"name":"two","command": "echo two", "trigger": {"after": "default.one"}}, callback); },
+    function(callback){ ummon.createTask({"name":"twotwo","command": "echo twotwo", "trigger": {"after": "default.one"}}, callback); },
+    function(callback){ ummon.createTask({"name":"three","command": "echo three", "trigger": {"after": "default.two"}}, callback); },
+    function(callback){ ummon.createTask({"name":"four","command": "echo four", "trigger": {"after": "default.three"}}, callback); },
+    function(callback){ ummon.createTask({"name":"five","command": "echo five", "trigger": {"after": "default.four"}}, callback); },
+    function(callback){ ummon.createTask({"name":"six","command": "echo six", "trigger": {"after": "default.five"}}, callback); },
+  ],
+  function(err){
+    t.equal(ummon.dependencies.subject('default.one').references[1], 'default.twotwo', 'task one is referenced by two tasks');
+    t.equal(ummon.dependencies.subject('default.five').dependencies[0], 'default.four', 'task five is dependent on task four');
+  });
 });
 
 
 test('Test updating a tasks', function(t){
   t.plan(4);
 
-  var task = ummon.updateTask({"name":"twotwo","collection":"default","command": "echo twotwo", "trigger": {"time": moment().add('s', 1).toDate()} });
-
-  t.equal(task.command, "echo twotwo", "The method should return a new Task");
-  t.equal(ummon.dependencies.subject('default.one').references[0], 'default.two', 'The good reference remains');
-  t.notOk(ummon.dependencies.subject('default.one').references[1], 'The old reference was removed');
-  t.notOk(ummon.dependencies.subject('default.twotwo').dependencies[0], 'The task has no dependent tasks');
+  ummon.updateTask(
+    {"name":"twotwo","collection":"default","command": "echo twotwo", "trigger": {"time": moment().add('s', 1).toDate()} },
+    function(err, task){
+      t.equal(task.command, "echo twotwo", "The method should return a new Task");
+      t.equal(ummon.dependencies.subject('default.one').references[0], 'default.two', 'The good reference remains');
+      t.notOk(ummon.dependencies.subject('default.one').references[1], 'The old reference was removed');
+      t.notOk(ummon.dependencies.subject('default.twotwo').dependencies[0], 'The task has no dependent tasks');  
+  });
 });
 
 
 test('Delete a task and its dependencies', function(t){
   t.plan(2);
 
-  ummon.deleteTask('default.five');
-  t.notOk(ummon.dependencies.subject('default.four').references[0], 'Task four has no more references');
-  t.notOk(ummon.dependencies.subject('default.five').dependencies[0], 'The task has no dependent tasks');
+  ummon.deleteTask('default.five', function(err, task){
+    t.notOk(ummon.dependencies.subject('default.four').references[0], 'Task four has no more references');
+    t.notOk(ummon.dependencies.subject('default.five').dependencies[0], 'The task has no dependent tasks');    
+  });
 });
 
 
 test('Create collections default values and retrieve a task that inherits them', function(t){
   t.plan(2);
-
-  //ummon.setDefaults():
   ummon.defaults.science = { 'cwd': '/user/bill' };
-  ummon.createTask({"collection":"science", "name":"nye","command": "echo \"The science guy!\"" });
-  ummon.createTask({"collection":"science", "cwd":"/user/neil","name":"tyson","command": "echo \"The space guy!\"" });
-  var task = ummon.getTask('science.nye');
-  var task2 = ummon.getTask('science.tyson');
-  t.equal(task.cwd, '/user/bill', 'The nye task should have its cwd set by its collection defaults');
-  t.equal(task2.cwd, '/user/neil', 'The tyson task should override the collection defaults');
+
+  async.series([
+    function(callback){ ummon.createTask({"collection":"science", "name":"nye","command": "echo \"The science guy!\"" }, callback); },
+    function(callback){ ummon.createTask({"collection":"science", "cwd":"/user/neil","name":"tyson","command": "echo \"The space guy!\"" }, callback); },
+  ], function(err, results) {
+    t.equal(results[0].cwd, '/user/bill', 'The nye task should have its cwd set by its collection defaults');
+    t.equal(results[1].cwd, '/user/neil', 'The tyson task should override the collection defaults');
+  });
+  
 });
 
 
@@ -174,22 +183,21 @@ test('Add an arbitrary command to the queue', function(t){
 test('Autoload tasks from a json file', function(t){
   t.plan(8);
 
-  ummon.config.tasksDir = "./fixtures/tasks/*.json";
+  ummon.config.tasksDir = "./fixtures/tasks/";
 
   ummon.autoLoadTasks(function(err){
     t.notOk(err, 'There should be no error');
-
     t.equal(ummon.defaults.autosample.cwd, '/var/www/website/', 'The collection defaults were properly loaded');
-  
-    var task = ummon.getTask('autosample.task2');
-    t.ok(task, 'The task flippn loaded');
-    t.equal(task.cwd,'/var/www/website/', 'The collection defaults were properly loaded');
-    t.equal(task.command,'./symfony w2h:process-data', 'The task command is set');
-    
-    t.ok(ummon.tasks['palace.pizza'], 'Second config file loaded and first collection loaded');
-    t.ok(ummon.tasks['farm.pretzel'], 'Second config file loaded and second collection loaded');
+    ummon.getTask('autosample.task2', function(err, task){
+      t.ok(task, 'The task flippn loaded');
+      t.equal(task.cwd,'/var/www/website/', 'The collection defaults were properly loaded');
+      t.equal(task.command,'./symfony w2h:process-data', 'The task command is set');
+      
+      t.ok(ummon.tasks['palace.pizza'], 'Second config file loaded and first collection loaded');
+      t.ok(ummon.tasks['farm.pretzel'], 'Second config file loaded and second collection loaded');
 
-    t.equal(ummon.dependencies.subject('autosample.task1').references[0],'autosample.task2', 'Task dependencies were setup properly');  
+      t.equal(ummon.dependencies.subject('autosample.task1').references[0],'autosample.task2', 'Task dependencies were setup properly');  
+    });
   });
 
 });
