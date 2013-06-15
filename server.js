@@ -12,6 +12,10 @@ var ummon = require('./lib/ummon').create();
 
 var api = require('./lib/api')(ummon);
 
+var log = bunyan.createLogger({
+  name: 'API',
+  stream: process.stdout
+});
 
 var server = restify.createServer({
   version: 0,
@@ -22,6 +26,11 @@ var server = restify.createServer({
   })
 });
 var io = socketio.listen(server);
+
+// Because for some reason server.log doesn't automatically work
+server.on('after', function(req, res, next){
+  log.info(req.url);
+});
 
 // server.on('after', restify.auditLogger({
 //   log: bunyan.createLogger({
