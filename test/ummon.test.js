@@ -26,14 +26,14 @@ test('Create a task with a timed trigger and wait for it to add to the queue', f
     }
   }, function(err, task){
     t.ok(task, 'The callback returns a task');
-    t.ok(ummon.tasks['default.hello'], 'There is a hello task');
-    t.ok(ummon.timers['default.hello'], 'There is a hello task timer');
+    t.ok(ummon.tasks['ummon.hello'], 'There is a hello task');
+    t.ok(ummon.timers['ummon.hello'], 'There is a hello task timer');
   });
 
   ummon.dispatcher.once('queue.new', function(run){
     testRun = run;
     t.ok(true, 'The queue.new emitter was emited');
-    t.equal(run.task.id, 'default.hello', 'The task name was hello');
+    t.equal(run.task.id, 'ummon.hello', 'The task name was hello');
   });
 
   setTimeout(function(){
@@ -53,8 +53,8 @@ test('Create a dependent task', function(t) {
       "after": 'hello'
     }
   }, function(err, task){
-    t.ok(ummon.tasks['default.goodbye'], 'There is a goodbye task');
-    t.equal(ummon.dependencies.subject('default.hello').references[0], 'default.goodbye', 'default.hello is a dependent task for goodbye');
+    t.ok(ummon.tasks['ummon.goodbye'], 'There is a goodbye task');
+    t.equal(ummon.dependencies.subject('ummon.hello').references[0], 'ummon.goodbye', 'ummon.hello is a dependent task for goodbye');
   });
 });
 
@@ -64,8 +64,8 @@ test('Run the previously created tasks', function(t) {
 
   ummon.dispatcher.on('queue.new', function(run){
     t.ok(true, 'The queue.new emitter was emited');
-    t.equal(run.task.id, 'default.goodbye', 'The task default.goodbye was added to the queue after hello completed');
-    t.equal(run.triggeredBy.id, testRun.id, 'The task default.goodbye was triggered by hello\'s last run');
+    t.equal(run.task.id, 'ummon.goodbye', 'The task ummon.goodbye was added to the queue after hello completed');
+    t.equal(run.triggeredBy.id, testRun.id, 'The task ummon.goodbye was triggered by hello\'s last run');
   });
 
   ummon.dispatcher.on('worker.complete', function(run){
@@ -90,16 +90,16 @@ test('Test creating dependent tasks', function(t){
 
   async.series([
     function(callback){ ummon.createTask({"name":"one","command": "echo one" }, callback); },
-    function(callback){ ummon.createTask({"name":"two","command": "echo two", "trigger": {"after": "default.one"}}, callback); },
-    function(callback){ ummon.createTask({"name":"twotwo","command": "echo twotwo", "trigger": {"after": "default.one"}}, callback); },
-    function(callback){ ummon.createTask({"name":"three","command": "echo three", "trigger": {"after": "default.two"}}, callback); },
-    function(callback){ ummon.createTask({"name":"four","command": "echo four", "trigger": {"after": "default.three"}}, callback); },
-    function(callback){ ummon.createTask({"name":"five","command": "echo five", "trigger": {"after": "default.four"}}, callback); },
-    function(callback){ ummon.createTask({"name":"six","command": "echo six", "trigger": {"after": "default.five"}}, callback); },
+    function(callback){ ummon.createTask({"name":"two","command": "echo two", "trigger": {"after": "ummon.one"}}, callback); },
+    function(callback){ ummon.createTask({"name":"twotwo","command": "echo twotwo", "trigger": {"after": "ummon.one"}}, callback); },
+    function(callback){ ummon.createTask({"name":"three","command": "echo three", "trigger": {"after": "ummon.two"}}, callback); },
+    function(callback){ ummon.createTask({"name":"four","command": "echo four", "trigger": {"after": "ummon.three"}}, callback); },
+    function(callback){ ummon.createTask({"name":"five","command": "echo five", "trigger": {"after": "ummon.four"}}, callback); },
+    function(callback){ ummon.createTask({"name":"six","command": "echo six", "trigger": {"after": "ummon.five"}}, callback); },
   ],
   function(err){
-    t.equal(ummon.dependencies.subject('default.one').references[1], 'default.twotwo', 'task one is referenced by two tasks');
-    t.equal(ummon.dependencies.subject('default.five').dependencies[0], 'default.four', 'task five is dependent on task four');
+    t.equal(ummon.dependencies.subject('ummon.one').references[1], 'ummon.twotwo', 'task one is referenced by two tasks');
+    t.equal(ummon.dependencies.subject('ummon.five').dependencies[0], 'ummon.four', 'task five is dependent on task four');
   });
 });
 
@@ -108,12 +108,12 @@ test('Test updating a tasks', function(t){
   t.plan(4);
 
   ummon.updateTask(
-    {"name":"twotwo","collection":"default","command": "echo twotwo", "trigger": {"time": moment().add('s', 1).toDate()} },
+    {"name":"twotwo","collection":"ummon","command": "echo twotwo", "trigger": {"time": moment().add('s', 1).toDate()} },
     function(err, task){
       t.equal(task.command, "echo twotwo", "The method should return a new Task");
-      t.equal(ummon.dependencies.subject('default.one').references[0], 'default.two', 'The good reference remains');
-      t.notOk(ummon.dependencies.subject('default.one').references[1], 'The old reference was removed');
-      t.notOk(ummon.dependencies.subject('default.twotwo').dependencies[0], 'The task has no dependent tasks');  
+      t.equal(ummon.dependencies.subject('ummon.one').references[0], 'ummon.two', 'The good reference remains');
+      t.notOk(ummon.dependencies.subject('ummon.one').references[1], 'The old reference was removed');
+      t.notOk(ummon.dependencies.subject('ummon.twotwo').dependencies[0], 'The task has no dependent tasks');  
   });
 });
 
@@ -121,9 +121,9 @@ test('Test updating a tasks', function(t){
 test('Delete a task and its dependencies', function(t){
   t.plan(2);
 
-  ummon.deleteTask('default.five', function(err, task){
-    t.notOk(ummon.dependencies.subject('default.four').references[0], 'Task four has no more references');
-    t.notOk(ummon.dependencies.subject('default.five').dependencies[0], 'The task has no dependent tasks');    
+  ummon.deleteTask('ummon.five', function(err, task){
+    t.notOk(ummon.dependencies.subject('ummon.four').references[0], 'Task four has no more references');
+    t.notOk(ummon.dependencies.subject('ummon.five').dependencies[0], 'The task has no dependent tasks');    
   });
 });
 
@@ -159,16 +159,16 @@ test('Add an arbitrary command to the queue', function(t){
   });
   
   // Run a task that will fail because of built in dependencies
-  ummon.runTask('default.six', function(err, run){
+  ummon.runTask('ummon.six', function(err, run){
     t.ok(err, 'There is an error when an enxisting task with a dependency is run');
-    t.equal(err.message, 'The task default.six has a dependent task. Call that instead', 'The error says the right thing');
+    t.equal(err.message, 'The task ummon.six has a dependent task. Call that instead', 'The error says the right thing');
     t.notOk(run, 'There is no run when an enxisting task with a dependency is run');
   });
 
   // Force Run a task that has dependencies
-  ummon.runTask('default.six', true, function(err, run){
+  ummon.runTask('ummon.six', true, function(err, run){
     t.notOk(err, 'There is not an error when an enxisting task with a dependency is forced to run');
-    t.equal(run.task.id, 'default.six', 'A right task was loaded');
+    t.equal(run.task.id, 'ummon.six', 'A right task was loaded');
     t.ok(run, 'There is a run when an enxisting task with a dependency is forced to run');
   });
 

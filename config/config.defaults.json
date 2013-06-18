@@ -1,7 +1,7 @@
 {
   "name":"ummon.server",
   "tasksDir": "./config/tasks/",
-  "defaultCollection": "default",
+  "defaultCollection": "ummon",
   "log": {
     "path":"./logs/ummon.log",
     "level":"debug"
