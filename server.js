@@ -28,9 +28,18 @@ var server = restify.createServer({
 var io = socketio.listen(server);
 
 // Because for some reason server.log doesn't automatically work
-server.on('after', function(req, res, next){
-  log.info(req.url);
+server.on('after', function(req, res, route, error){
+  if (route) {
+    log.info('%s - %s (matched by route %s)', res.statusCode, req.url, route.spec.path);
+  } else {
+    log.info('%s - %s', res.statusCode, req.url);
+  }
 });
+
+server.on('uncaughtException', function(req, res, route, error){
+  log.err(error);
+});
+
 
 // server.on('after', restify.auditLogger({
 //   log: bunyan.createLogger({
@@ -62,6 +71,8 @@ server.use(restify.fullResponse());
 //     res.json(401, "Log in dummy. KWATZ!")
 //   }
 // })
+server.param('collection', api.doesCollectionExist);
+server.param('taskid', api.doesTaskExist);
 
 // The routes!
 server.get('/ps/:pid', api.ps);
