@@ -57,8 +57,8 @@ test('Show a task', function(t){
 
   res.json = function(status, json) {
     t.equal(status, 200, 'The status should be 200');
-    t.equal(json.name, 'test', 'The task name should be test');
-    t.equal(json.command, 'echo hello', 'The task command should be echo');
+    t.equal(json.task.name, 'test', 'The task name should be test');
+    t.equal(json.task.command, 'echo hello', 'The task command should be echo');
   };
 
   api.getTask(req, res, next);
