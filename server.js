@@ -93,11 +93,6 @@ server.get('/log/collection/:collection', api.showLog);
 server.get('/log/task/:taskid', api.showLog);
 server.get('/log/run/:runid', api.showLog);
 server.get('/log', api.showLog);
-// server.get('/tail/:collection', api.streamLog);
-// server.get('/tail/:taskid', api.streamLog);
-// server.get('/tail/:jobit', api.streamLog);
-// server.get('/tail', api.streamLog);
-
 
 
 var getRuns = _.throttle(function(){ return ummon.getRuns() }, '500');
