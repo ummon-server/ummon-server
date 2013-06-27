@@ -30,7 +30,7 @@ test('Create a task with a timed trigger and wait for it to add to the queue', f
     t.ok(ummon.timers['ummon.hello'], 'There is a hello task timer');
   });
 
-  ummon.dispatcher.once('queue.new', function(run){
+  ummon.once('queue.new', function(run){
     testRun = run;
     t.ok(true, 'The queue.new emitter was emited');
     t.equal(run.task.id, 'ummon.hello', 'The task name was hello');
@@ -62,13 +62,13 @@ test('Create a dependent task', function(t) {
 test('Run the previously created tasks', function(t) {
   t.plan(8);
 
-  ummon.dispatcher.on('queue.new', function(run){
+  ummon.on('queue.new', function(run){
     t.ok(true, 'The queue.new emitter was emited');
     t.equal(run.task.id, 'ummon.goodbye', 'The task ummon.goodbye was added to the queue after hello completed');
     t.equal(run.triggeredBy.id, testRun.id, 'The task ummon.goodbye was triggered by hello\'s last run');
   });
 
-  ummon.dispatcher.on('worker.complete', function(run){
+  ummon.on('worker.complete', function(run){
     t.ok(run, 'The worker.complete event was emited'); // Emitted twice for both tasks
 
     setTimeout(function(){
@@ -147,7 +147,7 @@ test('Add an arbitrary command to the queue', function(t){
   t.plan(14);
   ummon.MAX_WORKERS = 0;
   
-  ummon.dispatcher.on('queue.new', function(run){
+  ummon.on('queue.new', function(run){
     t.ok(true, 'The queue.new emitter was emited'); //Should fire twice
   });
 

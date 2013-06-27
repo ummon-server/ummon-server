@@ -106,9 +106,9 @@ io.sockets.on('connection', function (socket) {
     
     // Send runs 
     // TODO: Is there a way to bind to multiple events with one listener?
-    ummon.dispatcher.on('worker.start', function(){ socket.emit('send:runs', getRuns()); });
-    ummon.dispatcher.on('worker.complete', function(){ socket.emit('send:runs', getRuns()); });
-    ummon.dispatcher.on('queue.new', function(){ socket.emit('send:runs', getRuns()); });
+    ummon.on('worker.start', function(){ socket.emit('send:runs', getRuns()); });
+    ummon.on('worker.complete', function(){ socket.emit('send:runs', getRuns()); });
+    ummon.on('queue.new', function(){ socket.emit('send:runs', getRuns()); });
 });
 
 
