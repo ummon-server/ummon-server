@@ -1,0 +1,29 @@
+{ 
+  "collection": "florida",
+  "defaults": {
+    "cwd":"/var/www/website/"
+  },
+  
+  "sequences": [
+    ["task1", "task2", "task3", "task4"]
+  ],
+
+  "tasks": {
+    "task1": {
+      "cwd": "/var/www/website2/",
+      "command": "./update-apis",
+      "trigger": {
+        "time": "*/10 * * * *"
+      }
+    },
+    "task2": {
+      "command": "./process-data"
+    },
+    "task3": {
+      "command": "./process-data"
+    },
+    "task4": {
+      "command": "./process-data"
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "collection": "palace",
+  "tasks": {
+    "pizza": {
+      "command": "echo Pizza",
+      "trigger": {
+        "time": "*/10 * * * *"
+      }
+    },
+    "two-pizzas": {
+      "command": "echo Pizza Pizza"
+    }
+  }
+}

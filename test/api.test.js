@@ -3,7 +3,7 @@ var test = require("tap").test;
 var stream = require('stream');
 
 var ummon = require('../lib/ummon').create();
-var api = require('../lib/api')(ummon);
+var api = require('../api')(ummon);
 
 //                    Construct!
 // - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -48,7 +48,7 @@ test('Create a task', function(t){
 });
 
 
-test('Show a task', function(t){
+test('Show a single task', function(t){
   t.plan(3);
 
   var req = { params: { "taskid":"ummon.test" } };
@@ -65,7 +65,7 @@ test('Show a task', function(t){
 });
 
 
-test('Show tasks', function(t){
+test('Show multiple tasks', function(t){
   t.plan(4);
 
   var req = { params: {} };
@@ -74,10 +74,9 @@ test('Show tasks', function(t){
   
   res.json = function(status, json) {
     t.equal(status, 200, 'The status should be 200');
-    
-    t.equal(Object.keys(json.collections).length, 1, 'showTasks returns 1 collection');
-    t.ok(json.collections.ummon, 'There is an ummon collection');
-    t.ok(json.collections.ummon.tasks, 'There tasks in the ummon collection');
+    t.equal(json.collections.length, 1, 'showTasks returns 1 collection');
+    t.ok(json.collections[0], 'There is an ummon collection');
+    t.ok(json.collections[0].tasks, 'There tasks in the ummon collection');
   };
 
   api.getTasks(req, res, next);

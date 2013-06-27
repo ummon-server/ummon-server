@@ -10,12 +10,14 @@ var bunyan = require('bunyan');
 var _ = require('underscore');
 var ummon = require('./lib/ummon').create();
 
-var api = require('./lib/api')(ummon);
+var api = require('./api')(ummon);
+
 
 var log = bunyan.createLogger({
   name: 'API',
   stream: process.stdout
 });
+
 
 var server = restify.createServer({
   version: 0,
@@ -26,6 +28,7 @@ var server = restify.createServer({
   })
 });
 var io = socketio.listen(server);
+
 
 // Because for some reason server.log doesn't automatically work
 server.on('after', function(req, res, route, error){
@@ -95,7 +98,7 @@ server.get('/log/run/:runid', api.showLog);
 server.get('/log', api.showLog);
 
 
-var getRuns = _.throttle(function(){ return ummon.getRuns() }, '500');
+var getRuns = _.throttle(function(){ return ummon.getRuns(); }, '500');
 
 io.set('log level', 1);
 io.sockets.on('connection', function (socket) {

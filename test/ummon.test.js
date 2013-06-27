@@ -136,7 +136,7 @@ test('Create collections default values and retrieve a task that inherits them',
     function(callback){ ummon.createTask({"collection":"science", "name":"nye","command": "echo \"The science guy!\"" }, callback); },
     function(callback){ ummon.createTask({"collection":"science", "cwd":"/user/neil","name":"tyson","command": "echo \"The space guy!\"" }, callback); },
   ], function(err, results) {
-    t.equal(results[0].cwd, '/user/bill', 'The nye task should have its cwd set by its collection defaults');
+    t.notOk(results[0].cwd, 'The nye task shouldn\'t have its cwd set. It\'s in the collection defaults');
     t.equal(results[1].cwd, '/user/neil', 'The tyson task should override the collection defaults');
   });
   
@@ -177,29 +177,6 @@ test('Add an arbitrary command to the queue', function(t){
     t.notOk(err, 'There is no error when an arbitrary task is created');
     t.ok(run, 'There is a run when an arbitrary task is created');
   });
-});
-
-
-test('Autoload tasks from a json file', function(t){
-  t.plan(8);
-
-  ummon.config.tasksDir = "./fixtures/tasks/";
-
-  ummon.autoLoadTasks(function(err){
-    t.notOk(err, 'There should be no error');
-    t.equal(ummon.defaults.autosample.cwd, '/var/www/website/', 'The collection defaults were properly loaded');
-    ummon.getTask('autosample.task2', function(err, task){
-      t.ok(task, 'The task flippn loaded');
-      t.equal(task.cwd,'/var/www/website/', 'The collection defaults were properly loaded');
-      t.equal(task.command,'./symfony w2h:process-data', 'The task command is set');
-      
-      t.ok(ummon.tasks['palace.pizza'], 'Second config file loaded and first collection loaded');
-      t.ok(ummon.tasks['farm.pretzel'], 'Second config file loaded and second collection loaded');
-
-      t.equal(ummon.dependencies.subject('autosample.task1').references[0],'autosample.task2', 'Task dependencies were setup properly');  
-    });
-  });
-
 });
 
 

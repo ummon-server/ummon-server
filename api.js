@@ -52,6 +52,7 @@ module.exports = function(ummon){
     });
   };
 
+
   /**
    * Get a number of tasks. Could be for a specific colleciton
    * or all configured tasks
@@ -69,12 +70,13 @@ module.exports = function(ummon){
    * @param  {Function} next The callback
    * @return {[type]}        Heavily structured object. See above
    */
+  
   api.getTasks= function(req, res, next){
     ummon.getTasks(req.params.collection, function(err, collections){
       if (err) {
         return next(err);
       }
-      res.json(200, collections);
+      res.json(200, { 'collections': collections } );
       next();
     });
   };
@@ -87,7 +89,7 @@ module.exports = function(ummon){
       if (err) {
         return next(err);
       }
-      res.json(200, {'task': task } );
+      res.json(200, { 'task': task } );
       next();
     });
   };
@@ -164,8 +166,8 @@ module.exports = function(ummon){
   };
 
 
-  api.run = function(req, res, next){};
-  api.kill = function(req, res, next){};
+  // api.run = function(req, res, next){};
+  // api.kill = function(req, res, next){};
 
   return api;
 };
