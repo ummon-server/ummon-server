@@ -8,19 +8,18 @@
 var fs = require('fs');
 var path = require('path');
 var _ = require('underscore');
-var glob = require("glob");
-var async = require("async");
-var mkdirp = require("mkdirp");
+var glob = require('glob');
+var async = require('async');
+var mkdirp = require('mkdirp');
 
 
-module.exports = function(ummon){
+module.exports = function(ummon) {
   var db = {};
-
 
   /**
    * Load tasks out of a config file. This is a mess. Sorry
    */
-  db.loadTasks = function(callback){
+  db.loadTasks = function(callback) {
     var self = this;
 
     glob(ummon.config.tasksDir + '*.json', function (err, files) {
@@ -113,6 +112,9 @@ module.exports = function(ummon){
     if (!fs.existsSync(ummon.config.tasksDir)) {
       mkdirp.sync(ummon.config.tasksDir);
     }
+
+    // Keep track of the last save time
+    ummon.lastSave = new Date().getTime();
 
     async.each(collections, db.saveCollection, callback);
   };

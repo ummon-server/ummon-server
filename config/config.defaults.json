@@ -2,6 +2,8 @@
   "name":"ummon.server",
   "tasksDir": "./config/tasks/",
   "defaultCollection": "ummon",
+  "createWorkerPollInterval": 1000,
+  "minimalSaveInterval": 1000,
   "log": {
     "path":"./logs/ummon.log",
     "level":"debug"
