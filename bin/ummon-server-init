@@ -1,0 +1,38 @@
+#!/usr/bin/env node
+
+var optimist = require('optimist');
+var path = require('path');
+var fs = require('fs');
+var mkdirp = require('mkdirp');
+
+// Expose metadata for helmsman
+exports.command = {
+    description: 'Initialize your server\'s ummon configuration folders and files'
+};
+
+
+var argv = optimist.usage(exports.command.description, {
+  'config-dir': {
+    description: 'The directory where ummons config files will be setup',
+    default: '/etc/ummon',
+    short: 'c',
+  }
+}).argv;
+
+
+if (require.main === module) {
+  console.log(''); // Some padding for niceness
+
+  if (argv.help) {
+    return console.log(optimist.help());
+  }
+
+  // Make the config and tasks dir
+  var configDir = path.resolve(argv['config-dir']);
+  var tasksDir = path.join(configDir, 'tasks');
+  mkdirp.sync(tasksDir);
+
+  // Copy the default config file
+  var defaults = path.resolve(__dirname, '../config/config.defaults.json')
+  fs.createReadStream(defaults).pipe(fs.createWriteStream(path.join(configDir, 'config.json')));
+}

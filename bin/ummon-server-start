@@ -1,0 +1,75 @@
+#!/usr/bin/env node
+var optimist = require('optimist');
+var spawn = require('child_process').spawn;
+var path = require('path');
+var fs = require('fs');
+var mkdirp = require('mkdirp');
+
+
+// Expose metadata for helmsman
+exports.command = {
+    description: 'Start up the ummon server'
+};
+
+
+var argv = optimist.usage(exports.command.description, {
+  'config': {
+    description: 'The path to your ummon config.json file',
+    string: true,
+    short: 'c',
+  },
+  'daemon': {
+    description: 'Detach the server from the foreground and run in the background',
+    boolean: true,
+    short: 'd'
+  }
+}).argv;
+
+
+if (require.main === module) {
+  console.log(''); // Some padding for niceness
+
+  if (argv.help) {
+    return console.log(optimist.help());
+  }
+
+  var cwd = path.resolve(__dirname, '..')
+  var spawnArgs = ['server.js'];
+
+  if (argv.config) {
+    spawnArgs.push(argv.config);
+  }
+
+  var server;
+
+  if (argv.daemon) {
+    // If daemon is passed, create a detached process
+    server = spawn('node', spawnArgs, {
+      cwd: cwd,
+      detached: true,
+      stdio: 'ignore'
+    });
+
+    server.unref();
+    
+  } else {
+    // Start the ummon-server
+    server = spawn('node', spawnArgs, { 
+      cwd: cwd,
+      stdio: 'inherit'
+    });
+  }
+
+
+  // Save the PID!
+  var pidDirPath = path.join(cwd,'pids/'); // Puttingn pids in the project dir for now. Need to eval having them in /var/run
+  var pidPath = path.join(pidDirPath,'ummon-server.pid');
+  mkdirp.sync(pidDirPath);
+  fs.writeFileSync(pidPath, server.pid);
+
+
+  // If ctrl-c is pressed, clean up after yo'self
+  process.on('SIGINT', function() {
+    fs.unlinkSync(pidPath);
+  });
+}

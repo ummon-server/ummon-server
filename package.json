@@ -21,6 +21,9 @@
     }
   ],
   "main": "index",
+  "bin": {
+    "ummon-server": "./bin/ummon-server"
+  },
   "engines": {
     "node": ">= 0.10.0"
   },
@@ -46,6 +49,8 @@
     "event-stream": "~3.0.14",
     "socket.io": "~0.9.14",
     "glob": "~3.2.1",
-    "async": "~0.2.9"
+    "async": "~0.2.9",
+    "helmsman": "~0.1.0",
+    "optimist": "~0.6.0"
   }
 }

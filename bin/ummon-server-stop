@@ -1,0 +1,38 @@
+#!/usr/bin/env node
+
+var optimist = require('optimist');
+var path = require('path');
+var fs = require('fs');
+
+
+// Expose metadata for helmsman
+exports.command = {
+    description: 'Stop the running ummon server'
+};
+
+
+var argv = optimist.usage(exports.command.description, {
+  'force': {
+    description: 'Really kill the prcoess. Don\'t play nice',
+    boolean: true,
+    short: 'f',
+  }
+}).argv;
+
+
+if (require.main === module) {
+  console.log(''); // Some padding for niceness
+
+  if (argv.help) {
+    return console.log(optimist.help());
+  }
+
+  // Figure out paths and signals
+  var cwd = path.resolve(__dirname, '..')
+  var pidPath = path.join(cwd,'pids/ummon-server.pid');
+  var SIG = (argv.force) ? 'SIGKILL' : 'SIGTERM'
+
+  // Kill the process and delete it's pid file
+  process.kill(fs.readFileSync(pidPath, { encoding: 'utf8' }), SIG);
+  fs.unlinkSync(pidPath);
+}

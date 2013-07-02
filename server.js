@@ -8,7 +8,10 @@ var restify = require('restify');
 var socketio = require('socket.io');
 var bunyan = require('bunyan');
 var _ = require('underscore');
-var ummon = require('./lib/ummon').create();
+
+var ummonOptions = (process.argv[2]) ? { configPath: process.argv[2] } : {};
+
+var ummon = require('./lib/ummon').create(ummonOptions);
 
 var api = require('./api')(ummon);
 
