@@ -8,7 +8,9 @@ var restify = require('restify');
 var socketio = require('socket.io');
 var bunyan = require('bunyan');
 var _ = require('underscore');
+var ON_DEATH = require('death')({uncaughtException: true}) 
 
+// It's possible to pass a string that will be the config path. Catch it here:
 var ummonOptions = (process.argv[2]) ? { configPath: process.argv[2] } : {};
 
 var ummon = require('./lib/ummon').create(ummonOptions);
@@ -22,13 +24,43 @@ var log = bunyan.createLogger({
 });
 
 
+/**
+ * Watch for and properly respond to signals
+ */
+
+ON_DEATH(function(signal, err) {
+  if (!ummon.pause) {
+    ummon.pause = true;
+
+    ummon.log.info("Kill (%s) signal received. Waiting for workers to finish", signal);
+    
+    setInterval(function(){
+      var count = _.size(ummon.workers);
+
+      if (0 === count) {
+        ummon.log.info("All workers complete. Exiting", count);
+        process.exit(0);
+      }
+      ummon.log.info("Still waiting for %s workers to finish", count);
+    }, 1000)
+  }
+});
+
+process.stdout.on('error', function( err ) {
+  if (err.code == "EPIPE") {
+    process.exit(0);
+  }
+});
+
+
+/**
+ * Create Restify Server
+ */
+
 var server = restify.createServer({
   version: 0,
   name: 'Ummon',
-  log: bunyan.createLogger({
-    name: 'API',
-    stream: process.stdout
-  })
+  log: ummon.log
 });
 var io = socketio.listen(server);
 

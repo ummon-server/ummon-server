@@ -30,7 +30,7 @@ if (require.main === module) {
   // Figure out paths and signals
   var cwd = path.resolve(__dirname, '..')
   var pidPath = path.join(cwd,'pids/ummon-server.pid');
-  var SIG = (argv.force) ? 'SIGKILL' : 'SIGTERM'
+  var SIG = (argv.force) ? 'SIGKILL' : 'SIGINT'
 
   // Kill the process and delete it's pid file
   process.kill(fs.readFileSync(pidPath, { encoding: 'utf8' }), SIG);
