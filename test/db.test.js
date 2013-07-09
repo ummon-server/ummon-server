@@ -3,7 +3,7 @@ var test = require("tap").test;
 var fs = require('fs');
 var rimraf = require('rimraf');
 
-var ummon = require('../lib/ummon').create({"tasksDir":false});
+var ummon = require('../lib/ummon').create({"tasksPath":false});
 var db = require('../db')(ummon);
 
 //                    Construct!
@@ -31,7 +31,7 @@ test('Load collection information from a file', function(t){
 test('Load tasks from tasks dir', function(t){
   t.plan(7);
 
-  ummon.config.tasksDir = './fixtures/tasks/';
+  ummon.config.tasksPath = './fixtures/tasks/';
 
   db.loadTasks(function(err){
     t.notOk(err, 'There should be no error');
@@ -54,7 +54,7 @@ test('Save all tasks to files', function(t){
   t.plan(7);
   
   // Change tasks dir so it doesn't overwrite stuff
-  ummon.config.tasksDir = './fixtures/saveTasks';
+  ummon.config.tasksPath = './fixtures/saveTasks';
 
   db.saveTasks(function(err){
     t.notOk(err, 'There should be no error');

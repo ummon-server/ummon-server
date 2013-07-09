@@ -29,8 +29,8 @@ if (require.main === module) {
 
   // Make the config and tasks dir
   var configDir = path.resolve(argv['config-dir']);
-  var tasksDir = path.join(configDir, 'tasks');
-  mkdirp.sync(tasksDir);
+  var tasksPath = path.join(configDir, 'tasks');
+  mkdirp.sync(tasksPath);
 
   // Copy the default config file
   var defaults = path.resolve(__dirname, '../config/config.defaults.json')

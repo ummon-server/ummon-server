@@ -38,7 +38,7 @@ ON_DEATH(function(signal, err) {
       var count = _.size(ummon.workers);
 
       if (0 === count) {
-        ummon.log.info("All workers complete. Exiting", count);
+        ummon.log.info("All workers complete. Exiting");
         process.exit(0);
       }
       ummon.log.info("Still waiting for %s workers to finish", count);
@@ -46,6 +46,7 @@ ON_DEATH(function(signal, err) {
   }
 });
 
+// Don't explode if your're piping and it stops
 process.stdout.on('error', function( err ) {
   if (err.code == "EPIPE") {
     process.exit(0);

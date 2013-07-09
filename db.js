@@ -22,12 +22,12 @@ module.exports = function(ummon) {
   db.loadTasks = function(callback) {
     var self = this;
 
-    glob(ummon.config.tasksDir + '*.json', function (err, files) {
+    glob(ummon.config.tasksPath + '*.json', function (err, files) {
       if (err || !files) {
         return callback(err);
       }
 
-      ummon.log.info("Load tasks from %s", ummon.config.tasksDir);
+      ummon.log.info("Load tasks from %s", ummon.config.tasksPath);
       async.each(files, self.loadCollectionFromFile.bind(self), function(err){
         callback(err);
       });
@@ -109,8 +109,8 @@ module.exports = function(ummon) {
   db.saveTasks = function(callback) {
     var collections = ummon.getCollections();
 
-    if (!fs.existsSync(ummon.config.tasksDir)) {
-      mkdirp.sync(ummon.config.tasksDir);
+    if (!fs.existsSync(ummon.config.tasksPath)) {
+      mkdirp.sync(ummon.config.tasksPath);
     }
 
     // Keep track of the last save time
@@ -126,7 +126,7 @@ module.exports = function(ummon) {
         return callback(err);
       }
       
-      fs.writeFile(ummon.config.tasksDir+'/'+collection+'.tasks.json', JSON.stringify(result[0], null, 2), function (err) {
+      fs.writeFile(ummon.config.tasksPath+'/'+collection+'.tasks.json', JSON.stringify(result[0], null, 2), function (err) {
         callback(err);
       });
     });

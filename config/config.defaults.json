@@ -1,6 +1,6 @@
 {
   "name":"ummon.server",
-  "tasksDir": "./config/tasks/",
+  "tasksPath": "./config/tasks/",
   "defaultCollection": "ummon",
   "createWorkerPollInterval": 1000,
   "minimalSaveInterval": 1000,
