@@ -12,22 +12,21 @@ exports.command = {
 };
 
 
-var argv = optimist.usage(exports.command.description, {
-  'config': {
-    description: 'The path to your ummon config.json file',
-    string: true,
-    short: 'c',
-  },
-  'daemon': {
-    description: 'Detach the server from the foreground and run in the background',
-    boolean: true,
-    short: 'd'
-  }
-}).argv;
-
-
 if (require.main === module) {
   console.log(''); // Some padding for niceness
+
+  var argv = optimist.usage(exports.command.description, {
+    'config': {
+      description: 'The path to your ummon config.json file',
+      string: true,
+      short: 'c',
+    },
+    'daemon': {
+      description: 'Detach the server from the foreground and run in the background',
+      boolean: true,
+      short: 'd'
+    }
+  }).argv;
 
   if (argv.help) {
     return console.log(optimist.help());
@@ -40,8 +39,11 @@ if (require.main === module) {
     spawnArgs.push(argv.config);
   }
 
-  var server;
+  // Load the config
+  var uu = require(path.resolve(__dirname, '../lib/utils.js'))
+  var config = uu.loadConfig(argv);
 
+  var server;
   if (argv.daemon) {
     // If daemon is passed, create a detached process
     server = spawn('node', spawnArgs, {
@@ -60,11 +62,13 @@ if (require.main === module) {
     });
   }
 
-
   // Save the PID!
-  var pidDirPath = path.join(cwd,'pids/'); // Puttingn pids in the project dir for now. Need to eval having them in /var/run
-  var pidPath = path.join(pidDirPath,'ummon-server.pid');
-  mkdirp.sync(pidDirPath);
+  var pidPath = uu.pidPath(config);
+  
+  if (!fs.existsSync(config.pids.path)) {
+    mkdirp.sync(config.pids.path);
+  }
+  
   fs.writeFileSync(pidPath, server.pid);
 
 

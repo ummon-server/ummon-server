@@ -11,25 +11,26 @@ exports.command = {
 };
 
 
-var argv = optimist.usage(exports.command.description, {
-  'force': {
-    description: 'Really kill the prcoess. Don\'t play nice',
-    boolean: true,
-    short: 'f',
-  }
-}).argv;
-
-
 if (require.main === module) {
   console.log(''); // Some padding for niceness
 
+  var argv = optimist.usage(exports.command.description, {
+    'force': {
+      description: 'Really kill the prcoess. Don\'t play nice',
+      boolean: true,
+      short: 'f',
+    }
+  }).argv;
+  
   if (argv.help) {
     return console.log(optimist.help());
   }
 
   // Figure out paths and signals
-  var cwd = path.resolve(__dirname, '..')
-  var pidPath = path.join(cwd,'pids/ummon-server.pid');
+  var uu = require(path.resolve(__dirname, '../lib/utils.js'))
+  var config = uu.loadConfig(argv);
+  var pidPath = uu.pidPath(config);
+
   var SIG = (argv.force) ? 'SIGKILL' : 'SIGINT'
 
   // Kill the process and delete it's pid file

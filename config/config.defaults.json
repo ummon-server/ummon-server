@@ -5,8 +5,12 @@
   "createWorkerPollInterval": 1000,
   "minimalSaveInterval": 1000,
   "log": {
-    "path":"./logs/ummon.log",
+    "path":"/var/log/ummon/server.log",
     "level":"debug"
+  },
+  "pids": {
+    "path":"/var/run/ummon",
+    "file":"ummon-server.pid"
   },
   "port":8888,
   "credentials": ["dzJoOnNjMWVuY2U="]
