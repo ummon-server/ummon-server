@@ -21,7 +21,7 @@ if (require.main === module) {
       short: 'f',
     }
   }).argv;
-  
+
   if (argv.help) {
     return console.log(optimist.help());
   }
@@ -35,5 +35,6 @@ if (require.main === module) {
 
   // Kill the process and delete it's pid file
   process.kill(fs.readFileSync(pidPath, { encoding: 'utf8' }), SIG);
+  console.log('%s sent to ummon-server', SIG);
   fs.unlinkSync(pidPath);
 }

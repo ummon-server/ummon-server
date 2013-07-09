@@ -42,6 +42,14 @@ if (require.main === module) {
   // Load the config
   var uu = require(path.resolve(__dirname, '../lib/utils.js'))
   var config = uu.loadConfig(argv);
+  var pidPath = uu.pidPath(config);
+
+  // fs.readFileSync(pidPath, {encoding:'utf8'});
+  
+  if (fs.existsSync(pidPath)) {
+    console.log('ummon-server appears to be running. Pid file exists: %s', pidPath);
+    process.exit();
+  }
 
   var server;
   if (argv.daemon) {
@@ -63,18 +71,18 @@ if (require.main === module) {
   }
 
   // Save the PID!
-  var pidPath = uu.pidPath(config);
-  
   if (!fs.existsSync(config.pids.path)) {
     mkdirp.sync(config.pids.path);
   }
   
   fs.writeFileSync(pidPath, server.pid);
+  console.log('Server successfully started. pid: %s', process.pid);
 
 
   // If ctrl-c is pressed, clean up after yo'self
   process.on('SIGINT', function() {
     process.kill(server.pid, 'SIGINT');
+    console.log('%s sent to ummon-server', SIG);
     fs.unlinkSync(pidPath);
   });
 }
