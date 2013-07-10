@@ -16,7 +16,7 @@ if (require.main === module) {
   console.log(''); // Some padding for niceness
 
   var argv = optimist.usage(exports.command.description, {
-    'config': {
+    'configPath': {
       description: 'The path to your ummon config.json file',
       string: true,
       short: 'c',
@@ -35,8 +35,8 @@ if (require.main === module) {
   var cwd = path.resolve(__dirname, '..')
   var spawnArgs = ['server.js'];
 
-  if (argv.config) {
-    spawnArgs.push(argv.config);
+  if (argv.configPath) {
+    spawnArgs.push(argv.configPath);
   }
 
   // Load the config
@@ -44,10 +44,9 @@ if (require.main === module) {
   var config = uu.loadConfig(argv);
   var pidPath = uu.pidPath(config);
 
-  // fs.readFileSync(pidPath, {encoding:'utf8'});
-  
+  // Yell if an old pid file exists
   if (fs.existsSync(pidPath)) {
-    console.log('ummon-server appears to be running. Pid file exists: %s', pidPath);
+    console.log('ummon-server appears to be running. Pid file exists at %s', pidPath);
     process.exit();
   }
 

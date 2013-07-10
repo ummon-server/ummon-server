@@ -1,5 +1,6 @@
 {
   "name":"ummon.server",
+  "configPath": "/etc/ummon/config.json",
   "tasksPath": "./config/tasks/",
   "defaultCollection": "ummon",
   "createWorkerPollInterval": 1000,
