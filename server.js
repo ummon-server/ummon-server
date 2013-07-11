@@ -1,22 +1,36 @@
-'use strict';
+#!/usr/bin/env node
 
+'use strict';
 
 /**
  * Module dependencies.
  */
+var optimist = require('optimist');
+var path = require('path');
 var restify = require('restify');
 var socketio = require('socket.io');
 var bunyan = require('bunyan');
 var _ = require('underscore');
-var ON_DEATH = require('death')({uncaughtException: true}) 
+var ON_DEATH = require('death')({uncaughtException: true});
+
+
+
+var argv = optimist.usage('Ummon and stuff', {
+  'config': {
+    description: 'The path to your ummon config.json file',
+    string: true,
+    short: 'c',
+  }
+}).argv;
 
 // It's possible to pass a string that will be the config path. Catch it here:
-var ummonOptions = (process.argv[2]) ? { configPath: process.argv[2] } : {};
+var ummonOptions = (argv.config) 
+      ? {configPath: argv.config} 
+      : {};
 
-var ummon = require('./lib/ummon').create(ummonOptions);
+var ummon = require('./lib/ummon')(ummonOptions);
 
 var api = require('./api')(ummon);
-
 
 var log = bunyan.createLogger({
   name: 'API',
@@ -78,14 +92,6 @@ server.on('after', function(req, res, route, error){
 server.on('uncaughtException', function(req, res, route, error){
   log.err(error);
 });
-
-
-// server.on('after', restify.auditLogger({
-//   log: bunyan.createLogger({
-//     name: 'audit',
-//     stream: process.stdout
-//   })
-// }));
 
 // Middlewarez
 server.use(restify.acceptParser(server.acceptable));

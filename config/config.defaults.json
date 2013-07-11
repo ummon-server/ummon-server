@@ -1,17 +1,13 @@
 {
   "name":"ummon.server",
-  "configPath": "/etc/ummon/config.json",
+  "configPath": "./config/config.json",
   "tasksPath": "./config/tasks/",
   "defaultCollection": "ummon",
   "createWorkerPollInterval": 1000,
   "minimalSaveInterval": 1000,
   "log": {
-    "path":"/var/log/ummon/server.log",
+    "path":"./log/ummon/server.log",
     "level":"debug"
-  },
-  "pids": {
-    "path":"/var/run/ummon",
-    "file":"ummon-server.pid"
   },
   "port":8888,
   "credentials": ["dzJoOnNjMWVuY2U="]
