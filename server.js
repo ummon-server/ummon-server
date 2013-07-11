@@ -48,6 +48,10 @@ ON_DEATH(function(signal, err) {
 
     ummon.log.info("Kill (%s) signal received. Waiting for workers to finish", signal);
     
+    _.each(ummon.workers, function(run){
+      run.worker.kill(signal);
+    })
+
     setInterval(function(){
       var count = _.size(ummon.workers);
 
@@ -56,7 +60,7 @@ ON_DEATH(function(signal, err) {
         process.exit(0);
       }
       ummon.log.info("Still waiting for %s workers to finish", count);
-    }, 1000)
+    }, 250)
   }
 });
 
@@ -104,18 +108,18 @@ server.use(restify.CORS({
         // credentials: true                  // defaults to false
         // headers: ['x-foo']                 // sets expose-headers
     }));
-// server.use(restify.authorizationParser());
+server.use(restify.authorizationParser());
 
 server.pre(restify.pre.sanitizePath());
 server.use(restify.fullResponse());
 
-// server.use(function (req, res, next){
-//   if (ummon.config.credentials.indexOf(req.authorization.credentials) !== -1){
-//     next();
-//   } else {
-//     res.json(401, "Log in dummy. KWATZ!")
-//   }
-// })
+server.use(function (req, res, next){
+  if (ummon.config.credentials.indexOf(req.authorization.credentials) !== -1){
+    next();
+  } else {
+    res.json(401, "Log in dummy. KWATZ!")
+  }
+})
 server.param('collection', api.doesCollectionExist);
 server.param('taskid', api.doesTaskExist);
 

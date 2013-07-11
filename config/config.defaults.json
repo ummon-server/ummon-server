@@ -6,7 +6,7 @@
   "createWorkerPollInterval": 1000,
   "minimalSaveInterval": 1000,
   "log": {
-    "path":"./log/ummon/server.log",
+    "path":"./log/server.log",
     "level":"debug"
   },
   "port":8888,
