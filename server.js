@@ -6,11 +6,8 @@
  * Module dependencies.
  */
 var optimist = require('optimist');
-<<<<<<< HEAD
 var domain = require('domain');
-=======
 var npid = require('npid');
->>>>>>> 7577ba7c0805c4afeaa2361b813f4f5801f49137
 var path = require('path');
 var restify = require('restify');
 var socketio = require('socket.io');
@@ -158,7 +155,7 @@ d.on('error', function(err) {
   } else {
     server.log.error('ERROR',err);
   }
-  
+
   process.exit(1);
 })
 
