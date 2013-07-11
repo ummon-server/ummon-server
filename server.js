@@ -6,6 +6,7 @@
  * Module dependencies.
  */
 var optimist = require('optimist');
+var domain = require('domain');
 var path = require('path');
 var restify = require('restify');
 var socketio = require('socket.io');
@@ -81,20 +82,14 @@ var server = restify.createServer({
   name: 'Ummon',
   log: ummon.log
 });
-var io = socketio.listen(server);
-
 
 // Because for some reason server.log doesn't automatically work
-server.on('after', function(req, res, route, error){
+server.on('after', function(req, res, route, error) {
   if (route) {
     log.info('%s - %s (matched by route %s)', res.statusCode, req.url, route.spec.path);
   } else {
     log.info('%s - %s', res.statusCode, req.url);
   }
-});
-
-server.on('uncaughtException', function(req, res, route, error){
-  log.err(error);
 });
 
 // Middlewarez
@@ -146,24 +141,41 @@ server.get('/log', api.showLog);
 
 var getRuns = _.throttle(function(){ return ummon.getRuns(); }, '500');
 
-io.set('log level', 1);
-io.sockets.on('connection', function (socket) {
-    socket.emit('send:tasks', ummon.getTasks());
-    
-    // Send runs 
-    // TODO: Is there a way to bind to multiple events with one listener?
-    ummon.on('worker.start', function(){ socket.emit('send:runs', getRuns()); });
-    ummon.on('worker.complete', function(){ socket.emit('send:runs', getRuns()); });
-    ummon.on('queue.new', function(){ socket.emit('send:runs', getRuns()); });
-});
+var d = domain.create();
 
+d.on('error', function(err) {
+  if (err.code === 'EADDRINUSE') {
+    server.log.error(err, 'The address you\'re trying to bind too is already in use');
+  } else {
+    server.log.error('ERROR',err);
+  }
 
-server.listen(ummon.config.port, function() {
-  console.log("               _  __              _       _ ");
-  console.log("              | |/ __      ____ _| |_ ___| |");
-  console.log("              | ' /\\ \\ /\\ / / _` | __|_  | |");
-  console.log("              | . \\ \\ V  V | (_| | |_ / /|_|");
-  console.log("              |_|\\_\\ \\_/\\_/ \\__,_|\\__/___(_)");
-  console.log("");
-  server.log.info({addr: server.address()}, 'listening');
-});
+  process.exit(1);
+})
+
+d.run(function(){
+  server.listen(ummon.config.port, function() {
+    console.log("               _  __              _       _ ");
+    console.log("              | |/ __      ____ _| |_ ___| |");
+    console.log("              | ' /\\ \\ /\\ / / _` | __|_  | |");
+    console.log("              | . \\ \\ V  V | (_| | |_ / /|_|");
+    console.log("              |_|\\_\\ \\_/\\_/ \\__,_|\\__/___(_)");
+    console.log("");
+    server.log.info({addr: server.address()}, 'listening');
+
+    var io = socketio.listen(server);
+    io.on('error', function(test){
+      console.log('ERRROROROROR', test)
+    })
+    io.set('log level', 1);
+    io.sockets.on('connection', function (socket) {
+        socket.emit('send:tasks', ummon.getTasks());
+        
+        // Send runs 
+        // TODO: Is there a way to bind to multiple events with one listener?
+        ummon.on('worker.start', function(){ socket.emit('send:runs', getRuns()); });
+        ummon.on('worker.complete', function(){ socket.emit('send:runs', getRuns()); });
+        ummon.on('queue.new', function(){ socket.emit('send:runs', getRuns()); });
+    });
+  });
+})
