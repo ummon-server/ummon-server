@@ -2,7 +2,7 @@
 
 var test = require("tap").test;
 
-var ummon = require('..').create();
+var ummon = require('..')();
 var worker = require('../lib/worker.js');
 var run = require('../lib/run.js');
 

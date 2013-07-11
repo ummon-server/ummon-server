@@ -8,7 +8,7 @@ var ummon;
 
 test('construct an instance of ummon', function(t){
   t.plan(1);
-  ummon = require('..').create();
+  ummon = require('..')();
   t.ok(ummon, 'The server should exists');
 });
 

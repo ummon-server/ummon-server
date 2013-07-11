@@ -2,7 +2,7 @@ var test = require("tap").test;
 
 var stream = require('stream');
 
-var ummon = require('../lib/ummon').create();
+var ummon = require('../lib/ummon')();
 var api = require('../api')(ummon);
 
 //                    Construct!
