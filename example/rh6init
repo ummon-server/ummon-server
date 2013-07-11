@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# ummon-server  Startup script for ummon-server (copied from rsyslog startup).
+# ummon-server  Startup script for ummon-server for Red Hat 6.
 #
 # chkconfig: 2345 80 30
 # description: Ummon-server manages and monitors tasks.
