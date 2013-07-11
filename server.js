@@ -6,6 +6,7 @@
  * Module dependencies.
  */
 var optimist = require('optimist');
+var npid = require('npid');
 var path = require('path');
 var restify = require('restify');
 var socketio = require('socket.io');
@@ -14,14 +15,22 @@ var _ = require('underscore');
 var ON_DEATH = require('death')({uncaughtException: true});
 
 
-
 var argv = optimist.usage('Ummon and stuff', {
   'config': {
     description: 'The path to your ummon config.json file',
     string: true,
-    short: 'c',
+    alias: 'c',
+  },
+  'pidfile': {
+    'default': 'ummon.pid',
+    description: 'Set a custom pid file location',
+    string: true,
+    alias: 'p',
   }
 }).argv;
+
+// Create the pid file, throwing on failure
+npid.create(argv.pidfile);
 
 // It's possible to pass a string that will be the config path. Catch it here:
 var ummonOptions = (argv.config) 
@@ -29,13 +38,6 @@ var ummonOptions = (argv.config)
       : {};
 
 var ummon = require('./lib/ummon')(ummonOptions);
-
-var api = require('./api')(ummon);
-
-var log = bunyan.createLogger({
-  name: 'API',
-  stream: process.stdout
-});
 
 
 /**
@@ -83,8 +85,12 @@ var server = restify.createServer({
 });
 var io = socketio.listen(server);
 
-
 // Because for some reason server.log doesn't automatically work
+var log = bunyan.createLogger({
+  name: 'API',
+  stream: process.stdout
+});
+
 server.on('after', function(req, res, route, error){
   if (route) {
     log.info('%s - %s (matched by route %s)', res.statusCode, req.url, route.spec.path);
@@ -120,6 +126,10 @@ server.use(function (req, res, next){
     res.json(401, "Log in dummy. KWATZ!")
   }
 })
+
+// Set up the api
+var api = require('./api')(ummon);
+
 server.param('collection', api.doesCollectionExist);
 server.param('taskid', api.doesTaskExist);
 
