@@ -37,8 +37,8 @@
   "keywords": [],
   "dependencies": {
     "colors": "~0.6.0-1",
-    "underscore": "~1.4.4",
-    "moment": "~2.0.0",
+    "underscore": "~1.5.1",
+    "moment": "~2.1.0",
     "dependency-foo": "~0.1.1",
     "cron": "~1.0.1",
     "eventemitter2": "~0.4.11",

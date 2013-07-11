@@ -1,6 +1,6 @@
-# ummon
+# ummon-server
 
-[![NPM version](https://badge.fury.io/js/ummon-server.png)](http://badge.fury.io/js/ummon-server)[![Build Status](https://secure.travis-ci.org/punkave/ummon-server.png?branch=master)](http://travis-ci.org/punkave/ummon-server) [![Dependency Status](https://gemnasium.com/punkave/ummon-server.png)](https://gemnasium.com/punkave/ummon-server)
+[![NPM version](https://badge.fury.io/js/ummon-server.png)](http://badge.fury.io/js/ummon-server) [![Build Status](https://secure.travis-ci.org/punkave/ummon-server.png?branch=master)](http://travis-ci.org/punkave/ummon-server) [![Dependency Status](https://gemnasium.com/punkave/ummon-server.png)](https://gemnasium.com/punkave/ummon-server)
 
 **Documentation to come soon. Heavy development in process.**
 
