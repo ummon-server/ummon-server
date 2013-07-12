@@ -62,7 +62,7 @@ test('Create a tasks with simplified trigger', function(t) {
   }, function(err, task){
     t.ok(task, 'The callback returns a task');
     t.ok(ummon.tasks['ummon.aftereveryminute'], 'There is a aftereveryminute task');
-    t.equal(ummon.dependencies.subject('ummon.everyminute').references[0], 'ummon.aftereveryminute', 'aftereveryminute is dependent on everyminute');
+    t.equal(ummon.getTaskReferences('ummon.everyminute')[0], 'ummon.aftereveryminute', 'aftereveryminute is dependent on everyminute');
   });
 
 });
@@ -79,7 +79,7 @@ test('Create a dependent task', function(t) {
     }
   }, function(err, task){
     t.ok(ummon.tasks['ummon.goodbye'], 'There is a goodbye task');
-    t.equal(ummon.dependencies.subject('ummon.hello').references[0], 'ummon.goodbye', 'ummon.hello is a dependent task for goodbye');
+    t.equal(ummon.getTaskReferences('ummon.hello')[0], 'ummon.goodbye', 'ummon.hello is a dependent task for goodbye');
   });
 });
 
@@ -123,8 +123,8 @@ test('Test creating dependent tasks', function(t){
     function(callback){ ummon.createTask({"name":"six","command": "echo six", "trigger": {"after": "ummon.five"}}, callback); },
   ],
   function(err){
-    t.equal(ummon.dependencies.subject('ummon.one').references[1], 'ummon.twotwo', 'task one is referenced by two tasks');
-    t.equal(ummon.dependencies.subject('ummon.five').dependencies[0], 'ummon.four', 'task five is dependent on task four');
+    t.equal(ummon.getTaskReferences('ummon.one')[1], 'ummon.twotwo', 'task one is referenced by two tasks');
+    t.equal(ummon.getTaskDependencies('ummon.five')[0], 'ummon.four', 'task five is dependent on task four');
   });
 });
 
@@ -136,9 +136,9 @@ test('Test updating a tasks', function(t){
     {"name":"twotwo","collection":"ummon","command": "echo twotwo", "trigger": {"time": moment().add('s', 1).toDate()} },
     function(err, task){
       t.equal(task.command, "echo twotwo", "The method should return a new Task");
-      t.equal(ummon.dependencies.subject('ummon.one').references[0], 'ummon.two', 'The good reference remains');
-      t.notOk(ummon.dependencies.subject('ummon.one').references[1], 'The old reference was removed');
-      t.notOk(ummon.dependencies.subject('ummon.twotwo').dependencies[0], 'The task has no dependent tasks');  
+      t.equal(ummon.getTaskReferences('ummon.one')[0], 'ummon.two', 'The good reference remains');
+      t.notOk(ummon.getTaskReferences('ummon.one')[1], 'The old reference was removed');
+      t.notOk(ummon.getTaskDependencies('ummon.twotwo')[0], 'The task has no dependent tasks');  
   });
 });
 
@@ -147,8 +147,8 @@ test('Delete a task and its dependencies', function(t){
   t.plan(2);
 
   ummon.deleteTask('ummon.five', function(err, task){
-    t.notOk(ummon.dependencies.subject('ummon.four').references[0], 'Task four has no more references');
-    t.notOk(ummon.dependencies.subject('ummon.five').dependencies[0], 'The task has no dependent tasks');    
+    t.notOk(ummon.getTaskReferences('ummon.four')[0], 'Task four has no more references');
+    t.notOk(ummon.getTaskDependencies('ummon.five')[0], 'The task has no dependent tasks');    
   });
 });
 
