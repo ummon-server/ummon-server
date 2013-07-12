@@ -30,6 +30,7 @@ var argv = optimist.usage('Ummon and stuff', {
   }
 }).argv;
 
+
 // Create the pid file, throwing on failure
 npid.create(argv.pidfile);
 

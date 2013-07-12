@@ -42,6 +42,31 @@ test('Create a task with a timed trigger and wait for it to add to the queue', f
 
 });
 
+test('Create a tasks with simplified trigger', function(t) {
+  t.plan(6);
+
+  ummon.createTask({
+    "name":"everyminute",
+    "command": "echo Hello;",
+    "trigger": "* * * * *"
+  }, function(err, task){
+    t.ok(task, 'The callback returns a task');
+    t.ok(ummon.tasks['ummon.everyminute'], 'There is a everyminute task');
+    t.ok(ummon.timers['ummon.everyminute'], 'There is a everyminute task timer');
+  });
+
+  ummon.createTask({
+    "name":"aftereveryminute",
+    "command": "echo Hello;",
+    "trigger": "everyminute"
+  }, function(err, task){
+    t.ok(task, 'The callback returns a task');
+    t.ok(ummon.tasks['ummon.aftereveryminute'], 'There is a aftereveryminute task');
+    t.equal(ummon.dependencies.subject('ummon.everyminute').references[0], 'ummon.aftereveryminute', 'aftereveryminute is dependent on everyminute');
+  });
+
+});
+
 
 test('Create a dependent task', function(t) {
   t.plan(2);
