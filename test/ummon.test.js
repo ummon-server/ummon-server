@@ -42,50 +42,27 @@ test('Create a task with a timed trigger and wait for it to add to the queue', f
 
 });
 
-test('Create a tasks with simplified trigger', function(t) {
-  t.plan(6);
 
-  ummon.createTask({
-    "name":"everyminute",
-    "command": "echo Hello;",
-    "trigger": "* * * * *"
-  }, function(err, task){
-    t.ok(task, 'The callback returns a task');
-    t.ok(ummon.tasks['ummon.everyminute'], 'There is a everyminute task');
-    t.ok(ummon.timers['ummon.everyminute'], 'There is a everyminute task timer');
-  });
-
-  ummon.createTask({
-    "name":"aftereveryminute",
-    "command": "echo Hello;",
-    "trigger": "everyminute"
-  }, function(err, task){
-    t.ok(task, 'The callback returns a task');
-    t.ok(ummon.tasks['ummon.aftereveryminute'], 'There is a aftereveryminute task');
-    t.equal(ummon.getTaskReferences('ummon.everyminute')[0], 'ummon.aftereveryminute', 'aftereveryminute is dependent on everyminute');
-  });
-
-});
-
-
-test('Create a dependent task', function(t) {
+test('Create dependent tasks', function(t) {
   t.plan(2);
 
   ummon.createTask({
     "name": "goodbye",
-    "command": "echo goodbye;",
+    "command": "echo goodbye && exit 1",
     "trigger": {
       "after": 'hello'
     }
   }, function(err, task){
     t.ok(ummon.tasks['ummon.goodbye'], 'There is a goodbye task');
-    t.equal(ummon.getTaskReferences('ummon.hello')[0], 'ummon.goodbye', 'ummon.hello is a dependent task for goodbye');
+    t.equal(ummon.getTaskReferences('hello')[0], 'ummon.goodbye', 'ummon.hello is a dependent task for goodbye');
   });
 });
 
 
 test('Run the previously created tasks', function(t) {
   t.plan(8);
+
+  ummon.removeAllListeners(['queue.new','worker.complete']); //Delete old listeners to keep things simple
 
   ummon.on('queue.new', function(run){
     t.ok(true, 'The queue.new emitter was emited');
@@ -108,6 +85,62 @@ test('Run the previously created tasks', function(t) {
 
   t.equal(ummon.workers[pid].run.id, testRun.id, 'The worker is in the list');
 });
+
+
+test('Create a tasks with simplified trigger', function(t) {
+  t.plan(6);
+
+  ummon.createTask({
+    "name":"everyminute",
+    "command": "echo Hello;",
+    "trigger": "* 5 * * *"
+  }, function(err, task){
+    t.ok(task, 'The callback returns a task');
+    t.ok(ummon.tasks['ummon.everyminute'], 'There is a everyminute task');
+    t.ok(ummon.timers['ummon.everyminute'], 'There is a everyminute task timer');
+  });
+
+  ummon.createTask({
+    "name":"aftereveryminute",
+    "command": "echo Hello;",
+    "trigger": "everyminute"
+  }, function(err, task){
+    t.ok(task, 'The callback returns a task');
+    t.ok(ummon.tasks['ummon.aftereveryminute'], 'There is a aftereveryminute task');
+    t.equal(ummon.getTaskReferences('ummon.everyminute')[0], 'ummon.aftereveryminute', 'aftereveryminute is dependent on everyminute');
+  });
+
+});
+
+
+test('Triggerer proper tasks on failure', function(t){
+  t.plan(10)
+
+  ummon.removeAllListeners(['queue.new','worker.complete']); //Delete old listeners to keep things simple
+
+  ummon.createTask({
+    "name": "runMeOnErrors",
+    "command": "echo adios;",
+    "trigger": {
+      "afterFailed": 'goodbye'
+    }
+  }, function(err, task){
+    t.ok(ummon.tasks['ummon.runMeOnErrors'], 'There is a runMeOnErrors task');
+    t.equal(ummon.getTaskReferences('goodbye', 'error')[0], 'ummon.runMeOnErrors', 'ummon.runMeOnErrors is a dependent task for goodbye');
+  });
+
+  ummon.on('queue.new', function(run){
+    t.ok(true, 'The queue.new emitter was emited');
+    t.ok((run.task.name === 'goodbye' || run.task.name === 'runMeOnErrors'), 'The queue is added to goodbye or runMeOnErrors');
+  });
+
+  ummon.on('worker.complete', function(run){
+    t.ok(run, 'The worker.complete event was emited'); // Emitted twice for both tasks
+    t.ok((run.task.name === 'goodbye' || run.task.name === 'runMeOnErrors'), 'The completed tasks are goodbye and runMeOnErrors')
+  });
+
+  ummon.runTask('goodbye', function(q){})
+})
 
 
 test('Test creating dependent tasks', function(t){
@@ -169,8 +202,10 @@ test('Create collections default values and retrieve a task that inherits them',
 
 
 test('Add an arbitrary command to the queue', function(t){
-  t.plan(14);
+  t.plan(11);
   ummon.MAX_WORKERS = 0;
+
+  ummon.removeAllListeners(['queue.new','worker.complete']); //Delete old listeners to keep things simple
   
   ummon.on('queue.new', function(run){
     t.ok(true, 'The queue.new emitter was emited'); //Should fire twice
@@ -183,15 +218,8 @@ test('Add an arbitrary command to the queue', function(t){
     t.equal(run.triggeredBy, 'manual', 'A run is marked as manual');
   });
   
-  // Run a task that will fail because of built in dependencies
-  ummon.runTask('ummon.six', function(err, run){
-    t.ok(err, 'There is an error when an enxisting task with a dependency is run');
-    t.equal(err.message, 'The task ummon.six has a dependent task. Call that instead', 'The error says the right thing');
-    t.notOk(run, 'There is no run when an enxisting task with a dependency is run');
-  });
-
   // Force Run a task that has dependencies
-  ummon.runTask('ummon.six', true, function(err, run){
+  ummon.runTask('ummon.six', function(err, run){
     t.notOk(err, 'There is not an error when an enxisting task with a dependency is forced to run');
     t.equal(run.task.id, 'ummon.six', 'A right task was loaded');
     t.ok(run, 'There is a run when an enxisting task with a dependency is forced to run');
