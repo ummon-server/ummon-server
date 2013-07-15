@@ -22,6 +22,11 @@ var argv = optimist.usage('Ummon and stuff', {
     string: true,
     alias: 'c',
   },
+  'daemon': {
+    description: 'Daemonize the ummon server process',
+    boolean: true,
+    alias: 'd',
+  },
   'pidfile': {
     'default': 'ummon.pid',
     description: 'Set a custom pid file location',
@@ -29,6 +34,9 @@ var argv = optimist.usage('Ummon and stuff', {
     alias: 'p',
   }
 }).argv;
+
+// Daemonize if asked
+if (argv.daemon) require('daemon')();
 
 // Create the pid file, throwing on failure
 npid.create(argv.pidfile);
