@@ -22,7 +22,7 @@ PIDFILE=/var/run/ummon/ummon.pid
 USER=ummon
 
 prog=ummon
-exec=/usr/local/bin/ummon-server
+exec=/usr/bin/ummon-server
 lockfile=/var/lock/subsys/$prog
 
 mkdir -p /var/run/ummon 2>/dev/null
