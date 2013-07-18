@@ -159,7 +159,7 @@ var d = domain.create();
 
 d.on('error', function(err) {
   if (err.code === 'EADDRINUSE') {
-    server.log.error(err, 'The address you\'re trying to bind too is already in use');
+    server.log.error(err, 'The address you\'re trying to bind to is already in use');
   } else {
     server.log.error('ERROR',err);
   }
