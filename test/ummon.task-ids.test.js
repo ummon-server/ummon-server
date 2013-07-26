@@ -34,3 +34,10 @@ test('Return an array of collection names', function(t){
   t.plan(1);
   t.similar(ummon.getCollections(), ['ummon','canada'], "There should be two collection names")
 })
+
+test('teardown', function(t){
+  setImmediate(function() {
+    process.exit();
+  });
+  t.end();
+});

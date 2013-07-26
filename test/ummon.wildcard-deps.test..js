@@ -25,3 +25,10 @@ test('Create a tasks with a wildcard trigger', function(t) {
     t.similar(ummon.getTaskDependencies('cleanup.all'), ['important.one','important.two','notimportant.one', 'cleanup.important'], 'cleanup.all depends on all the tasks');
   });
 });
+
+test('teardown', function(t){
+  setImmediate(function() {
+    process.exit();
+  });
+  t.end();
+});

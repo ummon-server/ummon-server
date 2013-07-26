@@ -44,7 +44,7 @@ module.exports = function(ummon) {
     } catch(e) {
       return callback(e);
     }
-    
+
     var keys = Object.keys(config);
 
     // Is there no 'collection' and 'name' keys? No 'tasks'? Then something is up.
@@ -65,7 +65,7 @@ module.exports = function(ummon) {
    * @param  {Object}   config     Config object from json object
    * @param  {Function} callback   The callback. Simply returns true if all goes well
    */
-  
+
   db.createCollectionAndTasks = function(config, callback) {
     var self = this;
 
@@ -88,14 +88,16 @@ module.exports = function(ummon) {
         config.sequences.forEach(function(sequence){
           var dependent = sequence.shift();
           if (dependent.indexOf('.')) { dependent = config.collection + '.' + dependent; }
-          
+
           sequence.forEach(function(step){
             if (step.indexOf('.')) { step = config.collection + '.' + step; }
-            
+
+            if (!ummon.tasks[step].trigger) {ummon.tasks[step].trigger = {}}
+
             ummon.tasks[step].trigger.after = dependent; // Save trigger info in task
-            
-            ummon.dependencies.subject(step).dependOn(dependent); // Step DAG graph
-            
+
+            ummon.dependencies['success'].subject(step).dependOn(dependent); // Step DAG graph
+
             dependent = step;
           });
         });
@@ -125,7 +127,7 @@ module.exports = function(ummon) {
       if (err) {
         return callback(err);
       }
-      
+
       fs.writeFile(ummon.config.tasksPath+'/'+collection+'.tasks.json', JSON.stringify(result[0], null, 2), function (err) {
         callback(err);
       });

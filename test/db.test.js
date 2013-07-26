@@ -7,7 +7,7 @@ var ummon = require('../lib/ummon')({"tasksPath":false});
 var db = require('../db')(ummon);
 
 //                    Construct!
-// - - - - - - - - - - - - - - - - - - - - - - - - - 
+// - - - - - - - - - - - - - - - - - - - - - - - - -
 
 test('Load collection information from a file', function(t){
   t.plan(11);
@@ -41,10 +41,10 @@ test('Load tasks from tasks dir', function(t){
       t.ok(task, 'The task flippn loaded');
       t.equal(task.cwd,'/var/www/website/', 'The collection defaults were properly loaded');
       t.equal(task.command,'./process-data', 'The task command is set');
-      
+
       t.ok(ummon.tasks['palace.pizza'], 'Second config file loaded and first collection loaded');
 
-      t.equal(ummon.dependencies.subject('autosample.task1').references[0],'autosample.task2', 'Task dependencies were setup properly');  
+      t.equal(ummon.dependencies["success"].subject('autosample.task1').references[0],'autosample.task2', 'Task dependencies were setup properly');
     });
   });
 });
@@ -52,7 +52,7 @@ test('Load tasks from tasks dir', function(t){
 
 test('Save all tasks to files', function(t){
   t.plan(7);
-  
+
   // Change tasks dir so it doesn't overwrite stuff
   ummon.config.tasksPath = './fixtures/saveTasks';
 
