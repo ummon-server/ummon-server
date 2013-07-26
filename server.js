@@ -42,8 +42,8 @@ if (argv.daemon) require('daemon')();
 npid.create(argv.pidfile);
 
 // It's possible to pass a string that will be the config path. Catch it here:
-var ummonOptions = (argv.config) 
-      ? {configPath: argv.config} 
+var ummonOptions = (argv.config)
+      ? {configPath: argv.config}
       : {};
 
 var ummon = require('./lib/ummon')(ummonOptions);
@@ -58,7 +58,7 @@ ON_DEATH(function(signal, err) {
     ummon.pause = true;
 
     ummon.log.info("Kill (%s) signal received. Waiting for workers to finish", signal);
-    
+
     _.each(ummon.workers, function(run){
       run.worker.kill(signal);
     })
@@ -184,8 +184,8 @@ d.run(function(){
     io.set('log level', 1);
     io.sockets.on('connection', function (socket) {
         socket.emit('send:tasks', ummon.getTasks());
-        
-        // Send runs 
+
+        // Send runs
         // TODO: Is there a way to bind to multiple events with one listener?
         ummon.on('worker.start', function(){ socket.emit('send:runs', getRuns()); });
         ummon.on('worker.complete', function(){ socket.emit('send:runs', getRuns()); });
