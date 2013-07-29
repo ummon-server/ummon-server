@@ -3,6 +3,7 @@
 var test = require("tap").test;
 
 var ummon = require('..')();
+ummon.autoSave = false;
 var worker = require('../lib/worker.js');
 var run = require('../lib/run.js');
 

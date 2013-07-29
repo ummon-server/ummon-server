@@ -6,6 +6,7 @@ var async = require("async");
 
 var ummon = require('..')();
 ummon.pause = true;
+ummon.autoSave = false;
 
 test('Create a tasks with a wildcard trigger', function(t) {
   t.plan(3);

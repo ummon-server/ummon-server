@@ -4,6 +4,7 @@ var fs = require('fs');
 var rimraf = require('rimraf');
 
 var ummon = require('../lib/ummon')({"tasksPath":false});
+ummon.autoSave = false;
 var db = require('../db')(ummon);
 
 //                    Construct!

@@ -4,7 +4,8 @@ var test = require("tap").test;
 var moment = require("moment");
 var async = require("async");
 
-var ummon = require('..')();;
+var ummon = require('..')();
+ummon.autoSave = false;
 
 test('Triggerer proper tasks on failure', function(t){
   t.plan(11)

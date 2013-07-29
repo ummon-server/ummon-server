@@ -6,6 +6,7 @@ var async = require("async");
 
 var ummon = require('..')();
 ummon.pause = true;
+ummon.autoSave = false;
 
 // Stub in some tasks
 ummon.tasks = {

@@ -5,6 +5,7 @@ var moment = require("moment");
 var async = require("async");
 
 var ummon = require('..')();
+ummon.autoSave = false;
 
 test('Add an existing task to the queue', function(t){
   t.plan(4);

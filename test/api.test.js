@@ -5,6 +5,8 @@ var stream = require('stream');
 var ummon = require('../lib/ummon')();
 var api = require('../api')(ummon);
 
+ummon.autoSave = false;
+
 //                    Construct!
 // - - - - - - - - - - - - - - - - - - - - - - - - -
 test('Test successfully create the api object', function(t){
