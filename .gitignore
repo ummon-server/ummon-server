@@ -17,3 +17,5 @@ npm-debug.log
 docs
 test.js
 test.sh
+
+config/tasks/*
