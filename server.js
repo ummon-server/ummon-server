@@ -39,7 +39,7 @@ var argv = optimist.usage('Ummon and stuff', {
 if (argv.daemon) require('daemon')();
 
 // Create the pid file, throwing on failure
-npid.create(argv.pidfile);
+// npid.create(argv.pidfile);
 
 // It's possible to pass a string that will be the config path. Catch it here:
 var ummonOptions = (argv.config)
@@ -129,7 +129,6 @@ server.use(function (req, res, next){
 // Set up the api
 var api = require('./api')(ummon);
 
-server.param('collection', api.doesCollectionExist);
 server.param('taskid', api.doesTaskExist);
 
 // The routes!
@@ -144,7 +143,9 @@ server.put('/tasks/:taskid', api.updateTask);
 server.del('/tasks/:taskid', api.deleteTask);
 
 server.get('/tasks', api.getTasks);
-server.get('/collections/:collection', api.getTasks);
+server.get('/collections/:collection', api.doesCollectionExist, api.getTasks);
+server.get('/collections/:collection/defaults', api.getCollectionDefaults);
+server.put('/collections/:collection/defaults', api.setCollectionDefaults);
 // server.post('/run/:taskid', api.run);
 // server.post('/run', api.run);
 server.get('/log/collection/:collection', api.showLog);

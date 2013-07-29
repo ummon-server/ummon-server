@@ -21,6 +21,15 @@ Ummon is node.js application for managing, queuing, running and monitoring exter
 * **Run** An instance of a Task. A task is added to the queue as a run. Runs are also kept as historical artifacts
 * **Worker** The worker is what runs that commands and handles communicating back to ummon about their status. Technically, think of a worker as a thin wrapper around child_process.spawn
 
+# Installation and Setup
+
+To setup ummon-server on a linux server, complete the following:
+
+1. `sudo npm install -g ummon-server bunyan`
+2. Configure init script and install it in init dir
+3. Setup config
+4. Start app
+
 ## License
 Copyright (c) 2013 P'unk Avenue
 Licensed under the MIT license.

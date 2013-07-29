@@ -12,10 +12,10 @@ var _ = require('underscore');
 
 module.exports = function(ummon){
   var api = {};
-  
+
 
   api.doesCollectionExist = function(req, res, next, collection) {
-    if (!_.any(ummon.tasks, function(task){ return (task.collection === collection) })) {
+    if (!ummon.defaults[collection] || !_.any(ummon.tasks, function(task){ return (task.collection === collection) })) {
       return next(new restify.ResourceNotFoundError('No collection of name '+req.params.collection+' found'));
     } else {
       next();
@@ -30,7 +30,7 @@ module.exports = function(ummon){
       next();
     }
   };
-  
+
   /**
    * Ummon Status
    */
@@ -44,7 +44,7 @@ module.exports = function(ummon){
    */
   api.ps = function(req, res, next){
     var pids = Object.keys(ummon.workers);
-    
+
     res.json(200, {
       "count":pids.length,
       "pids": pids,
@@ -52,6 +52,24 @@ module.exports = function(ummon){
     });
   };
 
+  api.getCollectionDefaults = function(req, res, next) {
+    var collection = req.params.collection;
+    res.json(200, { 'collection':  collection, "defaults": ummon.defaults[collection]} );
+  }
+
+  api.setCollectionDefaults = function(req, res, next) {
+    var collection = req.params.collection;
+    
+    var message = (ummon.defaults[collection])
+          ? 'Collection '+collection+' defaults successfully set'
+          : 'Collection '+collection+' created and defaults set'
+
+    ummon.defaults[collection] = req.body;
+
+    ummon.emit('task.updated'); // Task.updated because this effect existing tasks
+
+    res.json(200, { 'message': message, 'collection':  collection, "defaults": ummon.defaults[collection]} );
+  }
 
   /**
    * Get a number of tasks. Could be for a specific colleciton
@@ -64,14 +82,14 @@ module.exports = function(ummon){
    *       'tasks': { ...tasks... }
    *     }
    *   }
-   * 
+   *
    * @param  {[type]}   req
    * @param  {[type]}   res
    * @param  {Function} next The callback
    * @return {[type]}        Heavily structured object. See above
    */
-  
-  api.getTasks= function(req, res, next){
+
+  api.getTasks = function(req, res, next) {
     ummon.getTasks(req.params.collection, function(err, collections){
       if (err) {
         return next(err);
@@ -84,7 +102,7 @@ module.exports = function(ummon){
 
   api.getTask = function(req, res, next){
     var p = req.params;
-    
+
     ummon.getTask(p.taskid, function(err, task){
       if (err) {
         return next(err);
@@ -99,7 +117,7 @@ module.exports = function(ummon){
    * Create a task and add it to a collection
    *
    * Accepts:
-   * 
+   *
    *     {
    *        "name":"hello",
    *        "command": "echo Hello;",
@@ -120,7 +138,7 @@ module.exports = function(ummon){
     });
   };
 
-  
+
   api.updateTask = function(req, res, next){
     var p = req.params;
     var t = req.body;
@@ -159,7 +177,7 @@ module.exports = function(ummon){
     } else {
       cmd = 'tail -n' + lines + ' ' + ummon.config.log.path;
     }
-    
+
     es.child(cp.exec(cmd)).pipe(res);
 
     return next();

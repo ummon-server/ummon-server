@@ -48,6 +48,40 @@ test('Create a task', function(t){
 });
 
 
+test('Set a collections default settings', function(t){
+  t.plan(3);
+
+  var req = { params: { "collection":"ummon" }, body: {"cwd":"/home/matt"} };
+  var res = {};
+  var next = function(){};
+
+  res.json = function(status, json) {
+    t.equal(status, 200, 'The status should be 200');
+    t.equal(json.collection, 'ummon', 'The collection returned should be ummon');
+    t.equal(json.defaults.cwd, '/home/matt', 'The task command should be echo');
+  };
+
+  api.setCollectionDefaults(req, res, next);
+});
+
+
+test('Show a collections default settings', function(t){
+  t.plan(3);
+
+  var req = { params: { "collection":"ummon" } };
+  var res = {};
+  var next = function(){};
+
+  res.json = function(status, json) {
+    t.equal(status, 200, 'The status should be 200');
+    t.equal(json.collection, 'ummon', 'The collection returned should be ummon');
+    t.equal(json.defaults.cwd, '/home/matt', 'The task command should be echo');
+  };
+
+  api.getCollectionDefaults(req, res, next);
+});
+
+
 test('Show a single task', function(t){
   t.plan(3);
 
@@ -84,21 +118,21 @@ test('Show multiple tasks', function(t){
 });
 
 
-// test('Update a task', function(t){
-//   t.plan(3);
+test('Update a task', function(t){
+  t.plan(3);
 
-//   var req = { params: { "taskid":"ummon.test"}, body: {"name":"test", "collection":"ummon", "command":"echo goodbye", "trigger": {"time":"* * * * *"}} };
-//   var res = {};
-//   var next = function(){};
+  var req = { params: { "taskid":"ummon.test"}, body: {"name":"test", "collection":"ummon", "command":"echo goodbye", "trigger": {"time":"* * * * *"}} };
+  var res = {};
+  var next = function(){};
 
-//   res.json = function(status, json) {
-//     t.equal(status, 200, 'The status should be 200');
-//     t.equal(json.task.name, 'test', 'The task name should be test');
-//     t.equal(json.task.command, 'echo goodbye', 'The task command should be echo');
-//   };
+  res.json = function(status, json) {
+    t.equal(status, 200, 'The status should be 200');
+    t.equal(json.task.name, 'test', 'The task name should be test');
+    t.equal(json.task.command, 'echo goodbye', 'The task command should be echo');
+  };
 
-//   api.updateTask(req, res, next);
-// });
+  api.updateTask(req, res, next);
+});
 
 
 test('Delete a task', function(t){

@@ -28,6 +28,7 @@
     "node": ">= 0.10.0"
   },
   "scripts": {
+    "start": "nodemon server.js",
     "test": "tap test"
   },
   "devDependencies": {
