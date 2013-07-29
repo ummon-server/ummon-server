@@ -39,7 +39,7 @@ var argv = optimist.usage('Ummon and stuff', {
 if (argv.daemon) require('daemon')();
 
 // Create the pid file, throwing on failure
-// npid.create(argv.pidfile);
+npid.create(argv.pidfile);
 
 // It's possible to pass a string that will be the config path. Catch it here:
 var ummonOptions = (argv.config)
