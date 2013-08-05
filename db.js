@@ -117,16 +117,41 @@ module.exports = function(ummon) {
 
     // Keep track of the last save time
     ummon.lastSave = new Date().getTime();
-
+    ummon.log.info("Saving "+collections.length+" collection(s) to file", collections)
     async.each(collections, db.saveCollection, callback);
   };
 
+
+  /**
+   * Remove data from tasks object that is not neccesary for the saved json file
+   * 
+   * @param  {[type]} collection [description]
+   * @return {[type]}            [description]
+   */
+  db.cleanCollectionMetaData = function(collection) {
+    // This is gross but deep clone code feels gross too
+    // TODO: Steam the json to the file and modify the stream
+    collection = JSON.stringify(collection);
+    collection = JSON.parse(collection);
+    for (var index = 0; index < collection.length; index++) {
+      for (var task in collection[index].tasks) {
+        // Clean up duplicate data we don't need for this
+        ['id', 'name', 'collection'].forEach(function(key){
+          delete collection[index].tasks[task][key]
+        });
+      }
+    };
+
+    return collection;
+  };
 
   db.saveCollection = function(collection, callback) {
     ummon.getTasks(collection, function(err, result){
       if (err) {
         return callback(err);
       }
+
+      result = db.cleanCollectionMetaData(result);
 
       fs.writeFile(ummon.config.tasksPath+'/'+collection+'.tasks.json', JSON.stringify(result[0], null, 2), function (err) {
         callback(err);
