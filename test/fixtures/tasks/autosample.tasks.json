@@ -1,30 +1,33 @@
 {
-  "collection":"autosample",
-  
+  "collection": "autosample",
   "defaults": {
     "cwd": "/var/www/website/"
   },
-
-  "sequences": [
-    ["task1", "task2", "task3", "task4"]
-  ],
-  
   "tasks": {
     "task1": {
-      "cwd": "/var/www/website2/",
       "command": "./update-apis",
+      "cwd": "/var/www/website2/",
       "trigger": {
         "time": "*/10 * * * *"
       }
     },
     "task2": {
-      "command": "./process-data"
+      "command": "./process-data",
+      "trigger": {
+        "after": "autosample.task1"
+      }
     },
     "task3": {
-      "command": "./process-data"
+      "command": "./process-data",
+      "trigger": {
+        "after": "autosample.task2"
+      }
     },
     "task4": {
-      "command": "./process-data"
+      "command": "./process-data",
+      "trigger": {
+        "after": "autosample.task3"
+      }
     }
   }
 }

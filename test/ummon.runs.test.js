@@ -4,12 +4,11 @@ var test = require("tap").test;
 var moment = require("moment");
 var async = require("async");
 
-var ummon = require('..')();
-ummon.autoSave = false;
+var ummon = require('..')({pause:true, autoSave:false});
 
 test('Add an existing task to the queue', function(t){
   t.plan(4);
-  ummon.pause = true;
+  ummon.config.pause = true;
 
   ummon.on('queue.new', function(run){
     t.ok(true, 'The queue.new emitter was emited'); //Should fire twice

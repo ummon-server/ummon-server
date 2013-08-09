@@ -109,16 +109,18 @@ module.exports = function(ummon) {
 
 
   db.saveTasks = function(callback) {
-    var collections = ummon.getCollections();
+    if (ummon.config.tasksPath) {
+      var collections = ummon.getCollections();
 
-    if (!fs.existsSync(ummon.config.tasksPath)) {
-      mkdirp.sync(ummon.config.tasksPath);
+      if (!fs.existsSync(ummon.config.tasksPath)) {
+        mkdirp.sync(ummon.config.tasksPath);
+      }
+
+      // Keep track of the last save time
+      ummon.lastSave = new Date().getTime();
+      ummon.log.info("Saving "+collections.length+" collection(s) to file", collections)
+      async.each(collections, db.saveCollection, callback);
     }
-
-    // Keep track of the last save time
-    ummon.lastSave = new Date().getTime();
-    ummon.log.info("Saving "+collections.length+" collection(s) to file", collections)
-    async.each(collections, db.saveCollection, callback);
   };
 
 

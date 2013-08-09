@@ -8,15 +8,14 @@ var ummon;
 
 test('construct an instance of ummon', function(t){
   t.plan(1);
-  ummon = require('..')();
-  ummon.autoSave = false;
+  ummon = require('..')({pause: true, autoSave: false});
   t.ok(ummon, 'The server should exists');
 });
 
 var testRun;
 
 test('Create a task with a timed trigger and wait for it to add to the queue', function(t) {
-  t.plan(6);
+  t.plan(5);
   ummon.pause = true; // Don't run any task
 
   ummon.createTask({
@@ -30,7 +29,6 @@ test('Create a task with a timed trigger and wait for it to add to the queue', f
     }
   }, function(err, task){
     t.ok(task, 'The callback returns a task');
-    t.equal(ummon.tasks['ummon.hello'].env.TERM, 'dummy', 'Task environmental variables are set');
     t.ok(ummon.tasks['ummon.hello'], 'There is a hello task');
     t.ok(ummon.timers['ummon.hello'], 'There is a hello task timer');
   });
@@ -161,6 +159,19 @@ test('Create collections default values and retrieve a task that inherits them',
   });
 
 });
+
+test('Test getting a task that inherits global task settings', function(t){
+  t.plan(4);
+
+  ummon.config.globalTaskDefaults = { env: {"NODE_ENV":"TEST" }};
+
+  ummon.getTask('ummon.hello', function(err, task){
+    t.notOk(err, 'There is no error');
+    t.ok(task, 'There is a task');
+    t.equal(ummon.tasks['ummon.hello'].env.TERM, 'dummy', 'Task environmental variables are set');
+    t.equal(ummon.tasks['ummon.hello'].env.NODE_ENV, 'TEST', 'Task environmental variables are set');
+  })
+})
 
 
 test('teardown', function(t){

@@ -4,9 +4,7 @@ var test = require("tap").test;
 var moment = require("moment");
 var async = require("async");
 
-var ummon = require('..')();
-ummon.pause = true;
-ummon.autoSave = false;
+var ummon = require('..')({pause:true, autoSave:false});
 
 // Stub in some tasks
 ummon.tasks = {

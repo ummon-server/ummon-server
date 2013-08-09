@@ -2,6 +2,7 @@
   "name":"ummon.server",
   "configPath": "./config/config.json",
   "tasksPath": "./config/tasks/",
+  "autoSave":true,
   "defaultCollection": "ummon",
   "createWorkerPollInterval": 1000,
   "minimalSaveInterval": 1000,
@@ -12,5 +13,7 @@
     "count":4
   },
   "port":8888,
-  "credentials": ["dzJoOnNjaWVuY2U="]
+  "credentials": ["dzJoOnNjaWVuY2U="],
+  "globalTaskDefaults": {},
+  "pause": false
 }

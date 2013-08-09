@@ -2,8 +2,7 @@
 
 var test = require("tap").test;
 
-var ummon = require('..')({tasksPath:null});
-ummon.autoSave = false;
+var ummon = require('..')({pause:true, autoSave:false, tasksPath:null});
 var worker = require('../lib/worker.js');
 var run = require('../lib/run.js');
 

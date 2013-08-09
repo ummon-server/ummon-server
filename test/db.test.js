@@ -3,8 +3,7 @@ var test = require("tap").test;
 var fs = require('fs');
 var rimraf = require('rimraf');
 
-var ummon = require('../lib/ummon')({"tasksPath":false});
-ummon.autoSave = false;
+var ummon = require('../lib/ummon')({pause:true, autoSave:false, tasksPath:false});
 var db = require('../db')(ummon);
 
 //                    Construct!

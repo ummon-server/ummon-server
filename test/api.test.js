@@ -2,7 +2,7 @@ var test = require("tap").test;
 
 var stream = require('stream');
 
-var ummon = require('../lib/ummon')();
+var ummon = require('../lib/ummon')({pause:true, autoSave:false});
 var api = require('../api')(ummon);
 
 ummon.autoSave = false;
