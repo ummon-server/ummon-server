@@ -2,7 +2,7 @@
 
 var test = require("tap").test;
 
-var ummon = require('..')();
+var ummon = require('..')({tasksPath:null});
 ummon.autoSave = false;
 var worker = require('../lib/worker.js');
 var run = require('../lib/run.js');
@@ -12,7 +12,8 @@ var run = require('../lib/run.js');
 // - - - - - - - - - - - - - - - - - - - - - - - - - 
 // 
 var sampleTask = run({
-  "command": "sleep .1 && echo Finished"
+  "command": "echo $TERM Finished",
+  "env": {"TERM":"dumb"}
 });
  
 test('Test successfully running code with a worker', function(t){

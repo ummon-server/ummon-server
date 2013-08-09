@@ -22,11 +22,15 @@ test('Create a task with a timed trigger and wait for it to add to the queue', f
   ummon.createTask({
     "name":"hello",
     "command": "echo Hello;",
+    "env": {
+      "TERM":"dummy"
+    },
     "trigger": {
       "time": moment().add('ms', 100).toDate()
     }
   }, function(err, task){
     t.ok(task, 'The callback returns a task');
+    t.equal(ummon.tasks['ummon.hello'].env.TERM, 'dummy', 'Task environmental variables are set');
     t.ok(ummon.tasks['ummon.hello'], 'There is a hello task');
     t.ok(ummon.timers['ummon.hello'], 'There is a hello task timer');
   });
