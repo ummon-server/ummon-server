@@ -15,5 +15,6 @@
   "port":8888,
   "credentials": ["dzJoOnNjaWVuY2U="],
   "globalTaskDefaults": {},
-  "pause": false
+  "pause": false,
+  "workerToCpuRatio": 1.25
 }
