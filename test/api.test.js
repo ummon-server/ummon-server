@@ -12,7 +12,6 @@ ummon.autoSave = false;
 test('Test successfully create the api object', function(t){
   t.ok(api, 'The api object should exist');
   t.ok(api.ps, 'The ps function should exist');
-  t.ok(api.status, 'The status function should exist');
   t.ok(api.createTask, 'The createTask function should exist');
 
   t.end();
@@ -33,6 +32,25 @@ test('Show processes', function(t){
   api.ps(req, res, next);
 });
 
+test('get server status', function(t){
+  t.plan(7);
+
+  var req = {};
+  var res = {};
+  var next = function(){};
+
+  res.json = function(status, json) {
+    t.type(json.workers, 'object', 'workers should be an object');
+    t.type(json.queue.length, 'number', 'queue should be an array');
+    t.type(json.activeTimers, 'number', 'activeTimers should be a number');
+    t.type(json.isPaused, 'boolean', 'isPaused should be a boolean');
+    t.type(json.maxWorkers, 'number', 'maxWorkers should be a number');
+    t.type(json.collections.length, 'number', 'collections should be an array');
+    t.type(json.totalTasks, 'number', 'totalTasks should be a number');
+  };
+
+  api.getStatus(req, res, next);
+});
 
 test('Create a task', function(t){
   t.plan(2);

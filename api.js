@@ -32,10 +32,10 @@ module.exports = function(ummon){
   };
 
   /**
-   * Ummon Status
+   * Return the configuration object
    */
-  api.status = function(req, res, next) {
-    res.json(200,'status');
+  api.getConfig = function(req, res, next) {
+    res.json(200, ummon.config);
   };
 
 
@@ -52,6 +52,37 @@ module.exports = function(ummon){
     });
   };
 
+
+  /**
+   * Return a snapshot of what is going on
+   *
+   * returns an object like:
+   *
+   *   {
+   *     "workers": [...],
+   *     "queue": [...],
+   *     "activeTimers": 1,
+   *     "isPaused": falase,
+   *     "maxWorkers": 10,
+   *     "collections": 2,
+   *     "totalTasks":
+   *   }
+   */
+  api.getStatus = function(req, res, next){
+    var pids = Object.keys(ummon.workers);
+
+    res.json(200, {
+      "workers": ummon.workers,
+      "queue": ummon.queue.items,
+      "activeTimers": _.size(ummon.timers),
+      "isPaused": ummon.config.pause,
+      "maxWorkers": ummon.MAX_WORKERS,
+      "collections": ummon.getCollections(),
+      "totalTasks": _.size(ummon.tasks)
+    });
+  };
+
+
   api.getCollectionDefaults = function(req, res, next) {
     var collection = req.params.collection;
     res.json(200, { 'collection':  collection, "defaults": ummon.defaults[collection]} );
@@ -59,7 +90,7 @@ module.exports = function(ummon){
 
   api.setCollectionDefaults = function(req, res, next) {
     var collection = req.params.collection;
-    
+
     var message = (ummon.defaults[collection])
           ? 'Collection '+collection+' defaults successfully set'
           : 'Collection '+collection+' created and defaults set'
