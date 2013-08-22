@@ -52,6 +52,40 @@ test('get server status', function(t){
   api.getStatus(req, res, next);
 });
 
+test('get server config', function(t){
+  t.plan(3);
+
+  var req = {};
+  var res = {};
+  var next = function(){};
+
+  res.json = function(status, json) {
+    t.type(json.name, 'string', 'name should be an object');
+    t.type(json.createWorkerPollInterval, 'number', 'createWorkerPollInterval should be a number');
+    t.type(json.log.path, 'string', 'log.path should be a string');
+  };
+
+  api.getConfig(req, res, next);
+});
+
+
+test('set server config', function(t){
+  t.plan(3);
+
+  var req = {query: {name:"science", workerToCpuRatio: "1.50", pause:"true"}};
+  var res = {};
+  var next = function(){};
+
+  res.json = function(status, json) {
+    t.equal(json.name, 'science', 'name should be science');
+    t.equal(json.workerToCpuRatio, 1.50, 'createWorkerPollInterval should be a number');
+    t.equal(json.pause, true, 'pause should be false');
+  };
+
+  api.setConfig(req, res, next);
+});
+
+
 test('Create a task', function(t){
   t.plan(2);
 

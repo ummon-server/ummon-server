@@ -40,6 +40,29 @@ module.exports = function(ummon){
 
 
   /**
+   * Update the configuration
+   *
+   * Currently limited to only top level of config. So
+   * changing log.path won't work just yet
+   */
+  api.setConfig = function(req, res, next) {
+    _.each(req.query, function(value, key) {
+      // Convert strings for true and false to boolean
+      if (value == "true" || value == "false") {
+        value = (value == "true") ? true : false;
+
+      } else if (!isNaN(value)) {
+        value = +value;
+      }
+
+      ummon.config[key] = value;
+    })
+
+    res.json(200, ummon.config);
+  };
+
+
+  /**
    * What tasks are running
    */
   api.ps = function(req, res, next){
@@ -196,6 +219,8 @@ module.exports = function(ummon){
 
 
   api.showLog = function(req, res, next){
+    delete req.params.lines; // Not sure why this is here but deleting it simplifies the code below
+
     var key = Object.keys(req.params)[0];
     var val = req.params[key];
     var lines = req.query.lines;
@@ -208,8 +233,13 @@ module.exports = function(ummon){
     } else {
       cmd = 'tail -n' + lines + ' ' + ummon.config.log.path;
     }
-
-    es.child(cp.exec(cmd)).pipe(res);
+    var d = require('domain').create();
+    d.on('error', function(er) {
+      console.log(er.stack)
+    })
+    d.run(function() {
+      es.child(cp.exec(cmd)).pipe(res);
+    })
 
     return next();
   };

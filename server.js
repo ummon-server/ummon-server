@@ -135,8 +135,10 @@ server.param('taskid', api.doesTaskExist);
 server.get('/ps/:pid', api.ps);
 server.get('/ps', api.ps);
 // server.post('/kill/:pid', api.kill);
-server.get('/status', api.status);
 server.get('/status', api.getStatus);
+server.get('/config', api.getConfig);
+server.put('/config', api.setConfig);
+
 server.post('/tasks/new', api.createTask);
 
 server.get('/tasks/:taskid', api.getTask);
