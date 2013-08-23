@@ -16,7 +16,7 @@ var testRun;
 
 test('Create a task with a timed trigger and wait for it to add to the queue', function(t) {
   t.plan(5);
-  ummon.pause = true; // Don't run any task
+  ummon.config.pause = true; // Don't run any task
 
   ummon.createTask({
     "name":"hello",
@@ -87,11 +87,10 @@ test('Run the previously created tasks', function(t) {
     }, '100');
   });
 
-  ummon.pause = false;
+  ummon.config.pause = false;
   ummon.createWorkerIfReady();
 
   var pid = Object.keys(ummon.workers)[0];
-
   t.equal(ummon.workers[pid].run.id, testRun.id, 'The worker is in the list');
 });
 
