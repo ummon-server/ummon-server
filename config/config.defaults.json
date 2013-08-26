@@ -16,5 +16,6 @@
   "credentials": ["dzJoOnNjaWVuY2U="],
   "globalTaskDefaults": {},
   "pause": false,
-  "workerToCpuRatio": 1.25
+  "workerToCpuRatio": 1.25,
+  "collections": {}
 }
