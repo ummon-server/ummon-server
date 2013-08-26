@@ -52,58 +52,8 @@ module.exports = function(ummon) {
       return callback(new Error('Malformed tasks config file'));
     }
 
-    self.createCollectionAndTasks(config, function(err){
+    ummon.createCollectionAndTasks(config, function(err){
       callback(err);
-    });
-  };
-
-
-  /**
-   * Setup a collection and it's associated tasks
-   *
-   * @see  autoLoadTasks
-   * @param  {Object}   config     Config object from json object
-   * @param  {Function} callback   The callback. Simply returns true if all goes well
-   */
-
-  db.createCollectionAndTasks = function(config, callback) {
-    var self = this;
-
-    // Setup the defaults for this collection
-    ummon.defaults[config.collection] = config.defaults;
-
-    // Bring keys into the object. This simplifies the async forEach below
-    // This feels gross
-    for (var task in config.tasks){
-      config.tasks[task].name = task;
-      config.tasks[task].collection = config.collection;
-    }
-
-    config.tasks = _.toArray(config.tasks);
-
-    async.each(config.tasks, ummon.createTask.bind(ummon), function(err){
-      if (err) { return callback(err); }
-      // Create manually defined sequences
-      if (config.sequences) {
-        config.sequences.forEach(function(sequence){
-          var dependent = sequence.shift();
-          if (dependent.indexOf('.')) { dependent = config.collection + '.' + dependent; }
-
-          sequence.forEach(function(step){
-            if (step.indexOf('.')) { step = config.collection + '.' + step; }
-
-            if (!ummon.tasks[step].trigger) {ummon.tasks[step].trigger = {}}
-
-            ummon.tasks[step].trigger.after = dependent; // Save trigger info in task
-
-            ummon.dependencies['success'].subject(step).dependOn(dependent); // Step DAG graph
-
-            dependent = step;
-          });
-        });
-      }
-
-      callback();
     });
   };
 
@@ -126,7 +76,7 @@ module.exports = function(ummon) {
 
   /**
    * Remove data from tasks object that is not neccesary for the saved json file
-   * 
+   *
    * @param  {[type]} collection [description]
    * @return {[type]}            [description]
    */

@@ -152,6 +152,7 @@ test('Show a single task', function(t){
   api.getTask(req, res, next);
 });
 
+var collection;
 
 test('Show multiple tasks', function(t){
   t.plan(4);
@@ -164,11 +165,32 @@ test('Show multiple tasks', function(t){
     t.equal(status, 200, 'The status should be 200');
     t.equal(json.collections.length, 1, 'showTasks returns 1 collection');
     t.ok(json.collections[0], 'There is an ummon collection');
+    collection = json.collections[0];
     t.ok(json.collections[0].tasks, 'There tasks in the ummon collection');
   };
 
   api.getTasks(req, res, next);
 
+});
+
+
+test('Create new collection', function(t){
+  t.plan(4);
+
+  collection.collection = "newUmmon";
+
+  var req = { params: { collection: collection.collection}, body: collection };
+  var res = {};
+  var next = function(){};
+
+  res.json = function(status, json) {
+    t.equal(status, 200, 'The status should be 200');
+    t.equal(json.collections.length, 1, 'showTasks returns 1 collection');
+    t.equal(json.collections[0].collection, "newUmmon", 'There is an ummon collection');
+    t.ok(json.collections[0].tasks, 'There tasks in the ummon collection');
+  };
+
+  api.setTasks(req, res, next);
 });
 
 

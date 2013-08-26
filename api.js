@@ -14,7 +14,8 @@ module.exports = function(ummon){
   var api = {};
 
 
-  api.doesCollectionExist = function(req, res, next, collection) {
+  api.doesCollectionExist = function(req, res, next) {
+    var collection = req.params.collection
     if (!ummon.defaults[collection] || !_.any(ummon.tasks, function(task){ return (task.collection === collection) })) {
       return next(new restify.ResourceNotFoundError('No collection of name '+req.params.collection+' found'));
     } else {
@@ -23,7 +24,7 @@ module.exports = function(ummon){
   };
 
 
-  api.doesTaskExist = function(req, res, next, collection) {
+  api.doesTaskExist = function(req, res, next) {
     if (!(req.params.taskid in ummon.tasks)) {
       return next(new restify.ResourceNotFoundError('Task not found! Consider broadening your search to a collection'));
     } else {
@@ -36,6 +37,7 @@ module.exports = function(ummon){
    */
   api.getConfig = function(req, res, next) {
     res.json(200, ummon.config);
+    next();
   };
 
 
@@ -59,6 +61,7 @@ module.exports = function(ummon){
     })
 
     res.json(200, ummon.config);
+    next();
   };
 
 
@@ -73,6 +76,7 @@ module.exports = function(ummon){
       "pids": pids,
       "runs": _.pluck(ummon.workers, 'run')
     });
+    next();
   };
 
 
@@ -103,13 +107,16 @@ module.exports = function(ummon){
       "collections": ummon.getCollections(),
       "totalTasks": _.size(ummon.tasks)
     });
+    next();
   };
 
 
   api.getCollectionDefaults = function(req, res, next) {
     var collection = req.params.collection;
     res.json(200, { 'collection':  collection, "defaults": ummon.defaults[collection]} );
+    next();
   }
+
 
   api.setCollectionDefaults = function(req, res, next) {
     var collection = req.params.collection;
@@ -123,7 +130,11 @@ module.exports = function(ummon){
     ummon.emit('task.updated'); // Task.updated because this effect existing tasks
 
     res.json(200, { 'message': message, 'collection':  collection, "defaults": ummon.defaults[collection]} );
+    next();
   }
+
+
+  // api.copyCollection = function(req, )
 
   /**
    * Get a number of tasks. Could be for a specific colleciton
@@ -163,6 +174,28 @@ module.exports = function(ummon){
       }
       res.json(200, { 'task': task } );
       next();
+    });
+  };
+
+
+  /**
+   * PUT a collection
+   *
+   * @param {[type]}   req  [description]
+   * @param {[type]}   res  [description]
+   * @param {Function} next [description]
+   */
+  api.setTasks = function(req, res, next) {
+    ummon.createCollectionAndTasks(req.body, function(err){
+      if (err) {
+        // Assume it's a duplicate task id error
+        return next(new restify.ConflictError(err.message));
+      }
+
+      ummon.getTasks(req.params.collection, function(err, collection){
+        res.json(200, { 'collections': collection } );
+        next();
+      })
     });
   };
 

@@ -96,9 +96,9 @@ var server = restify.createServer({
 // Because for some reason server.log doesn't automatically work
 server.on('after', function(req, res, route, error) {
   if (route) {
-    log.info('%s - %s (matched by route %s)', res.statusCode, req.url, route.spec.path);
+    ummon.log.info('%s - %s (matched by route %s)', res.statusCode, req.url, route.spec.path);
   } else {
-    log.info('%s - %s', res.statusCode, req.url);
+    ummon.log.info('%s - %s', res.statusCode, req.url);
   }
 });
 
@@ -147,6 +147,7 @@ server.del('/tasks/:taskid', api.deleteTask);
 
 server.get('/tasks', api.getTasks);
 server.get('/collections/:collection', api.doesCollectionExist, api.getTasks);
+server.put('/collections/:collection', api.setTasks);
 server.get('/collections/:collection/defaults', api.getCollectionDefaults);
 server.put('/collections/:collection/defaults', api.setCollectionDefaults);
 // server.post('/run/:taskid', api.run);
