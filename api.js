@@ -111,31 +111,6 @@ module.exports = function(ummon){
   };
 
 
-  api.getCollectionDefaults = function(req, res, next) {
-    var collection = req.params.collection;
-    res.json(200, { 'collection':  collection, "defaults": ummon.defaults[collection]} );
-    next();
-  }
-
-
-  api.setCollectionDefaults = function(req, res, next) {
-    var collection = req.params.collection;
-
-    var message = (ummon.defaults[collection])
-          ? 'Collection '+collection+' defaults successfully set'
-          : 'Collection '+collection+' created and defaults set'
-
-    ummon.defaults[collection] = req.body;
-
-    ummon.emit('task.updated'); // Task.updated because this effect existing tasks
-
-    res.json(200, { 'message': message, 'collection':  collection, "defaults": ummon.defaults[collection]} );
-    next();
-  }
-
-
-  // api.copyCollection = function(req, )
-
   /**
    * Get a number of tasks. Could be for a specific colleciton
    * or all configured tasks
@@ -249,6 +224,99 @@ module.exports = function(ummon){
       next();
     });
   };
+
+
+  api.enableTask = function(req, res, next) {
+    var task = ummon.tasks[req.params.taskid];
+
+    // Don't enable a task that is in a disabled collection
+    if (ummon.config.collections[task.collection].enabled === false) {
+      res.json(424, { "message":  "Cannot enabled task " + task.id + " because it's collection is disabled. Please enable collection "+task.collection} );
+      return next();
+    }
+
+    task.enabled = true;
+    ummon.setupTaskTriggers(task);
+
+    res.json(200, { "message": "Task " + task.id + " enabled" });
+    next();
+  }
+
+
+  api.disableTask = function(req, res, next) {
+    ummon.tasks[req.params.taskid].enabled = false;
+    ummon.removeTaskTriggers(req.params.taskid);
+
+    res.json(200, { "message": "Task " + req.params.taskid + " disabled" });
+    next();
+  }
+
+
+  api.getCollectionDefaults = function(req, res, next) {
+    var collection = req.params.collection;
+    res.json(200, { "collection":  collection, "defaults": ummon.defaults[collection]} );
+    next();
+  }
+
+
+  api.setCollectionDefaults = function(req, res, next) {
+    var collection = req.params.collection;
+
+    var message = (ummon.defaults[collection])
+          ? 'Collection '+collection+' defaults successfully set'
+          : 'Collection '+collection+' created and defaults set'
+
+    ummon.defaults[collection] = req.body;
+
+    ummon.emit('task.updated'); // Task.updated because this effect existing tasks
+
+    res.json(200, { 'message': message, "collection":  collection, "defaults": ummon.defaults[collection]} );
+    next();
+  }
+
+
+  api.enableCollection = function(req, res, next) {
+    var collection = req.params.collection;
+    var tasksEnabled = [];
+
+    if (ummon.config.collections[collection].enabled === true) {
+      res.json(304, { "message": "Collection already enabled" })
+      return next();
+    }
+
+    ummon.config.collections[collection].enabled = true;
+    for (var task in ummon.tasks) {
+      if (ummon.tasks[task].collection === collection) {
+        ummon.setupTaskTriggers(ummon.tasks[task]);
+        tasksEnabled.push(task);
+      }
+    }
+
+    res.json(200, { "message":  "Collection " + collection + " successfully enabled", "tasksEnabled": tasksEnabled} );
+    next();
+  }
+
+
+  api.disableCollection = function(req, res, next) {
+    var collection = req.params.collection;
+    var tasksDisabled = [];
+
+    if (ummon.config.collections[collection].enabled === false) {
+      res.json(304, { "message": "Collection already disabled" })
+      return next();
+    }
+
+    ummon.config.collections[collection].enabled = false;
+    for (var task in ummon.tasks) {
+      if (ummon.tasks[task].collection === collection) {
+        ummon.removeTaskTriggers(task);
+        tasksDisabled.push(task);
+      }
+    }
+
+    res.json(200, { "message":  "Collection " + collection + " successfully enabled", "tasksDisabled": tasksDisabled} );
+    next();
+  }
 
 
   api.showLog = function(req, res, next){

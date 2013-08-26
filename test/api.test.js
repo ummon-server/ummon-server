@@ -5,8 +5,6 @@ var stream = require('stream');
 var ummon = require('../lib/ummon')({pause:true, autoSave:false});
 var api = require('../api')(ummon);
 
-ummon.autoSave = false;
-
 //                    Construct!
 // - - - - - - - - - - - - - - - - - - - - - - - - -
 test('Test successfully create the api object', function(t){
@@ -102,40 +100,6 @@ test('Create a task', function(t){
 });
 
 
-test('Set a collections default settings', function(t){
-  t.plan(3);
-
-  var req = { params: { "collection":"ummon" }, body: {"cwd":"/home/matt"} };
-  var res = {};
-  var next = function(){};
-
-  res.json = function(status, json) {
-    t.equal(status, 200, 'The status should be 200');
-    t.equal(json.collection, 'ummon', 'The collection returned should be ummon');
-    t.equal(json.defaults.cwd, '/home/matt', 'The task command should be echo');
-  };
-
-  api.setCollectionDefaults(req, res, next);
-});
-
-
-test('Show a collections default settings', function(t){
-  t.plan(3);
-
-  var req = { params: { "collection":"ummon" } };
-  var res = {};
-  var next = function(){};
-
-  res.json = function(status, json) {
-    t.equal(status, 200, 'The status should be 200');
-    t.equal(json.collection, 'ummon', 'The collection returned should be ummon');
-    t.equal(json.defaults.cwd, '/home/matt', 'The task command should be echo');
-  };
-
-  api.getCollectionDefaults(req, res, next);
-});
-
-
 test('Show a single task', function(t){
   t.plan(3);
 
@@ -152,7 +116,6 @@ test('Show a single task', function(t){
   api.getTask(req, res, next);
 });
 
-var collection;
 
 test('Show multiple tasks', function(t){
   t.plan(4);
@@ -165,32 +128,11 @@ test('Show multiple tasks', function(t){
     t.equal(status, 200, 'The status should be 200');
     t.equal(json.collections.length, 1, 'showTasks returns 1 collection');
     t.ok(json.collections[0], 'There is an ummon collection');
-    collection = json.collections[0];
     t.ok(json.collections[0].tasks, 'There tasks in the ummon collection');
   };
 
   api.getTasks(req, res, next);
 
-});
-
-
-test('Create new collection', function(t){
-  t.plan(4);
-
-  collection.collection = "newUmmon";
-
-  var req = { params: { collection: collection.collection}, body: collection };
-  var res = {};
-  var next = function(){};
-
-  res.json = function(status, json) {
-    t.equal(status, 200, 'The status should be 200');
-    t.equal(json.collections.length, 1, 'showTasks returns 1 collection');
-    t.equal(json.collections[0].collection, "newUmmon", 'There is an ummon collection');
-    t.ok(json.collections[0].tasks, 'There tasks in the ummon collection');
-  };
-
-  api.setTasks(req, res, next);
 });
 
 
@@ -208,6 +150,42 @@ test('Update a task', function(t){
   };
 
   api.updateTask(req, res, next);
+});
+
+
+test('Disable a task', function(t){
+  t.plan(4);
+
+  var req = { params: { "taskid":"ummon.test"} };
+  var res = {};
+  var next = function(){};
+
+  res.json = function(status, json) {
+    t.equal(status, 200, 'The status should be 200');
+    t.equal(json.message, "Task ummon.test disabled", 'The message should be correct');
+    t.equal(ummon.tasks["ummon.test"].enabled, false, 'The task should be marked as disabled');
+    t.notOk(ummon.timers["ummon.test"], 'The timer should be deleted');
+  };
+
+  api.disableTask(req, res, next);
+});
+
+
+test('Enable a task', function(t){
+  t.plan(4);
+
+  var req = { params: { "taskid":"ummon.test"} };
+  var res = {};
+  var next = function(){};
+
+  res.json = function(status, json) {
+    t.equal(status, 200, 'The status should be 200');
+    t.equal(json.message, "Task ummon.test enabled", 'The message should be correct');
+    t.equal(ummon.tasks["ummon.test"].enabled, true, 'The task should be marked as enabled');
+    t.not(ummon.timers["ummon.test"], 'The timer should be created');
+  };
+
+  api.enableTask(req, res, next);
 });
 
 
