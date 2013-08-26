@@ -328,7 +328,8 @@ module.exports = function(ummon){
     var cmd;
 
     // We need to build a tail command like:
-    //    grep '"taskid":"cmmi.apply-feedback"' ummon.log | tail -n5
+    //
+    //    ep '"taskid":"cmmi.apply-feedback"' ummon.log | tail -n5
     if (key) {
       cmd = 'grep \'"' + key + '":"' + val + '"\' ' + ummon.config.log.path + ' | tail -n' + lines;
     } else {
