@@ -144,12 +144,16 @@ server.post('/tasks/new', api.createTask);
 server.get('/tasks/:taskid', api.getTask);
 server.put('/tasks/:taskid', api.updateTask);
 server.del('/tasks/:taskid', api.deleteTask);
+server.put('/tasks/:taskid/enable', api.enableTask);
+server.put('/tasks/:taskid/disable', api.disableTask);
 
 server.get('/tasks', api.getTasks);
 server.get('/collections/:collection', api.doesCollectionExist, api.getTasks);
 server.put('/collections/:collection', api.setTasks);
 server.get('/collections/:collection/defaults', api.getCollectionDefaults);
 server.put('/collections/:collection/defaults', api.setCollectionDefaults);
+server.put('/collections/:collection/enable', api.enableCollection);
+server.put('/collections/:collection/disable', api.disableCollection);
 // server.post('/run/:taskid', api.run);
 // server.post('/run', api.run);
 server.get('/log/collection/:collection', api.showLog);

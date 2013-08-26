@@ -4,8 +4,7 @@ var test = require("tap").test;
 var moment = require("moment");
 var async = require("async");
 
-var ummon = require('..')();
-ummon.autoSave = false;
+var ummon = require('..')({autoSave:false});
 
 test('Triggerer proper tasks on failure', function(t){
   t.plan(11)
@@ -27,6 +26,7 @@ test('Triggerer proper tasks on failure', function(t){
   function(err){
     t.ok(ummon.tasks['ummon.goodbye'], 'There is a goodbye task');
     t.ok(ummon.tasks['ummon.runMeOnErrors'], 'There is a runMeOnErrors task');
+    console.log(ummon.dependencies['error'].state)
     t.equal(ummon.getTaskReferences('goodbye', 'error')[0], 'ummon.runMeOnErrors', 'ummon.runMeOnErrors is a dependent task for goodbye');
   });
 
