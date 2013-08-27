@@ -19,3 +19,4 @@ test.js
 test.sh
 
 config/tasks/*
+config/config.json
