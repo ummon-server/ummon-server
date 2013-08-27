@@ -37,7 +37,7 @@ var testQueue = queue(ummon);
 
 
 //                    Construct!
-// - - - - - - - - - - - - - - - - - - - - - - - - - 
+// - - - - - - - - - - - - - - - - - - - - - - - - -
 test('construct an instance of a queue', function(t){
   t.plan(2);
 
@@ -49,10 +49,10 @@ test('construct an instance of a queue', function(t){
 test('Test adding some items to the queue', function(t){
   t.plan(1);
 
-  testQueue.push('one');
-  testQueue.push('two');
-  testQueue.push('three');
-  testQueue.push('four');
+  testQueue.push({command:'one'});
+  testQueue.push({command:'two'});
+  testQueue.push({command:'three'});
+  testQueue.push({command:'four'});
 
   t.equal(testQueue.items.length, 4, 'There are four items in the queue');
 });
@@ -64,5 +64,5 @@ test('Test retreiving the next iterm from the queue', function(t){
   var item = testQueue.getNext();
 
   t.equal(testQueue.items.length, 3, 'There are now three items in the queue');
-  t.equal(item.task, 'one', 'The correct item was returned');
+  t.equal(item.task.command, 'one', 'The correct item was returned');
 });
