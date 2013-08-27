@@ -32,7 +32,7 @@ test('Triggerer proper tasks on failure', function(t){
 
   async.series([
     function(callback){ ummon.createTask({"name": "goodbye", "command": "echo goodbye && exit 1"},  callback)},
-    function(callback){ ummon.createTask({ "name": "runMeOnErrors", "command": "echo <%= run.id %> failed","trigger": { "afterFailed": 'goodbye' }}, callback) }
+    function(callback){ ummon.createTask({ "name": "runMeOnErrors", "command": "echo <%= run.triggeredBy.id %> failed","trigger": { "afterFailed": 'goodbye' }}, callback) }
   ],
   function(err){
     t.ok(ummon.tasks['ummon.goodbye'], 'There is a goodbye task');
