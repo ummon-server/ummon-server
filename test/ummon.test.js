@@ -159,15 +159,18 @@ test('Create collections default values and retrieve a task that inherits them',
 });
 
 test('Test getting a task that inherits global task settings', function(t){
-  t.plan(4);
+  t.plan(6);
 
+  ummon.defaults.ummon = { 'cwd': '/user/bill' };
   ummon.config.globalTaskDefaults = { env: {"NODE_ENV":"TEST" }};
 
   ummon.getTask('ummon.hello', function(err, task){
     t.notOk(err, 'There is no error');
     t.ok(task, 'There is a task');
     t.equal(ummon.tasks['ummon.hello'].env.TERM, 'dummy', 'Task environmental variables are set');
-    t.equal(ummon.tasks['ummon.hello'].env.NODE_ENV, 'TEST', 'Task environmental variables are set');
+    t.notOk(ummon.tasks['ummon.hello'].cwd, 'Defaults are not set on the master task');
+    t.notOk(ummon.tasks['ummon.hello'].env.NODE_ENV, 'Defaults are not set on the master task');
+    t.equal(task.env.NODE_ENV, 'TEST', 'Gloabl default are attached to the retrieved');
   })
 })
 
