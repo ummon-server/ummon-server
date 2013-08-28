@@ -37,9 +37,13 @@ test('get server status', function(t){
   var res = {};
   var next = function(){};
 
+  ummon.workers = {123:{run:{task: {id: 123}}}}
+  ummon.queue.items = [{task: {id: 321}}]
+
   res.json = function(status, json) {
-    t.type(json.workers.length, 'number', 'workers should be an object');
-    t.type(json.queue.length, 'number', 'queue should be an array');
+    console.log(json.workers, json.queue)
+    t.similar(json.workers, [123], 'workers should be an object');
+    t.similar(json.queue, [321], 'queue should be an array');
     t.type(json.activeTimers, 'object', 'activeTimers should be an object');
     t.type(json.isPaused, 'boolean', 'isPaused should be a boolean');
     t.type(json.maxWorkers, 'number', 'maxWorkers should be a number');

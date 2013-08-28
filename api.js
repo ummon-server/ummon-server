@@ -103,7 +103,7 @@ module.exports = function(ummon){
       : [];
 
     var queuedItems = (_.size(ummon.queue.items))
-      ? _.map(ummon.queue.items, function(iterm) {return item.task.id})
+      ? _.map(ummon.queue.items, function(item) {return item.task.id})
       : [];
 
     res.json(200, {
