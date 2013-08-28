@@ -246,6 +246,8 @@ module.exports = function(ummon){
     task.enabled = true;
     ummon.setupTaskTriggers(task);
 
+    ummon.emit('task.updated'); // Task.updated because this effect existing tasks
+
     res.json(200, { "message": "Task " + task.id + " enabled" });
     next();
   }
@@ -254,6 +256,8 @@ module.exports = function(ummon){
   api.disableTask = function(req, res, next) {
     ummon.tasks[req.params.taskid].enabled = false;
     ummon.removeTaskTriggers(req.params.taskid);
+
+    ummon.emit('task.updated'); // Task.updated because this effect existing tasks
 
     res.json(200, { "message": "Task " + req.params.taskid + " disabled" });
     next();
@@ -300,6 +304,8 @@ module.exports = function(ummon){
       }
     }
 
+    ummon.emit('task.updated'); // Task.updated because this effect existing tasks
+
     res.json(200, { "message":  "Collection " + collection + " successfully enabled", "tasksEnabled": tasksEnabled} );
     next();
   }
@@ -321,6 +327,8 @@ module.exports = function(ummon){
         tasksDisabled.push(task);
       }
     }
+
+    ummon.emit('task.updated'); // Task.updated because this effect existing tasks
 
     res.json(200, { "message":  "Collection " + collection + " successfully enabled", "tasksDisabled": tasksDisabled} );
     next();
