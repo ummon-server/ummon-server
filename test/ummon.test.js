@@ -16,7 +16,6 @@ var testRun;
 
 test('Create a task with a timed trigger and wait for it to add to the queue', function(t) {
   t.plan(5);
-  ummon.config.pause = true; // Don't run any task
 
   ummon.createTask({
     "name":"hello",

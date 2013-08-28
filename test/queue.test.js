@@ -49,20 +49,30 @@ test('construct an instance of a queue', function(t){
 test('Test adding some items to the queue', function(t){
   t.plan(1);
 
-  testQueue.push({command:'one'});
-  testQueue.push({command:'two'});
-  testQueue.push({command:'three'});
-  testQueue.push({command:'four'});
+  testQueue.push({id: 'one', command:'one'});
+  testQueue.push({id: 'two', command:'two'});
+  testQueue.push({id: 'three', command:'three'});
+  testQueue.push({id: 'four', command:'four'});
 
   t.equal(testQueue.items.length, 4, 'There are four items in the queue');
 });
 
 
-test('Test retreiving the next iterm from the queue', function(t){
+test('Test retreiving the next item from the queue', function(t){
   t.plan(2);
 
   var item = testQueue.getNext();
 
   t.equal(testQueue.items.length, 3, 'There are now three items in the queue');
   t.equal(item.task.command, 'one', 'The correct item was returned');
+});
+
+
+test('Test retreiving the next item from the queue that is not currently running', function(t){
+  t.plan(2);
+
+  var item = testQueue.getNext(['two']);
+
+  t.equal(testQueue.items.length, 2, 'There are now two items in the queue');
+  t.equal(item.task.command, 'three', 'The correct item was returned');
 });
