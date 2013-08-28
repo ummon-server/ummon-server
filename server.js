@@ -93,12 +93,11 @@ var server = restify.createServer({
   log: ummon.log
 });
 
-// Because for some reason server.log doesn't automatically work
 server.on('after', function(req, res, route, error) {
   if (route) {
-    ummon.log.info('%s - %s (matched by route %s)', res.statusCode, req.url, route.spec.path);
+    ummon.log.info({apiUrl:req.url},'%s - %s (matched by route %s)', res.statusCode, req.url, route.spec.path);
   } else {
-    ummon.log.info('%s - %s', res.statusCode, req.url);
+    ummon.log.info({apiUrl:req.url}, '%s - %s', res.statusCode, req.url);
   }
 });
 

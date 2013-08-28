@@ -21,7 +21,6 @@ module.exports = function(ummon) {
    */
   db.loadTasks = function(callback) {
     var self = this;
-
     glob(ummon.config.tasksPath + '*.json', function (err, files) {
       if (err || !files) {
         return callback(err);

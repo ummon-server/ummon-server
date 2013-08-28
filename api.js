@@ -98,9 +98,17 @@ module.exports = function(ummon){
   api.getStatus = function(req, res, next){
     var pids = Object.keys(ummon.workers);
 
+    var workers = (_.size(ummon.workers))
+      ? _.map(ummon.workers, function(worker) {return worker.run.task.id})
+      : [];
+
+    var queuedItems = (_.size(ummon.queue.items))
+      ? _.map(ummon.queue.items, function(iterm) {return item.task.id})
+      : [];
+
     res.json(200, {
-      "workers": ummon.workers,
-      "queue": ummon.queue.items,
+      "workers": workers,
+      "queue": queuedItems,
       "activeTimers": Object.keys(ummon.timers),
       "isPaused": ummon.config.pause,
       "maxWorkers": ummon.MAX_WORKERS,

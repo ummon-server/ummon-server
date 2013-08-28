@@ -38,7 +38,7 @@ test('get server status', function(t){
   var next = function(){};
 
   res.json = function(status, json) {
-    t.type(json.workers, 'object', 'workers should be an object');
+    t.type(json.workers.length, 'number', 'workers should be an object');
     t.type(json.queue.length, 'number', 'queue should be an array');
     t.type(json.activeTimers, 'object', 'activeTimers should be an object');
     t.type(json.isPaused, 'boolean', 'isPaused should be a boolean');
