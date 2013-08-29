@@ -26,7 +26,8 @@ var argv = require('optimist')
   })
   .argv
 
-var config = require('../lib/ummon').loadConfig()
+var config = require(require('path').resolve(__dirname, '../lib/ummon.js')).loadConfig()
+
 var runID = argv.run;
 
 es.pipeline(
