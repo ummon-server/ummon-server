@@ -29,6 +29,7 @@ var argv = require('optimist')
 var config = require(require('path').resolve(__dirname, '../lib/ummon.js')).loadConfig()
 
 var runID = argv.run;
+var run;
 
 es.pipeline(
   fs.createReadStream(config.log.path, {encoding: 'utf8'}),
@@ -37,6 +38,9 @@ es.pipeline(
   es.map(function (data, callback) {
     // Filter out only the runid we want
     if (data.runid === runID) {
+      if (data.run) {
+        run = data.run
+      }
       callback(null, data)
     } else {
       callback()
@@ -48,19 +52,15 @@ es.pipeline(
     // a simple string
     if (!argv.verbose) {
       data = JSON.parse(data)
-      // Only show the date on worker start and worker end lines
-      if (data.msg.indexOf('worker') === 0 || data.msg.indexOf('A task run') === 0) {
-        data = data.time + " - " + data.msg + '\n';
-      } else {
-        data = data.msg + '\n';
-      }
+
+      data = data.msg + '\n';
     }
     callback(null, data)
   }),
   es.wait(function (err, data) {
     if (argv.campfire) {
 
-      data = "[Tasks Error]\n\n"+data
+      data = "[Tasks Error] "+ run.task.id+" exited with code " + run.exitCode + " on "+require('os').hostname()+"\n\n" + data;
 
       request.post({
         url:config.campfire.speak_url,
@@ -69,6 +69,5 @@ es.pipeline(
         json: true
       })
     }
-    console.log(data)
   })
 )
