@@ -4,7 +4,7 @@
   "tasksPath": "./config/tasks/",
   "autoSave":true,
   "defaultCollection": "ummon",
-  "createWorkerPollInterval": 1000,
+  "createWorkerPollInterval": 250,
   "minimalSaveInterval": 1000,
   "log": {
     "path":"./log/server.log",
