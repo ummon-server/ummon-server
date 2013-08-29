@@ -2,7 +2,7 @@
 
 Ummon is node.js application for managing, queuing, running and monitoring external tasks. Think of it as a lightweight hybrid of Jenkins & Resque
 
-## Goals of this project
+### Goals of this project
 
 Many large web applications have long running tasks that are a smattering of cron, supervisor jobs and tasks triggered by the applicaiton itself. Ummon goal is to unify all of these tasks under one smart application to provide the following benefits:
 
@@ -11,18 +11,18 @@ Many large web applications have long running tasks that are a smattering of cro
 * To expose many interfaces by which to manage and monitor all of your tasks (CLI, REST api, JSON log files)
 * To setup intelligent task dependancies (ie: run taskB only after taskA successfully completes)
 
-## Practical Use Cases
+### Practical Use Cases
 
 * Any command put into cron. Backup, Regular API consumption, Log processing
   * Why not use cron? Logs are easily queriable and all tasks are queued so there is no risk of stampeding the server
 * Any task you would run through Jenkins
   * Why? Simplier setup and configuration. Less opinionated.
 
-## Limitations?
+### Limitations?
 
 Unlike [resque](https://github.com/resque/resque) or [node-worker-farm](https://github.com/rvagg/node-worker-farm), you can only run terminal commands.
 
-## Glossary
+### Glossary
 
 * **Task:** The core unit. Tasks are information about work that needs to be executed: The command, its working directory, when it should run, etc.
   * When it's time for a task to run, it is *triggered*. A task can be triggered manually by the user, by a cron timer or by the successful or unsuccessful completion of another task
@@ -33,11 +33,11 @@ Unlike [resque](https://github.com/resque/resque) or [node-worker-farm](https://
 
 # Installation and Setup
 
-## Prerequisites
+### Prerequisites
 
 Ummon has one dependency: [node.js](http://nodejs.org/) version 0.10 or above
 
-## Installation
+### Installation
 
 If you want to play around with ummon to see whats possible
 
@@ -51,7 +51,7 @@ To setup ummon-server on a linux server, complete the following:
 3. Modify or create `config.json`. If you're using the example init script, the file should be placed in `/etc/ummon/`
 4. Once your init script is in place, you can start ummon with `/etc/init.d/ummon start`
 
-## Configuration
+### Configuration
 
 * `name`: The name of your ummon instance. Defaults to `ummon.server`*
 * `port`: The port ummon will run and listen on. Defaults to `8888`
