@@ -292,7 +292,7 @@ module.exports = function(ummon){
     var tasksEnabled = [];
 
     if (ummon.config.collections[collection].enabled === true) {
-      res.json(304, { "message": "Collection already enabled" })
+      res.json(304, {"message": "Collection already enabled"})
       return next();
     }
 
@@ -330,7 +330,7 @@ module.exports = function(ummon){
 
     ummon.emit('task.updated'); // Task.updated because this effect existing tasks
 
-    res.json(200, { "message":  "Collection " + collection + " successfully enabled", "tasksDisabled": tasksDisabled} );
+    res.json(200, { "message":  "Collection " + collection + " successfully disabled", "tasksDisabled": tasksDisabled} );
     next();
   }
 
