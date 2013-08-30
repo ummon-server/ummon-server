@@ -292,7 +292,7 @@ module.exports = function(ummon){
     var tasksEnabled = [];
 
     if (ummon.config.collections[collection].enabled === true) {
-      res.json(304, {"message": "Collection already enabled"})
+      res.json(304)
       return next();
     }
 
@@ -316,7 +316,7 @@ module.exports = function(ummon){
     var tasksDisabled = [];
 
     if (ummon.config.collections[collection].enabled === false) {
-      res.json(304, { "message": "Collection already disabled" })
+      res.json(304)
       return next();
     }
 
