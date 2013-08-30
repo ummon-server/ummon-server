@@ -193,20 +193,22 @@ test('Enable a task', function(t){
 });
 
 
-test('Delete a task', function(t){
-  t.plan(3);
+test('Delete a collection task', function(t){
+  t.plan(5);
 
-  var req = { params: { "taskid":"ummon.test"} };
+  var req = { params: { "collection":"ummon"} };
   var res = {};
   var next = function(){};
 
   res.json = function(status) {
     t.equal(status, 200, 'The status should be 200');
+    t.notOk(ummon.defaults["ummon"], 'There is no defaults');
+    t.notOk(ummon.config.collections["ummon"], 'There is no settings');
     t.notOk(ummon.timers["ummon.test"], 'The timer should be deleted');
     t.notOk(ummon.tasks["ummon.test"], 'The task should be deleted');
   };
 
-  api.deleteTask(req, res, next);
+  api.deleteCollection(req, res, next);
 });
 
 

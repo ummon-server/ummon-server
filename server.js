@@ -153,6 +153,7 @@ server.get('/collections/:collection/defaults', api.doesCollectionExist, api.get
 server.put('/collections/:collection/defaults', api.setCollectionDefaults);
 server.put('/collections/:collection/enable', api.doesCollectionExist, api.enableCollection);
 server.put('/collections/:collection/disable', api.doesCollectionExist, api.disableCollection);
+server.del('/collections/:collection', api.doesCollectionExist, api.deleteCollection);
 // server.post('/run/:taskid', api.run);
 // server.post('/run', api.run);
 server.get('/log/collection/:collection', api.showLog);

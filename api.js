@@ -8,6 +8,7 @@ var restify = require('restify');
 var cp = require('child_process')
 var es = require('event-stream');
 var _ = require('underscore');
+var async = require('async');
 
 
 module.exports = function(ummon){
@@ -332,6 +333,28 @@ module.exports = function(ummon){
 
     res.json(200, { "message":  "Collection " + collection + " successfully disabled", "tasksDisabled": tasksDisabled} );
     next();
+  }
+
+
+  api.deleteCollection = function(req, res, next) {
+    var collection = req.params.collection;
+    console.log('DELETEING')
+    delete ummon.config.collections[collection];
+    delete ummon.defaults[collection];
+
+    var collectionDbPath = ummon.config.tasksPath + '/' + collection + '.tasks.json';
+    if (fs.existsSync(collectionDbPath)) {
+      fs.unlinkSync(collectionDbPath)
+    }
+
+    var taskIds = ummon.getTaskIds(collection+'*');
+
+    async.each(taskIds, ummon.deleteTask.bind(ummon), function(err){
+      ummon.emit('task.deleted'); // Task.updated because this effect existing tasks
+
+      res.json(200, { "message":  "Collection " + collection + " successfully deleted" } );
+      next();
+    });
   }
 
 
