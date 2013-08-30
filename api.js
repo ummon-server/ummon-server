@@ -360,26 +360,35 @@ module.exports = function(ummon){
 
   api.showLog = function(req, res, next){
     delete req.params.lines; // Not sure why this is here but deleting it simplifies the code below
-    if (['collection', 'task', 'run'].indexOf(Object.keys(req.params)[0]) !== -1){
+    console.log(req.params)
+    if (['collection', 'taskid', 'runid'].indexOf(Object.keys(req.params)[0]) !== -1){
       var key = Object.keys(req.params)[0];
       var val = req.params[key];
     }
 
     var lines = req.query.lines;
     var runsOnly = (req.query.runsOnly) ? true : false;
-    var cmd;
 
     // We need to build a tail command like:
     //
     //    ep '"taskid":"cmmi.apply-feedback"' ummon.log | tail -n5
+
+    var cmd = 'cat ' + ummon.config.log.path;
+
     if (key) {
-      cmd = 'grep \'"' + key + '":"' + val + '"\' ' + ummon.config.log.path + ' | tail -n' + lines;
-    } else if (runsOnly) {
-      cmd = 'grep \'"run":\' ' + ummon.config.log.path + ' | tail -n' + lines;
-    } else {
-      cmd = 'tail -n' + lines + ' ' + ummon.config.log.path;
+      cmd += ' | grep \'"' + key + '":"' + val + '"\' ';
     }
+
+    if (runsOnly) {
+      cmd += ' | grep \'"run":\'';
+    }
+
+    cmd += ' | tail -n' + lines;
+
+
+
     console.log(cmd)
+
     var d = require('domain').create();
     d.on('error', function(er) {
       console.log(er.stack)
