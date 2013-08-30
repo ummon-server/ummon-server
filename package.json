@@ -1,7 +1,7 @@
 {
   "name": "ummon-server",
   "description": "Ummon is node.js application for managing, queuing, running and monitoring externally running tasks",
-  "version": "0.0.26",
+  "version": "0.0.27",
   "homepage": "https://github.com/punkave/ummon-server",
   "author": {
     "name": "Matt McManus",
