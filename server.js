@@ -128,8 +128,6 @@ server.use(function (req, res, next){
 // Set up the api
 var api = require('./api')(ummon);
 
-server.param('taskid', api.doesTaskExist);
-
 // The routes!
 server.get('/ps/:pid', api.ps);
 server.get('/ps', api.ps);
@@ -140,11 +138,11 @@ server.put('/config', api.setConfig);
 
 server.post('/tasks/new', api.createTask);
 
-server.get('/tasks/:taskid', api.getTask);
+server.get('/tasks/:taskid', api.getTasks);
 server.put('/tasks/:taskid', api.updateTask);
-server.del('/tasks/:taskid', api.deleteTask);
-server.put('/tasks/:taskid/enable', api.enableTask);
-server.put('/tasks/:taskid/disable', api.disableTask);
+server.del('/tasks/:taskid', api.doesTaskExist, api.deleteTask);
+server.put('/tasks/:taskid/enable', api.doesTaskExist, api.enableTask);
+server.put('/tasks/:taskid/disable', api.doesTaskExist, api.disableTask);
 
 server.get('/tasks', api.getTasks);
 server.get('/collections/:collection', api.doesCollectionExist, api.getTasks);
