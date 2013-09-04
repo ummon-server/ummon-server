@@ -87,7 +87,7 @@ module.exports = function(ummon) {
     for (var index = 0; index < collection.length; index++) {
       for (var task in collection[index].tasks) {
         // Clean up duplicate data we don't need for this
-        ['id', 'name', 'collection'].forEach(function(key){
+        ['id', 'name', 'collection', 'recentExitCodes'].forEach(function(key){
           delete collection[index].tasks[task][key]
         });
       }
@@ -104,7 +104,9 @@ module.exports = function(ummon) {
 
       result = db.cleanCollectionMetaData(result);
 
-      fs.writeFile(ummon.config.tasksPath+'/'+collection+'.tasks.json', JSON.stringify(result[0], null, 2), function (err) {
+      var resultStringified = JSON.stringify(result[0], null, '\t');
+
+      fs.writeFile(ummon.config.tasksPath+'/'+collection+'.tasks.json', resultStringified, function (err) {
         callback(err);
       });
     });
