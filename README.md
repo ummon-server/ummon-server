@@ -60,6 +60,7 @@ To set up ummon-server on Linux:
 * `defaultCollection`: Name of the default collection for tasks. Defaults to  `ummon`.
 * `createWorkerPollInterval`: Interval at which Ummon checks if it can run a new worker. Defaults to  `1000`.
 * `minimalSaveInterval`: Minimal amount of time before Ummon auto saves again. Defaults to `1000`.
+* `maxQueueSize`: The maximum number of runs in the queue before ummon will error. Defaults to `500`.
 * `log`:
   * `path`: Path to Ummon's log file. Consider `/var/log/ummon/server.log`. Defaults to `./log/server.log`.
   * `level`: Level at which to log to file. Defaults to `debug`.

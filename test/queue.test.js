@@ -4,9 +4,9 @@ var test = require("tap").test;
 
 var queue = require('../lib/queue.js');
 
-var ummon = { emit: function(name) {} }; // emulate event emitter
+var ummon = { emit: function(name) {}, log: { error: function(err){}} }; // emulate event emitter
 
-var testQueue = queue(ummon);
+var testQueue = queue({maxSize: 4}, ummon);
 
 
 //                    Construct!
@@ -29,6 +29,15 @@ test('Test adding some items to the queue', function(t){
 
   t.equal(testQueue.items.length, 4, 'There are four items in the queue');
 });
+
+
+test('Test adding an item to a full queue', function(t){
+  t.plan(1);
+
+  testQueue.push({id: 'five', command:'five'}, function(err){
+    t.ok(err, 'There is an error');
+  });
+})
 
 
 test('Test retreiving the next item from the queue', function(t){

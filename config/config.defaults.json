@@ -6,6 +6,7 @@
   "defaultCollection": "ummon",
   "createWorkerPollInterval": 250,
   "minimalSaveInterval": 1000,
+  "maxQueueSize": 500,
   "log": {
     "path":"./log/server.log",
     "level":"debug",
