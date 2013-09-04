@@ -58,16 +58,19 @@ es.pipeline(
     callback(null, data)
   }),
   es.wait(function (err, data) {
-    if (argv.campfire) {
-
+    if (data) {
       data = "[Tasks Error] "+ run.task.id+" exited with code " + run.exitCode + " on "+require('os').hostname()+"\n\n" + data;
-
-      request.post({
-        url:config.campfire.speak_url,
-        body: {"message":{"body":data, "type":"PasteMessage"}},
-        auth: {user: config.campfire.apitoken},
-        json: true
-      })
+      if (argv.campfire) {
+        request.post({
+          url:config.campfire.speak_url,
+          body: {"message":{"body":data, "type":"PasteMessage"}},
+          auth: {user: config.campfire.apitoken},
+          json: true
+        })
+      }
+      console.log(data)
+    } else {
+      console.error('No information found for that run-id')
     }
   })
 )
