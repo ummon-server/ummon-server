@@ -9,7 +9,7 @@ var ummon = require('..')({autoSave:false});
 var taskRunId;
 
 test('Triggerer proper tasks on failure', function(t){
-  t.plan(12)
+  t.plan(13)
 
   ummon.on('queue.new', function(run){
     t.ok(true, 'The queue.new emitter was emited');
@@ -32,12 +32,14 @@ test('Triggerer proper tasks on failure', function(t){
 
   async.series([
     function(callback){ ummon.createTask({"name": "goodbye", "command": "echo goodbye && exit 1"},  callback)},
-    function(callback){ ummon.createTask({ "name": "runMeOnErrors", "command": "echo <%= run.triggeredBy.id %> failed","trigger": { "afterFailed": 'goodbye' }}, callback) }
+    function(callback){ ummon.createTask({ "name": "runMeOnErrors", "command": "echo <%= run.triggeredBy.id %> failed","trigger": { "afterFailed": '*' }}, callback) },
+    function(callback){ ummon.createTask({ "name": "adios", "command": "echo adios && exit 1"}, callback) }
   ],
   function(err){
     t.ok(ummon.tasks['ummon.goodbye'], 'There is a goodbye task');
     t.ok(ummon.tasks['ummon.runMeOnErrors'], 'There is a runMeOnErrors task');
     t.equal(ummon.getTaskReferences('goodbye', 'error')[0], 'ummon.runMeOnErrors', 'ummon.runMeOnErrors is a dependent task for goodbye');
+    t.equal(ummon.getTaskReferences('adios', 'error')[0], 'ummon.runMeOnErrors', 'ummon.runMeOnErrors is a dependent task for adios, even though it was created after runMeOnErrors');
   });
 
   ummon.runTask('goodbye', function(q){})

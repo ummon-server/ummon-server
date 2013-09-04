@@ -250,7 +250,7 @@ module.exports = function(ummon){
     task.enabled = true;
     ummon.setupTaskTriggers(task);
 
-    ummon.emit('task.updated'); // Task.updated because this effect existing tasks
+    ummon.emit('task.updated', task.id); // Task.updated because this effect existing tasks
 
     res.json(200, { "message": "Task " + task.id + " enabled" });
     next();
@@ -258,12 +258,14 @@ module.exports = function(ummon){
 
 
   api.disableTask = function(req, res, next) {
-    ummon.tasks[req.params.taskid].enabled = false;
-    ummon.removeTaskTriggers(req.params.taskid);
+    var taskid = req.params.taskid;
 
-    ummon.emit('task.updated'); // Task.updated because this effect existing tasks
+    ummon.tasks[taskid].enabled = false;
+    ummon.removeTaskTriggers(taskid);
 
-    res.json(200, { "message": "Task " + req.params.taskid + " disabled" });
+    ummon.emit('task.updated', taskid); // Task.updated because this effect existing tasks
+
+    res.json(200, { "message": "Task " + taskid + " disabled" });
     next();
   }
 
@@ -284,7 +286,7 @@ module.exports = function(ummon){
 
     ummon.defaults[collection] = req.body;
 
-    ummon.emit('task.updated'); // Task.updated because this effect existing tasks
+    ummon.emit('task.updated', collection); // Task.updated because this effect existing tasks
 
     res.json(200, { 'message': message, "collection":  collection, "defaults": ummon.defaults[collection]} );
     next();
@@ -308,7 +310,7 @@ module.exports = function(ummon){
       }
     }
 
-    ummon.emit('task.updated'); // Task.updated because this effect existing tasks
+    ummon.emit('task.updated', collection); // Task.updated because this effect existing tasks
 
     res.json(200, { "message":  "Collection " + collection + " successfully enabled", "tasksEnabled": tasksEnabled} );
     next();
@@ -332,7 +334,7 @@ module.exports = function(ummon){
       }
     }
 
-    ummon.emit('task.updated'); // Task.updated because this effect existing tasks
+    ummon.emit('task.updated', collection); // Task.updated because this effect existing tasks
 
     res.json(200, { "message":  "Collection " + collection + " successfully disabled", "tasksDisabled": tasksDisabled} );
     next();
@@ -341,7 +343,7 @@ module.exports = function(ummon){
 
   api.deleteCollection = function(req, res, next) {
     var collection = req.params.collection;
-    console.log('DELETEING')
+
     delete ummon.config.collections[collection];
     delete ummon.defaults[collection];
 
@@ -353,7 +355,7 @@ module.exports = function(ummon){
     var taskIds = ummon.getTaskIds(collection+'*');
 
     async.each(taskIds, ummon.deleteTask.bind(ummon), function(err){
-      ummon.emit('task.deleted'); // Task.updated because this effect existing tasks
+      ummon.emit('task.deleted', collection); // Task.updated because this effect existing tasks
 
       res.json(200, { "message":  "Collection " + collection + " successfully deleted" } );
       next();
