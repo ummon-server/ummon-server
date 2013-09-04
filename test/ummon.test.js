@@ -60,7 +60,7 @@ test('Test creating dependent tasks', function(t){
   ],
   function(err){
     t.ok(ummon.tasks['ummon.goodbye'], 'There is a goodbye task');
-    t.equal(ummon.getTaskReferences('hello')[0], 'ummon.goodbye', 'ummon.hello is a dependent task for goodbye');
+    t.equal(ummon.getTaskReferences('ummon.hello')[0], 'ummon.goodbye', 'ummon.hello is a dependent task for goodbye');
     t.equal(ummon.getTaskReferences('ummon.one')[1], 'ummon.twotwo', 'task one is referenced by two tasks');
     t.equal(ummon.getTaskDependencies('ummon.five')[0], 'ummon.four', 'task five is dependent on task four');
   });
@@ -157,6 +157,7 @@ test('Create collections default values and retrieve a task that inherits them',
   });
 
 });
+
 
 test('Test getting a task that inherits global task settings', function(t){
   t.plan(6);

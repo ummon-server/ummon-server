@@ -22,9 +22,10 @@ test('Return the proper task id', function(t){
 })
 
 test('Return an array of task ids', function(t) {
-  t.plan(4);
+  t.plan(5);
   t.similar(ummon.getTaskIds(), ['ummon.one','ummon.two','ummon.three','canada.four'], 'getTaskIds() returns all of the tasks');
   t.similar(ummon.getTaskIds('*'), ['ummon.one','ummon.two','ummon.three','canada.four'], 'getTaskIds(*) returns all of the tasks');
+  t.similar(ummon.getTaskIds('ummon'), ['ummon.one','ummon.two','ummon.three'], 'getTaskIds("ummon") returns all of the ummon tasks');
   t.similar(ummon.getTaskIds('ummon.*'), ['ummon.one','ummon.two','ummon.three'], 'getTaskIds("ummon.*") returns all of the ummon tasks');
   t.similar(ummon.getTaskIds('ummon.one'), ['ummon.one'], 'getTaskIds("ummon.one") returns all of the ummon tasks');
 });

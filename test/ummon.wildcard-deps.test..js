@@ -7,7 +7,7 @@ var async = require("async");
 var ummon = require('..')({pause:true, autoSave:false});
 
 test('Create a tasks with a wildcard trigger', function(t) {
-  t.plan(3);
+  t.plan(2);
 
   // Create a bunch of dummy tasks
   async.series([
@@ -19,8 +19,8 @@ test('Create a tasks with a wildcard trigger', function(t) {
     function(callback){ ummon.createTask({"collection":"cleanup","name":"all","command": "echo two", "trigger":"*" }, callback); },
   ],
   function(err){
-    t.equal(ummon.getTaskReferences('important.one')[0], 'cleanup.important', 'cleanup.important references important.one as a dependant');
-    t.equal(ummon.getTaskReferences('important.one')[1], 'cleanup.all', 'cleanup.all references important.one as a dependant');
+    console.log(ummon.getTaskReferences('important.one'))
+    t.similar(ummon.getTaskReferences('important.one'), ['cleanup.important','cleanup.all'], 'important.one depends on all the tasks');
     t.similar(ummon.getTaskDependencies('cleanup.all'), ['important.one','important.two','notimportant.one', 'cleanup.important'], 'cleanup.all depends on all the tasks');
   });
 });
