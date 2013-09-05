@@ -144,7 +144,11 @@ module.exports = function(ummon){
 
     ummon.getTasks(filter, function(err, collections){
       if (err) {
-        return next(err);
+        if (err.message === "There is no tasks or collections that match the provided filter") {
+          return next(new restify.ResourceNotFoundError(err.message));
+        } else {
+          return next(err);
+        }
       }
       res.json(200, { 'collections': collections } );
       next();
