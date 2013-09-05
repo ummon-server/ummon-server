@@ -24,9 +24,15 @@ var argv = require('optimist')
     boolean: true,
     describe: 'Return all meta data with each log row'
   })
+  .options('c', {
+    alias: 'config',
+    describe: 'Config path'
+  })
   .argv
 
-var config = require(require('path').resolve(__dirname, '../lib/ummon.js')).loadConfig()
+var configOptions = (argv.config) ? {configPath: argv.config} : {};
+
+var config = require(require('path').resolve(__dirname, '../lib/ummon.js')).loadConfig(configOptions)
 
 var runID = argv.run;
 var run;
@@ -60,6 +66,10 @@ es.pipeline(
   es.wait(function (err, data) {
     data = "[Tasks Error] "+ run.task.id+" exited with code " + run.exitCode + " on "+require('os').hostname()+"\n\n" + data;
     if (argv.campfire) {
+      if (!config.campfire) {
+        console.error('Your configuration doesn\'t have campfire section. Please add it!')
+        process.exit(1);
+      }
       request.post({
         url:config.campfire.speak_url,
         body: {"message":{"body":data, "type":"PasteMessage"}},
