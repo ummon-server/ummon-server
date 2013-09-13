@@ -105,13 +105,9 @@ module.exports = function(ummon){
       ? _.map(ummon.workers, function(worker) {return worker.run.task.id})
       : [];
 
-    var queuedItems = (_.size(ummon.queue.items))
-      ? _.map(ummon.queue.items, function(item) {return item.task.id})
-      : [];
-
     res.json(200, {
       "workers": workers,
-      "queue": queuedItems,
+      "queue": queuedTasks,
       "activeTimers": Object.keys(ummon.timers),
       "isPaused": ummon.config.pause,
       "maxWorkers": ummon.MAX_WORKERS,
@@ -121,6 +117,28 @@ module.exports = function(ummon){
     next();
   };
 
+
+  api.getQueue = function(req, res, next) {
+    res.json(200, {"queue": quededTasks()});
+  }
+
+  function queuedTasks() {
+    return (_.size(ummon.queue.items))
+      ? _.map(ummon.queue.items, function(item) {return item.task.id})
+      : [];
+  }
+
+  api.clearQueue = function(req, res, next) {
+    var task = req.params.task || false;
+    var queueLength = ummon.queue.items.length;
+
+    if (task) {
+      ummon.queue.items = _.filter(ummon.queue.items, function(item){ return item.task.id !== task })
+    } else {
+      ummon.queue.items = [];
+    }
+
+  }
 
   /**
    * Get a number of tasks. Could be for a specific colleciton

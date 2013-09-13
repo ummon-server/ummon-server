@@ -136,15 +136,17 @@ server.get('/status', api.getStatus);
 server.get('/config', api.getConfig);
 server.put('/config', api.setConfig);
 
-server.post('/tasks/new', api.createTask);
+server.get('/queue', api.getQueue);
+server.post('/queue/clear', api.clearQueue);
 
+server.post('/tasks/new', api.createTask);
 server.get('/tasks/:taskid', api.getTasks);
 server.put('/tasks/:taskid', api.updateTask);
 server.del('/tasks/:taskid', api.doesTaskExist, api.deleteTask);
 server.put('/tasks/:taskid/enable', api.doesTaskExist, api.enableTask);
 server.put('/tasks/:taskid/disable', api.doesTaskExist, api.disableTask);
-
 server.get('/tasks', api.getTasks);
+
 server.get('/collections/:collection', api.doesCollectionExist, api.getTasks);
 server.put('/collections/:collection', api.setTasks);
 server.get('/collections/:collection/defaults', api.doesCollectionExist, api.getCollectionDefaults);
