@@ -107,7 +107,7 @@ module.exports = function(ummon){
 
     res.json(200, {
       "workers": workers,
-      "queue": queuedTasks,
+      "queue": queuedTasks(),
       "activeTimers": Object.keys(ummon.timers),
       "isPaused": ummon.config.pause,
       "maxWorkers": ummon.MAX_WORKERS,

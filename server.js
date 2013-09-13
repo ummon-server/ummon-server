@@ -141,7 +141,7 @@ server.post('/queue/clear', api.clearQueue);
 
 server.post('/tasks/new', api.createTask);
 server.get('/tasks/:taskid', api.getTasks);
-server.put('/tasks/:taskid', api.updateTask);
+server.put('/tasks/:taskid', api.doesTaskExist, api.updateTask);
 server.del('/tasks/:taskid', api.doesTaskExist, api.deleteTask);
 server.put('/tasks/:taskid/enable', api.doesTaskExist, api.enableTask);
 server.put('/tasks/:taskid/disable', api.doesTaskExist, api.disableTask);
