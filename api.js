@@ -237,10 +237,7 @@ module.exports = function(ummon){
 
 
   api.updateTask = function(req, res, next){
-    var p = req.params;
-    var t = req.body;
-
-    var task = ummon.updateTask(t, function(err, task){
+    var task = ummon.updateTask(req.params.taskid, req.body, function(err, task){
       res.json(200, {"message":"Task "+task.id+" successfully updated", "task":task});
       next();
     });

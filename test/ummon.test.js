@@ -123,13 +123,12 @@ test('Create a tasks with simplified trigger', function(t) {
 test('Test updating a tasks', function(t){
   t.plan(4);
 
-  ummon.updateTask(
-    {"name":"twotwo","collection":"ummon","command": "echo twotwo", "trigger": {"time": moment().add('s', 1).toDate()} },
+  ummon.updateTask('ummon.twotwo', {"trigger": 'ummon.two'},
     function(err, task){
       t.equal(task.command, "echo twotwo", "The method should return a new Task");
       t.equal(ummon.getTaskReferences('ummon.one')[0], 'ummon.two', 'The good reference remains');
       t.notOk(ummon.getTaskReferences('ummon.one')[1], 'The old reference was removed');
-      t.notOk(ummon.getTaskDependencies('ummon.twotwo')[0], 'The task has no dependent tasks');
+      t.equal(ummon.getTaskDependencies('ummon.twotwo')[0], 'ummon.two', 'There is a new dependency');
   });
 });
 
