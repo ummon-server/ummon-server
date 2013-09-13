@@ -154,9 +154,6 @@ server.put('/collections/:collection/disable', api.doesCollectionExist, api.disa
 server.del('/collections/:collection', api.doesCollectionExist, api.deleteCollection);
 // server.post('/run/:taskid', api.run);
 // server.post('/run', api.run);
-server.get('/log/collection/:collection', api.showLog);
-server.get('/log/task/:taskid', api.showLog);
-server.get('/log/run/:runid', api.showLog);
 server.get('/log', api.showLog);
 
 

@@ -9,6 +9,7 @@ var cp = require('child_process')
 var es = require('event-stream');
 var _ = require('underscore');
 var async = require('async');
+var moment = require('moment');
 
 
 module.exports = function(ummon){
@@ -370,44 +371,73 @@ module.exports = function(ummon){
   api.showLog = function(req, res, next){
     delete req.params.lines; // Not sure why this is here but deleting it simplifies the code below
 
-    if (['collection', 'taskid', 'runid'].indexOf(Object.keys(req.params)[0]) !== -1){
-      var key = Object.keys(req.params)[0];
-      var val = req.params[key];
-    }
-
-    var lines = req.query.lines;
+    var filter = req.query.filter || false;
+    var from = req.query.from || false;
+    var to = req.query.to || false;
     var runsOnly = (req.query.runsOnly) ? true : false;
     var follow = (req.query.follow) ? true : false;
 
-    // We need to build a tail command like:
-    //
-    //    ep '"taskid":"cmmi.apply-feedback"' ummon.log | tail -n5
-
-    var cmd = '';
-    if (follow) {
-      cmd += 'tail -f ' + ummon.config.log.path;
-    } else {
-      cmd += 'cat ' + ummon.config.log.path;
-    }
-
-    if (key) {
-      cmd += ' | grep \'"' + key + '":"' + val + '"\' ';
-    }
-
-    if (runsOnly) {
-      cmd += ' | grep \'"run":\'';
-    }
-
-    if (!follow) {
-      cmd += ' | tail -n' + lines;
+    // Figure out the filter
+    if (filter) {
+      var runid = false, collection = false, taskid = false;
+      if (/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/.test(filter)) {
+        runid = filter;
+      } else if (filter.indexOf('.') !== -1) {
+        taskid = filter;
+      } else {
+        collection = filter;
+      }
     }
 
     var d = require('domain').create();
+
     d.on('error', function(er) {
       console.log(er.stack)
     })
+
     d.run(function() {
-      es.child(cp.exec(cmd)).pipe(res);
+      es.pipeline(
+        fs.createReadStream(ummon.config.log.path, {encoding: 'utf8'}),
+        es.split(), // Split on new lines
+        es.parse(), // JSON.parse()
+
+        // Start by filtering by date
+        es.map(function (data, callback) {
+          if ((data.time >= from) && (!to || data.time <= to)) {
+            return callback(null, data)
+          }
+          callback()
+        }),
+
+        // Filter on content
+        es.map(function (data, callback) {
+          if (runid || taskid || collection) {
+            if ((runid && runid === data.runid) ||
+              (taskid && taskid === data.taskid) ||
+              (collection && collection === data.collection)) {
+                return callback(null, data)
+            }
+
+            return callback()
+          }
+
+          callback(null, data);
+        }),
+
+        // filter on runs only
+        es.map(function (data, callback) {
+          if (runsOnly) {
+            if (("run" in data)) {
+              return callback(null, data)
+            } else {
+              return callback();
+            }
+          }
+          callback(null, data)
+        }),
+        es.stringify(), // JSON.stringify()
+        res
+      )
     })
 
     return next();
