@@ -120,7 +120,7 @@ test('Create a tasks with simplified trigger', function(t) {
 });
 
 
-test('Test updating a tasks', function(t){
+test('Test updating a task with a task trigger', function(t){
   t.plan(4);
 
   ummon.updateTask('ummon.twotwo', {"trigger": 'ummon.two'},
@@ -129,6 +129,16 @@ test('Test updating a tasks', function(t){
       t.equal(ummon.getTaskReferences('ummon.one')[0], 'ummon.two', 'The good reference remains');
       t.notOk(ummon.getTaskReferences('ummon.one')[1], 'The old reference was removed');
       t.equal(ummon.getTaskDependencies('ummon.twotwo')[0], 'ummon.two', 'There is a new dependency');
+  });
+});
+
+test('Test updating a task with a time trigger', function(t){
+  t.plan(2);
+
+  ummon.updateTask('ummon.everyminute', {"trigger": '* 10 * * *'},
+    function(err, task){
+      t.equal(task.command, "echo Hello;", "The method should return a new Task");
+      t.equal(ummon.timers['ummon.everyminute'].cronTime.source, '* 10 * * *', 'A new timer has been setup');
   });
 });
 
