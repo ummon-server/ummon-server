@@ -59,7 +59,8 @@ test('Test retreiving the next item from the queue that is not currently running
   t.equal(item.task.command, 'three', 'The correct item was returned');
 });
 
-test('Make sure an empty queue doesn\'t return nothing', function(t){
+
+test('Make sure an empty queue doesn\'t return undefined', function(t){
   t.plan(4);
 
   var item = testQueue.getNext(['two']);
@@ -71,4 +72,26 @@ test('Make sure an empty queue doesn\'t return nothing', function(t){
 
   t.equal(testQueue.items.length, 1, 'Theres still one item in the queue');
   t.equal(item2, false, 'No item was returned');
+})
+
+
+test('Remove every task from the queue', function(t){
+  t.plan(2);
+  t.equal(testQueue.items.length, 1, 'The queue has one item');
+  testQueue.clear();
+  t.equal(testQueue.items.length, 0, 'The queue is empty');
+})
+
+
+test('Remove a certain task id from the queue', function(t){
+  t.plan(2);
+
+  testQueue.push({id: 'task.one', command:'one'});
+  testQueue.push({id: 'task.one', command:'one'});
+  testQueue.push({id: 'task.three', command:'three'});
+  testQueue.push({id: 'task.four', command:'four'});
+
+  testQueue.clear('task.one');
+  t.equal(testQueue.items.length, 2, 'The are only two items in the queue');
+  t.equal(testQueue.items[0].task.id, 'task.three' , 'The first item is no longer task.one');
 })

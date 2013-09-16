@@ -54,6 +54,22 @@ test('get server status', function(t){
   api.getStatus(req, res, next);
 });
 
+test('Get the ummon queue', function(t){
+  t.plan(1);
+
+  var req = {};
+  var res = {};
+  var next = function(){};
+
+  ummon.queue.items = [{task: {id: 321}}]
+
+  res.json = function(status, json) {
+    t.similar(json.queue, [321], 'queue should be an array');
+  };
+
+  api.getQueue(req, res, next);
+});
+
 test('get server config', function(t){
   t.plan(3);
 

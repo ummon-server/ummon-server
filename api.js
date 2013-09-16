@@ -107,7 +107,7 @@ module.exports = function(ummon){
 
     res.json(200, {
       "workers": workers,
-      "queue": queuedTasks(),
+      "queue": ummon.queue.getPresentTaskIds(),
       "activeTimers": Object.keys(ummon.timers),
       "isPaused": ummon.config.pause,
       "maxWorkers": ummon.MAX_WORKERS,
@@ -119,26 +119,16 @@ module.exports = function(ummon){
 
 
   api.getQueue = function(req, res, next) {
-    res.json(200, {"queue": quededTasks()});
+    res.json(200, {"queue": ummon.queue.getPresentTaskIds()});
   }
 
-  function queuedTasks() {
-    return (_.size(ummon.queue.items))
-      ? _.map(ummon.queue.items, function(item) {return item.task.id})
-      : [];
-  }
 
   api.clearQueue = function(req, res, next) {
     var task = req.params.task || false;
-    var queueLength = ummon.queue.items.length;
-
-    if (task) {
-      ummon.queue.items = _.filter(ummon.queue.items, function(item){ return item.task.id !== task })
-    } else {
-      ummon.queue.items = [];
-    }
-
+    ummon.queue.clear(task);
+    res.json(200)
   }
+
 
   /**
    * Get a number of tasks. Could be for a specific colleciton
@@ -157,7 +147,6 @@ module.exports = function(ummon){
    * @param  {Function} next The callback
    * @return {[type]}        Heavily structured object. See above
    */
-
   api.getTasks = function(req, res, next) {
     var filter = req.params.collection || req.params.taskid || false;
 
@@ -176,9 +165,7 @@ module.exports = function(ummon){
 
 
   api.getTask = function(req, res, next){
-    var p = req.params;
-
-    ummon.getTask(p.taskid, function(err, task){
+    ummon.getTask(req.params.taskid, function(err, task){
       if (err) {
         return next(err);
       }

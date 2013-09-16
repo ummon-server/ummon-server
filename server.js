@@ -129,15 +129,13 @@ server.use(function (req, res, next){
 var api = require('./api')(ummon);
 
 // The routes!
-server.get('/ps/:pid', api.ps);
-server.get('/ps', api.ps);
-// server.post('/kill/:pid', api.kill);
 server.get('/status', api.getStatus);
+
 server.get('/config', api.getConfig);
 server.put('/config', api.setConfig);
 
 server.get('/queue', api.getQueue);
-server.post('/queue/clear', api.clearQueue);
+server.del('/queue/clear', api.clearQueue);
 
 server.post('/tasks/new', api.createTask);
 server.get('/tasks/:taskid', api.getTasks);
