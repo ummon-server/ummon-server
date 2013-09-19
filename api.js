@@ -19,7 +19,7 @@ module.exports = function(ummon){
   api.doesCollectionExist = function(req, res, next) {
     var collection = req.params.collection
 
-    if (ummon.config.collections[collection]) {
+    if (collection && collection in ummon.config.collections) {
       next();
     } else {
       return next(new restify.ResourceNotFoundError('No collection of name '+collection+' found'));
