@@ -15,10 +15,9 @@ ummon.tasks = {
 }
 
 test('Return the proper task id', function(t){
-  t.plan(3);
+  t.plan(2);
   t.equal(ummon.getTaskId('ummon.one'), 'ummon.one', "Return the proper task id");
   t.equal(ummon.getTaskId('one'), 'ummon.one', "Return the proper task id");
-  t.equal(ummon.getTaskId('oneone'), false, "Yell if there isn't a task with that id");
 })
 
 test('Return an array of task ids', function(t) {

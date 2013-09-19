@@ -2,6 +2,8 @@
 
 Ummon is a Node.js application for managing and monitoring tasks on a server. Think of it as a lightweight hybrid of Jenkins & Resque.
 
+[![NPM](https://nodei.co/npm/ummon-server.png?downloads=true)](https://nodei.co/npm/ummon-server/)
+
 ### Goals of this project
 
 Many large web applications have long-running tasks that are a smattering of cron, supervisor jobs, and tasks triggered by the application itself. Ummon's goal is to unify these tasks under one smart application to provide the following benefits:
