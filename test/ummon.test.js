@@ -94,32 +94,6 @@ test('Run the previously created tasks', function(t) {
 });
 
 
-test('Create a tasks with simplified trigger', function(t) {
-  t.plan(6);
-
-  ummon.createTask({
-    "name":"everyminute",
-    "command": "echo Hello;",
-    "trigger": "* 5 * * *"
-  }, function(err, task){
-    t.ok(task, 'The callback returns a task');
-    t.ok(ummon.tasks['ummon.everyminute'], 'There is a everyminute task');
-    t.ok(ummon.timers['ummon.everyminute'], 'There is a everyminute task timer');
-  });
-
-  ummon.createTask({
-    "name":"aftereveryminute",
-    "command": "echo Hello;",
-    "trigger": "everyminute"
-  }, function(err, task){
-    t.ok(task, 'The callback returns a task');
-    t.ok(ummon.tasks['ummon.aftereveryminute'], 'There is a aftereveryminute task');
-    t.equal(ummon.getTaskReferences('ummon.everyminute')[0], 'ummon.aftereveryminute', 'aftereveryminute is dependent on everyminute');
-  });
-
-});
-
-
 test('Test updating a task with a task trigger', function(t){
   t.plan(4);
 
@@ -132,13 +106,14 @@ test('Test updating a task with a task trigger', function(t){
   });
 });
 
+
 test('Test updating a task with a time trigger', function(t){
   t.plan(2);
 
-  ummon.updateTask('ummon.everyminute', {"trigger": '* 10 * * *'},
+  ummon.updateTask('ummon.twotwo', {"trigger": '* 10 * * *'},
     function(err, task){
-      t.equal(task.command, "echo Hello;", "The method should return a new Task");
-      t.equal(ummon.timers['ummon.everyminute'].cronTime.source, '* 10 * * *', 'A new timer has been setup');
+      t.equal(task.command, "echo twotwo", "The method should return a new Task");
+      t.equal(ummon.timers['ummon.twotwo'].cronTime.source, '* 10 * * *', 'A new timer has been setup');
   });
 });
 
@@ -151,38 +126,6 @@ test('Delete a task and its dependencies', function(t){
     t.notOk(ummon.getTaskDependencies('ummon.five')[0], 'The task has no dependent tasks');
   });
 });
-
-
-test('Create collections default values and retrieve a task that inherits them', function(t){
-  t.plan(2);
-  ummon.defaults.science = { 'cwd': '/user/bill' };
-
-  async.series([
-    function(callback){ ummon.createTask({"collection":"science", "name":"nye","command": "echo \"The science guy!\"" }, callback); },
-    function(callback){ ummon.createTask({"collection":"science", "cwd":"/user/neil","name":"tyson","command": "echo \"The space guy!\"" }, callback); },
-  ], function(err, results) {
-    t.notOk(results[0].cwd, 'The nye task shouldn\'t have its cwd set. It\'s in the collection defaults');
-    t.equal(results[1].cwd, '/user/neil', 'The tyson task should override the collection defaults');
-  });
-
-});
-
-
-test('Test getting a task that inherits global task settings', function(t){
-  t.plan(6);
-
-  ummon.defaults.ummon = { 'cwd': '/user/bill' };
-  ummon.config.globalTaskDefaults = { env: {"NODE_ENV":"TEST" }};
-
-  ummon.getTask('ummon.hello', function(err, task){
-    t.notOk(err, 'There is no error');
-    t.ok(task, 'There is a task');
-    t.equal(ummon.tasks['ummon.hello'].env.TERM, 'dummy', 'Task environmental variables are set');
-    t.notOk(ummon.tasks['ummon.hello'].cwd, 'Defaults are not set on the master task');
-    t.notOk(ummon.tasks['ummon.hello'].env.NODE_ENV, 'Defaults are not set on the master task');
-    t.equal(task.env.NODE_ENV, 'TEST', 'Gloabl default are attached to the retrieved');
-  })
-})
 
 
 test('teardown', function(t){

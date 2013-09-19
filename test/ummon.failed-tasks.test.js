@@ -38,8 +38,9 @@ test('Triggerer proper tasks on failure', function(t){
   function(err){
     t.ok(ummon.tasks['ummon.goodbye'], 'There is a goodbye task');
     t.ok(ummon.tasks['ummon.runMeOnErrors'], 'There is a runMeOnErrors task');
-    t.equal(ummon.getTaskReferences('goodbye', 'error')[0], 'ummon.runMeOnErrors', 'ummon.runMeOnErrors is a dependent task for goodbye');
-    t.equal(ummon.getTaskReferences('adios', 'error')[0], 'ummon.runMeOnErrors', 'ummon.runMeOnErrors is a dependent task for adios, even though it was created after runMeOnErrors');
+    console.log(ummon.getTaskReferences('ummon.goodbye', 'error'));
+    t.equal(ummon.getTaskReferences('ummon.goodbye', 'error')[0], 'ummon.runMeOnErrors', 'ummon.runMeOnErrors is a dependent task for goodbye');
+    t.equal(ummon.getTaskReferences('ummon.adios', 'error')[0], 'ummon.runMeOnErrors', 'ummon.runMeOnErrors is a dependent task for adios, even though it was created after runMeOnErrors');
   });
 
   ummon.runTask('goodbye', function(q){})
