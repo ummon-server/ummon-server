@@ -118,10 +118,12 @@ server.pre(restify.pre.sanitizePath());
 server.use(restify.fullResponse());
 
 server.use(function (req, res, next){
-  if (ummon.config.credentials.indexOf(req.authorization.credentials) !== -1){
+  var creds = ummon.config.credentials;
+  // Don't check credentials if not in config
+  if (!creds || !creds.length || creds.indexOf(req.authorization.credentials) !== -1){
     next();
   } else {
-    res.json(401, "Log in dummy. KWATZ!")
+    res.json(401, "You need credentials, dummy. KWATZ!")
   }
 })
 
