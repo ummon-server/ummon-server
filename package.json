@@ -45,7 +45,7 @@
     "cron": "~1.0.1",
     "eventemitter2": "~0.4.11",
     "restify": "~2.6.0",
-    "bunyan": "~0.21.1",
+    "bunyan": "~0.22.0",
     "mkdirp": "~0.3.5",
     "uuid": "~1.4.1",
     "event-stream": "~3.0.14",
