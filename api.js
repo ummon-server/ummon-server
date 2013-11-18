@@ -405,7 +405,7 @@ module.exports = function(ummon){
 
         // Start by filtering by date
         es.map(function (data, callback) {
-          if ((data.time >= from) && (!to || data.time <= to)) {
+          if ((!from || data.time >= from) && (!to || data.time <= to)) {
             return callback(null, data)
           }
           callback()
