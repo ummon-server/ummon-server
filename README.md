@@ -1,8 +1,8 @@
-# ummon-server [![NPM version](https://badge.fury.io/js/ummon-server.png)](http://badge.fury.io/js/ummon-server) [![Build Status](https://secure.travis-ci.org/punkave/ummon-server.png?branch=master)](http://travis-ci.org/punkave/ummon-server) [![Dependency Status](https://gemnasium.com/punkave/ummon-server.png)](https://gemnasium.com/punkave/ummon-server)
+# ummon-server [![Build Status](https://secure.travis-ci.org/punkave/ummon-server.png?branch=master)](http://travis-ci.org/punkave/ummon-server)
 
 Ummon is a Node.js application for managing and monitoring tasks on a server. Think of it as a lightweight hybrid of Jenkins & Resque.
 
-[![NPM](https://nodei.co/npm/ummon-server.png?downloads=true)](https://nodei.co/npm/ummon-server/)
+[![NPM](https://nodei.co/npm/ummon-server.png)](https://nodei.co/npm/ummon-server/)
 
 ### Goals of this project
 
