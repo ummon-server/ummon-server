@@ -84,6 +84,26 @@ module.exports = function(ummon){
 
 
   /**
+   * Get basic system info, for example:
+   *
+   *   {
+   *     "ok": true,
+   *     "version": "0.1.0",
+   *     "name": "ummon.server",
+   *     "port": 8888
+   *   }
+   */
+  api.getInfo = function(req, res, next) {
+    var pkg = require('./package.json');
+    res.json(200, {
+      ok: true,
+      version: pkg.version,
+      name: ummon.config.name,
+      port: ummon.config.port
+    });
+  };
+
+  /**
    * Return a snapshot of what is going on
    *
    * returns an object like:

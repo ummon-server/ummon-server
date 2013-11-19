@@ -30,6 +30,23 @@ test('Show processes', function(t){
   api.ps(req, res, next);
 });
 
+test('Get server info', function(t){
+  t.plan(4);
+
+  var req = {};
+  var res = {};
+  var next = function(){};
+
+  res.json = function(status, json) {
+    t.ok(json.ok, 'Server should return {"ok": true} for connection checking');
+    t.equal(json.version, require('../package.json').version, 'Version should be the one in package.json');
+    t.equal(json.name, ummon.config.name, 'Name should be set in config');
+    t.equal(json.port, ummon.config.port, 'Port should be set in config');
+  };
+
+  api.getInfo(req, res, next);
+});
+
 test('get server status', function(t){
   t.plan(7);
 

@@ -131,6 +131,7 @@ server.use(function (req, res, next){
 var api = require('./api')(ummon);
 
 // The routes!
+server.get('/', api.getInfo);
 server.get('/status', api.getStatus);
 
 server.get('/config', api.getConfig);
