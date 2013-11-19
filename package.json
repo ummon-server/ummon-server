@@ -1,26 +1,11 @@
 {
   "name": "ummon-server",
-  "description": "Ummon is node.js application for managing, queuing, running and monitoring externally running tasks",
+  "description": "Ummon is a Node.js application for queuing, running, and monitoring tasks",
   "version": "0.1.1",
   "homepage": "https://github.com/punkave/ummon-server",
-  "author": {
-    "name": "Matt McManus",
-    "email": "mcmanus@punkave.com"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/punkave/ummon-server.git"
-  },
-  "bugs": {
-    "url": "https://github.com/punkave/ummon-server/issues"
-  },
-  "licenses": [
-    {
-      "type": "MIT",
-      "url": "https://github.com/punkave/ummon-server/blob/master/LICENSE-MIT"
-    }
-  ],
-  "main": "index",
+  "author": "P'unk Avenue LLC",
+  "license": "MIT",
+  "repository": "git://github.com/punkave/ummon.git",
   "bin": {
     "ummon-server": "./server.js",
     "ummon-notify": "./bin/ummon-notify"
@@ -29,14 +14,12 @@
     "node": ">= 0.10.0"
   },
   "scripts": {
-    "start": "nodemon server.js",
     "test": "tap test"
   },
   "devDependencies": {
     "tap": "~0.4.1",
     "rimraf": "~2.2.0"
   },
-  "keywords": [],
   "dependencies": {
     "colors": "~0.6.0-1",
     "underscore": "~1.5.1",
@@ -55,7 +38,6 @@
     "optimist": "~0.6.0",
     "death": "~0.1.0",
     "npid": "~0.3.2",
-    "daemon": "~1.1.0",
-    "request": "~2.27.0"
+    "daemon": "~1.1.0"
   }
 }
