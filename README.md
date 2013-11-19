@@ -75,4 +75,5 @@ To set up ummon-server on Linux:
 
 ## License
 Copyright (c) 2013 P'unk Avenue
-Licensed under the MIT license.
+
+Released under the MIT license.
