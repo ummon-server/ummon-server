@@ -3,7 +3,7 @@ var ummon = require('..')({pause:true, autoSave:false});
 
 
 test('Create a task', function (t) {
-  t.plan(2);
+  t.plan(3);
 
   ummon.createTask({
     collection: 'science', 
@@ -13,19 +13,22 @@ test('Create a task', function (t) {
   }, function (err, task) {
     t.ifError(err, 'No error returned to task creation callback');
     t.equal(task.trigger.time, '* * * * *', 'Task trigger set as it should be');
+    t.equal(ummon.timers['science.nye'].cronTime.source, '* * * * *', 'Timer matches trigger');
   });
 });
 
 test('Update a task', function (t) {
-  t.plan(2);
+  t.plan(3);
 
   ummon.updateTask('science.nye', {
     trigger: '5 * * * *'
   }, function (err, task) {
     t.ifError(err, 'No error returned to task update callback');
     t.equal(task.trigger.time, '5 * * * *', 'Task trigger set as it should be');
+    t.equal(ummon.timers['science.nye'].cronTime.source, '5 * * * *', 'Timer matches trigger');
   });
 });
+
 
 test('teardown', function(t){
   setImmediate(function() {
