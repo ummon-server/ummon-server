@@ -12,7 +12,7 @@ var db = require('../db')(ummon);
 test('Load collection information from a file', function(t){
   t.plan(11);
 
-  db.loadCollectionFromFile('./fixtures/florida.tasks.json', function(err){
+  db.loadCollectionFromFile(__dirname+'/fixtures/florida.tasks.json', function(err){
     t.notOk(err, 'There should be no error');
     t.equal(ummon.defaults['florida'].cwd, '/var/www/website/', 'The default settings for the florida collection are set');
     t.equal(ummon.tasks['florida.task1'].command, './update-apis', 'Task1 was created and with the right command');
@@ -31,7 +31,7 @@ test('Load collection information from a file', function(t){
 test('Load tasks from tasks dir', function(t){
   t.plan(7);
 
-  ummon.config.tasksPath = './fixtures/tasks/';
+  ummon.config.tasksPath = __dirname+'/fixtures/tasks/';
 
   db.loadTasks(function(err){
     t.notOk(err, 'There should be no error');
@@ -55,15 +55,15 @@ test('Save all tasks to files', function(t){
   t.plan(7);
 
   // Change tasks dir so it doesn't overwrite stuff
-  ummon.config.tasksPath = './fixtures/saveTasks';
+  ummon.config.tasksPath = __dirname+'/fixtures/saveTasks';
 
   db.saveTasks(function(err){
     t.notOk(err, 'There should be no error');
-    t.ok(fs.existsSync('./fixtures/saveTasks/autosample.tasks.json'), 'The autosample collection was saved to file');
-    t.ok(fs.existsSync('./fixtures/saveTasks/florida.tasks.json'), 'The florida collection was saved to file');
-    t.ok(fs.existsSync('./fixtures/saveTasks/palace.tasks.json'), 'The palace collection was saved to file');
+    t.ok(fs.existsSync(__dirname+'/fixtures/saveTasks/autosample.tasks.json'), 'The autosample collection was saved to file');
+    t.ok(fs.existsSync(__dirname+'/fixtures/saveTasks/florida.tasks.json'), 'The florida collection was saved to file');
+    t.ok(fs.existsSync(__dirname+'/fixtures/saveTasks/palace.tasks.json'), 'The palace collection was saved to file');
 
-    var florida = require('./fixtures/saveTasks/florida.tasks.json');
+    var florida = require(__dirname+'/fixtures/saveTasks/florida.tasks.json');
 
     t.equal(florida.collection, 'florida', 'The collection name was saved');
     t.ok(florida.tasks.task1, 'There is a task one');
@@ -74,7 +74,7 @@ test('Save all tasks to files', function(t){
 
 test('teardown', function(t){
   setImmediate(function() {
-    rimraf('./fixtures/saveTasks', function(err) {
+    rimraf(__dirname+'/fixtures/saveTasks', function(err) {
       process.exit();
     });
   });
