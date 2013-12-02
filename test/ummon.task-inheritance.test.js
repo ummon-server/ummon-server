@@ -32,7 +32,7 @@ test('Test getting a task that inherits global task settings', function(t){
     t.equal(task.cwd, '/user/bill', 'Defaults are not set on the master task');
     t.notOk(ummon.tasks['science.nye'].env, 'The task is truly inheriting from globals');
     t.notOk(ummon.tasks['science.nye'].cwd, 'The task is truly inheriting from globals');
-    t.equal(task.env.NODE_ENV, 'TEST', 'Gloabl default are attached to the retrieved');
+    t.equal(task.env.NODE_ENV, 'TEST', 'Global default are attached to the retrieved');
   })
 })
 
