@@ -27,6 +27,14 @@ test('Load collection information from a file', function(t){
   });
 });
 
+test('Attempt to load collection with configuration error', function(t){
+  t.plan(1);
+
+  db.loadCollectionFromFile(__dirname+'/fixtures/error.tasks.json', function(err){
+    console.log(err);
+    t.ok(err, 'There should be an error');
+  });
+});
 
 test('Load tasks from tasks dir', function(t){
   t.plan(7);

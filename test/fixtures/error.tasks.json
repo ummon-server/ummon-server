@@ -1,0 +1,25 @@
+{ 
+  "collection": "error",
+  "defaults": {
+    "cwd":"/var/www/website/"
+  },
+  "tasks": {
+    "task1": {
+      "cwd": "/var/www/website2/",
+      "command": "./update-apis",
+      "trigger": {
+        "time": "*/10 * * * *"
+      }
+    },
+    "task2withNoCommand": {
+      "trigger": "error.task1"
+    },
+    "task3": {
+      "command": "./process-data",
+      "trigger": "error.task2"
+    },
+    "task4": {
+      "trigger": "error.task3"
+    }
+  }
+}
