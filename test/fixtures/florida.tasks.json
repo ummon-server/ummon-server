@@ -3,11 +3,6 @@
   "defaults": {
     "cwd":"/var/www/website/"
   },
-  
-  "sequences": [
-    ["task1", "task2", "task3", "task4"]
-  ],
-
   "tasks": {
     "task1": {
       "cwd": "/var/www/website2/",
@@ -17,13 +12,16 @@
       }
     },
     "task2": {
-      "command": "./process-data"
+      "command": "./process-data",
+      "trigger": "florida.task1"
     },
     "task3": {
-      "command": "./process-data"
+      "command": "./process-data",
+      "trigger": "florida.task2"
     },
     "task4": {
-      "command": "./process-data"
+      "command": "./process-data",
+      "trigger": "florida.task3"
     }
   }
 }
