@@ -215,7 +215,7 @@ module.exports = function(ummon){
     ummon.createCollectionAndTasks(req.body, function(err){
       if (err) {
         // Assume it's a duplicate task id error
-        return next(new restify.ConflictError(err.message));
+        return next(new restify.InvalidContentError(err.message));
       }
 
       ummon.getTasks(req.params.collection, function(err, collection){
