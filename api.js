@@ -212,11 +212,13 @@ module.exports = function(ummon){
    * @param {Function} next [description]
    */
   api.setTasks = function(req, res, next) {
-    ummon.createCollectionAndTasks(req.body, function(err){
-      if (err) {
-        // Assume it's a duplicate task id error
-        return next(new restify.InvalidContentError(err.message));
-      }
+    try {
+      var config = JSON.parse(req.body);
+    } catch (e) {
+      return next(new restify.InvalidContentError('Could not parse JSON data'));
+    }
+    ummon.createCollectionAndTasks(config, function(err){
+      if (err) return next(new restify.InvalidContentError(err.message));
 
       ummon.getTasks(req.params.collection, function(err, collection){
         res.json(200, { 'collections': collection } );
