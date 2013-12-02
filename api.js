@@ -184,6 +184,15 @@ module.exports = function(ummon){
   };
 
 
+  api.getCollection = function (req, res, next) {
+    ummon.getTasks(req.params.collection, function (err, results) {
+      if (err) return next(err);
+      // Collection object should always be the only member of the results array
+      res.json(200, results[0]);
+    });
+  };
+
+
   api.getTask = function(req, res, next){
     ummon.getTask(req.params.taskid, function(err, task){
       if (err) {
