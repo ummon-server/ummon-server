@@ -8,7 +8,7 @@
   "minimalSaveInterval": 1000,
   "maxQueueSize": 500,
   "log": {
-    "path":"./log/server.log",
+    "path":"./logs/server.log",
     "level":"debug",
     "period":"1w",
     "count":4
