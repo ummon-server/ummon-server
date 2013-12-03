@@ -210,11 +210,7 @@ module.exports = function(ummon){
 
 
   api.setCollection = function(req, res, next) {
-    try {
-      var config = JSON.parse(req.body);
-    } catch (e) {
-      return next(new restify.InvalidContentError('Could not parse JSON data'));
-    }
+    var config = req.body;
     // Modify config for feeding to createCollectionAndTasks
     // TODO Simplify stored object
     config.collection = req.params.collection;
@@ -251,12 +247,7 @@ module.exports = function(ummon){
    * @param {Function} next [description]
    */
   api.setTasks = function(req, res, next) {
-    try {
-      var config = JSON.parse(req.body);
-    } catch (e) {
-      return next(new restify.InvalidContentError('Could not parse JSON data'));
-    }
-    ummon.createCollectionAndTasks(config, function(err){
+    ummon.createCollectionAndTasks(req.body, function(err){
       if (err) return next(new restify.InvalidContentError(err.message));
 
       ummon.getTasks(req.params.collection, function(err, collection){
