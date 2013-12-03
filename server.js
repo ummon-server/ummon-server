@@ -149,7 +149,7 @@ server.put('/tasks/:taskid/disable', api.doesTaskExist, api.disableTask);
 server.get('/tasks', api.getTasks);
 
 server.get('/collections/:collection', api.doesCollectionExist, api.getCollection);
-server.put('/collections/:collection', api.setTasks);
+server.put('/collections/:collection', api.setCollection);
 server.get('/collections/:collection/defaults', api.doesCollectionExist, api.getCollectionDefaults);
 server.put('/collections/:collection/defaults', api.setCollectionDefaults);
 server.put('/collections/:collection/enable', api.doesCollectionExist, api.enableCollection);

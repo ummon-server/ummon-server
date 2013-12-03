@@ -188,7 +188,46 @@ module.exports = function(ummon){
     ummon.getTasks(req.params.collection, function (err, results) {
       if (err) return next(err);
       // Collection object should always be the only member of the results array
-      res.json(200, results[0]);
+      var col = results[0];
+      // Return a simplified config
+      var config = {
+        enabled: col.config.enabled,
+        tasks: {}
+      };
+      if (ummon.defaults[req.params.collection]) {
+        config.defaults = ummon.defaults[req.params.collection];
+      }
+      for (var task in col.tasks) {
+        config.tasks[task] = {
+          enabled: col.tasks[task].enabled,
+          command: col.tasks[task].command,
+          trigger: col.tasks[task].trigger
+        };
+      }
+      res.json(200, config);
+    });
+  };
+
+
+  api.setCollection = function(req, res, next) {
+    try {
+      var config = JSON.parse(req.body);
+    } catch (e) {
+      return next(new restify.InvalidContentError('Could not parse JSON data'));
+    }
+    // Modify config for feeding to createCollectionAndTasks
+    // TODO Simplify stored object
+    config.collection = req.params.collection;
+    if ('enabled' in config) {
+      config.config = {enabled: config.enabled};
+    }
+    ummon.createCollectionAndTasks(config, function(err){
+      if (err) return next(new restify.InvalidContentError(err.message));
+
+      ummon.getTasks(req.params.collection, function(err, collection){
+        res.json(200, { 'collections': collection } );
+        next();
+      })
     });
   };
 
