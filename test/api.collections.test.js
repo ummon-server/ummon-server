@@ -22,10 +22,11 @@ var collection = {
   }
 }
 
+
 test('Create new collection', function(t){
   t.plan(4);
 
-  var req = { params: { collection: collection.collection}, body: collection };
+  var req = { params: { collection: collection.collection}, body: JSON.stringify(collection) };
   var res = {};
   var next = function(){};
 
