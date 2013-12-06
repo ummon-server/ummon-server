@@ -226,6 +226,22 @@ test('Enable a task', function(t){
 });
 
 
+test('Run a task manually', function(t){
+  t.plan(2);
+
+  var req = {body: {task: "ummon.test"}};
+  var res = {};
+  var next = function(){};
+
+  res.json = function(status, json) {
+    t.equal(status, 200, 'The status should be 200');
+    t.equal(json.message, 'Added "ummon.test" to the queue', 'The message should be correct');
+  };
+
+  api.run(req, res, next);
+});
+
+
 test('Delete a collection task', function(t){
   t.plan(5);
 
@@ -242,6 +258,22 @@ test('Delete a collection task', function(t){
   };
 
   api.deleteCollection(req, res, next);
+});
+
+
+test('Run a one-off command', function(t){
+  t.plan(2);
+
+  var req = {body: {task: "echo hello"}};
+  var res = {};
+  var next = function(){};
+
+  res.json = function(status, json) {
+    t.equal(status, 200, 'The status should be 200');
+    t.equal(json.message, 'Added "echo hello" to the queue', 'The message should be correct');
+  };
+
+  api.run(req, res, next);
 });
 
 

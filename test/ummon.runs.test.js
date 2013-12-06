@@ -24,12 +24,12 @@ test('Add an existing task to the queue', function(t){
 });
 
 
-test('Run an arbitrary command', function(t){
+test('Run a command', function(t){
   t.plan(2);
-  // Run a new, arbitrary command
-  ummon.runTask({'command':'echo hello'}, true, function(err, run){
-    t.notOk(err, 'There is no error when an arbitrary task is created');
-    t.ok(run, 'There is a run when an arbitrary task is created');
+  // Run a one-off command
+  ummon.runTask('echo hello', function(err, run){
+    t.notOk(err, 'There is no error when a one-off command is created');
+    t.ok(run, 'There is a run when a one-off command is created');
   });
 })
 

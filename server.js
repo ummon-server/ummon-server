@@ -156,7 +156,7 @@ server.put('/collections/:collection/enable', api.doesCollectionExist, api.enabl
 server.put('/collections/:collection/disable', api.doesCollectionExist, api.disableCollection);
 server.del('/collections/:collection', api.doesCollectionExist, api.deleteCollection);
 // server.post('/run/:taskid', api.run);
-// server.post('/run', api.run);
+server.post('/run', api.run);
 server.get('/log', api.showLog);
 
 

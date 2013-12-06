@@ -8,7 +8,7 @@ var ummon = require('..')({autoSave:false});
 
 var taskRunId;
 
-test('Triggerer proper tasks on failure', function(t){
+test('Trigger proper tasks on failure', function(t){
   t.plan(13)
 
   ummon.on('queue.new', function(run){
@@ -41,10 +41,10 @@ test('Triggerer proper tasks on failure', function(t){
     console.log(ummon.getTaskReferences('ummon.goodbye', 'error'));
     t.equal(ummon.getTaskReferences('ummon.goodbye', 'error')[0], 'ummon.runMeOnErrors', 'ummon.runMeOnErrors is a dependent task for goodbye');
     t.equal(ummon.getTaskReferences('ummon.adios', 'error')[0], 'ummon.runMeOnErrors', 'ummon.runMeOnErrors is a dependent task for adios, even though it was created after runMeOnErrors');
-  });
 
-  ummon.runTask('goodbye', function(q){})
-})
+    ummon.runTask('goodbye', function(q){});
+  });
+});
 
 test('teardown', function(t){
   setImmediate(function() {

@@ -338,6 +338,16 @@ module.exports = function(ummon){
   }
 
 
+  // Run a task or one-off command
+  api.run = function(req, res, next) {
+    var task = req.body.task;
+
+    ummon.runTask(task, function (err, run) {
+      res.json(200, { message: 'Added "' + task + '" to the queue' });
+    });
+  };
+
+
   api.getCollectionDefaults = function(req, res, next) {
     var collection = req.params.collection;
     res.json(200, { "collection":  collection, "defaults": ummon.defaults[collection]} );
