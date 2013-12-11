@@ -27,8 +27,8 @@ test('Test creating dependent tasks', function(t){
   });
 });
 
-test('Create a tasks with a wildcard trigger', function(t) {
-  t.plan(2);
+test('Create tasks with wildcard triggers', function(t) {
+  t.plan(3);
   ummon.tasks = [];
   // Create a bunch of dummy tasks
   async.series([
@@ -40,8 +40,9 @@ test('Create a tasks with a wildcard trigger', function(t) {
     function(callback){ ummon.createTask({"collection":"cleanup","name":"all","command": "echo two", "trigger":"*" }, callback); },
   ],
   function(err){
-    t.similar(ummon.getTaskReferences('important.one'), ['cleanup.important','cleanup.all'], 'important.one depends on all the tasks');
-    t.similar(ummon.getTaskDependencies('cleanup.all'), ['important.one','important.two','notimportant.one', 'cleanup.important'], 'cleanup.all depends on all the tasks');
+    t.deepEqual(ummon.getTaskReferences('important.one'), ['cleanup.important','cleanup.all'], 'important.one references both cleanup tasks');
+    t.deepEqual(ummon.getTaskDependencies('cleanup.all'), ['important.one','important.two','notimportant.one', 'cleanup.important'], 'cleanup.all depends on all tasks except itself');
+    t.deepEqual(ummon.getTaskReferences('cleanup.all'), [], 'no references for cleanup.all task');
   });
 });
 

@@ -9,7 +9,7 @@ var ummon = require('..')({autoSave:false});
 var taskRunId;
 
 test('Trigger proper tasks on failure', function(t){
-  t.plan(13)
+  t.plan(14)
 
   ummon.on('queue.new', function(run){
     t.ok(true, 'The queue.new emitter was emited');
@@ -26,7 +26,7 @@ test('Trigger proper tasks on failure', function(t){
   });
 
   ummon.on('worker.complete', function(run){
-    t.ok(run, 'The worker.complete event was emited'); // Emitted twice for both tasks
+    t.ok(run, 'The worker.complete event was emitted'); // Emitted twice for both tasks
     t.ok((run.task.name === 'goodbye' || run.task.name === 'runMeOnErrors'), 'The completed tasks are goodbye and runMeOnErrors')
   });
 
@@ -38,9 +38,10 @@ test('Trigger proper tasks on failure', function(t){
   function(err){
     t.ok(ummon.tasks['ummon.goodbye'], 'There is a goodbye task');
     t.ok(ummon.tasks['ummon.runMeOnErrors'], 'There is a runMeOnErrors task');
-    console.log(ummon.getTaskReferences('ummon.goodbye', 'error'));
-    t.equal(ummon.getTaskReferences('ummon.goodbye', 'error')[0], 'ummon.runMeOnErrors', 'ummon.runMeOnErrors is a dependent task for goodbye');
-    t.equal(ummon.getTaskReferences('ummon.adios', 'error')[0], 'ummon.runMeOnErrors', 'ummon.runMeOnErrors is a dependent task for adios, even though it was created after runMeOnErrors');
+    //console.log(ummon.getTaskReferences('ummon.goodbye', 'error'));
+    t.equal(ummon.getTaskReferences('ummon.goodbye', 'error')[0], 'ummon.runMeOnErrors', 'ummon.runMeOnErrors will be triggered by a failing goodbye');
+    t.equal(ummon.getTaskReferences('ummon.adios', 'error')[0], 'ummon.runMeOnErrors', 'ummon.runMeOnErrors will be triggered by a failing adios, even though it was created after runMeOnErrors');
+    t.deepEqual(ummon.getTaskReferences('ummon.runMeOnErrors', 'error'), [], 'ummon.runMeOnErrors should not trigger anything');
 
     ummon.runTask('goodbye', function(q){});
   });
