@@ -25,7 +25,7 @@
     "underscore": "~1.5.1",
     "moment": "~2.4.0",
     "dependency-foo": "~0.1.1",
-    "cron": "~1.0.1",
+    "cron": "~1.0.3",
     "eventemitter2": "~0.4.11",
     "restify": "~2.6.0",
     "bunyan": "~0.22.0",
