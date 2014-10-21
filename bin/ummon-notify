@@ -5,7 +5,7 @@ var es = require('event-stream')
 var request = require('request')
 
 var argv = require('optimist')
-  .usage('Count the lines in a file.\nUsage: $0')
+  .usage('Send the status of a run to an outside server. Typically triggered by other tasks.\nUsage: $0')
   .options('r', {
     alias: 'run',
     demand: true,
@@ -13,11 +13,15 @@ var argv = require('optimist')
   })
   .options('e', {
     alias: 'email',
-    describe: 'Generate an email with out the output of the provided Run'
+    describe: 'Generate an email with out the output of the provided Run    (coming soon)'
   })
   .options('campfire', {
     boolean: true,
     describe: 'Send a message to your configured campfire chatroom'
+  })
+  .options('slack', {
+    boolean: true,
+    describe: 'Send a message to your configured slack chatroom'
   })
   .options('v', {
     alias: 'verbose',
@@ -32,10 +36,11 @@ var argv = require('optimist')
 
 var configOptions = (argv.config) ? {configPath: argv.config} : {};
 
-var config = require(require('path').resolve(__dirname, '../lib/ummon.js')).loadConfig(configOptions)
+var config = require(require('path').resolve(__dirname, '../lib/ummon.js')).loadConfig(configOptions);
 
 var runID = argv.run;
 var run;
+var header;
 
 es.pipeline(
   fs.createReadStream(config.log.path, {encoding: 'utf8'}),
@@ -64,7 +69,7 @@ es.pipeline(
     callback(null, data)
   }),
   es.wait(function (err, data) {
-    data = "[Tasks Error] "+ run.task.id+" exited with code " + run.exitCode + " on "+require('os').hostname()+"\n\n" + data;
+    header = "[Tasks Error] "+ run.task.id+" exited with code " + run.exitCode + " on "+require('os').hostname();
     if (argv.campfire) {
       if (!config.campfire) {
         console.error('Your configuration doesn\'t have campfire section. Please add it!')
@@ -72,10 +77,56 @@ es.pipeline(
       }
       request.post({
         url:config.campfire.speak_url,
-        body: {"message":{"body":data, "type":"PasteMessage"}},
+        body: {"message":{"body":header + "\n\n"+data, "type":"PasteMessage"}},
         auth: {user: config.campfire.apitoken},
         json: true
       })
+    }
+    if (argv.slack) {
+      if (!config.slack) {
+        console.error('Your configuration doesn\'t have slack section. Please add it!')
+        process.exit(1);
+      }
+      var payload = {
+        text: "Oh noes! An ummon error!", 
+        username: config.slack.username,
+        attachments: [{
+          fallback: header,
+          text: data,
+          // title: "title",
+          fields: [
+            {
+              title: "Task",
+              value: run.task.id,
+              short: true
+            },
+            {
+              title: "Exit status",
+              value: run.exitCode,
+              short: true
+            },
+            {
+              title: "Host",
+              value: require('os').hostname(),
+              short: true
+            // },
+            // {
+            //   title: "Logs",
+            //   value: data
+            }
+          ]
+        }]
+      };
+      if (config.slack.icon_emoji) {
+        payload.icon_emoji = config.slack.icon_emoji;
+      }
+      request.post({
+        url: config.slack.webhook_url,
+        body: JSON.stringify(payload)
+      },function(e,r,body) {
+        console.log(body);
+      });
+
     }
     console.log(data)
   })
