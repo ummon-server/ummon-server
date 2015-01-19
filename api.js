@@ -203,8 +203,12 @@ module.exports = function(ummon){
           command: col.tasks[task].command,
           trigger: col.tasks[task].trigger
         };
+        if (col.tasks[task].hasOwnProperty('cwd')) {
+          config.tasks[task].cwd = col.tasks[task].cwd;
+        }
       }
       res.json(200, config);
+      next();
     });
   };
 
@@ -344,6 +348,7 @@ module.exports = function(ummon){
 
     ummon.runTask(task, function (err, run) {
       res.json(200, { message: 'Added "' + task + '" to the queue' });
+      next();
     });
   };
 
