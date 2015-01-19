@@ -218,10 +218,10 @@ module.exports = function(ummon){
     // Modify config for feeding to createCollectionAndTasks
     // TODO Simplify stored object
     config.collection = req.params.collection;
-    if ('enabled' in config) {
+    if (config.hasOwnProperty('enabled')) {
       config.config = {enabled: config.enabled};
     }
-    ummon.createCollectionAndTasks(config, function(err){
+    ummon.updateCollectionAndTasks(config, function(err){
       if (err) return next(new restify.InvalidContentError(err.message));
 
       ummon.getTasks(req.params.collection, function(err, collection){
