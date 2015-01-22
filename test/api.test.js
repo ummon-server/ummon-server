@@ -261,6 +261,46 @@ test('Delete a collection task', function(t){
 });
 
 
+test('Update a collection', function(t) {
+  t.plan(4);
+
+  // First create foo.delete-me
+  var req1 = { body: {"name":"foo.delete-me", "command":"echo hello", "trigger": {"time":"* * * * *"}}};
+  var res = { json: function(){} };
+  var next = function(){};
+  api.createTask(req1, res, next);
+
+  // Now create foo.change-me
+  var req2 = { body: {"name":"foo.change-me", "command":"echo old-version"}};
+  api.createTask(req2, res, next);
+
+  // Now in the third request we'll replace the foo collection with [foo.create-me, a new version of foo.change-me]
+  var req3 = {
+    params: {collection: 'foo'},
+    body: {
+      "enabled":true,
+      "tasks":{
+        "create-me":{"enabled":true,"command":"echo created"},
+        'change-me':{'enabled': true, 'command':'echo new-version'}
+      }
+    }
+  };
+
+  res.json = function(status) {
+    t.equal(status, 200, 'The status should be 200');
+    t.ok(ummon.tasks["foo.create-me"], 'The foo.create-me task should now exist');
+    t.equal(ummon.tasks["foo.change-me"]['command'], 'echo new-version', 'The foo.change-me task should be updated');
+    t.notOk(ummon.tasks["foo.delete-me"], 'The foo.delete-me task should be gone');
+  }
+
+  api.setCollection(req3, res, next);
+
+
+})
+
+
+
+
 test('Run a one-off command', function(t){
   t.plan(2);
 
