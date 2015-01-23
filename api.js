@@ -203,8 +203,12 @@ module.exports = function(ummon){
           command: col.tasks[task].command,
           trigger: col.tasks[task].trigger
         };
+        if (col.tasks[task].hasOwnProperty('cwd')) {
+          config.tasks[task].cwd = col.tasks[task].cwd;
+        }
       }
       res.json(200, config);
+      next();
     });
   };
 
@@ -214,10 +218,10 @@ module.exports = function(ummon){
     // Modify config for feeding to createCollectionAndTasks
     // TODO Simplify stored object
     config.collection = req.params.collection;
-    if ('enabled' in config) {
+    if (config.hasOwnProperty('enabled')) {
       config.config = {enabled: config.enabled};
     }
-    ummon.createCollectionAndTasks(config, function(err){
+    ummon.updateCollectionAndTasks(config, function(err){
       if (err) return next(new restify.InvalidContentError(err.message));
 
       ummon.getTasks(req.params.collection, function(err, collection){
@@ -344,6 +348,7 @@ module.exports = function(ummon){
 
     ummon.runTask(task, function (err, run) {
       res.json(200, { message: 'Added "' + task + '" to the queue' });
+      next();
     });
   };
 
