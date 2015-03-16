@@ -1,7 +1,7 @@
 {
   "name": "ummon-server",
   "description": "Ummon is a Node.js application for queuing, running, and monitoring tasks",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "homepage": "https://github.com/punkave/ummon-server",
   "author": "P'unk Avenue LLC",
   "license": "MIT",
@@ -25,7 +25,7 @@
     "underscore": "~1.5.1",
     "moment": "~2.4.0",
     "dependency-foo": "~0.1.1",
-    "cron": "~1.0.3",
+    "cron": "~1.0.9",
     "eventemitter2": "~0.4.11",
     "restify": "~2.6.0",
     "bunyan": "~0.22.0",
