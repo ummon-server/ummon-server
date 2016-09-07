@@ -17,16 +17,22 @@
 # Source function library.
 . /etc/init.d/functions
 
-RETVAL=0
-PIDFILE=/var/run/ummon/ummon.pid
 USER=ummon
+PIDDIR=/var/run/ummon
+PIDFILE="$PIDDIR/ummon.pid"
+CONFDIR=/etc/ummon
+CONFIG="$CONFDIR/config.json"
+DATADIR=/var/lib/ummon
+LOGDIR=/var/log/ummon
 
+retval=0
 prog=ummon
 exec=/usr/bin/ummon-server
 lockfile=/var/lock/subsys/$prog
 
-mkdir -p /var/run/ummon 2>/dev/null
-chown $USER /var/run/ummon
+# Make sure those directories are created and owned
+mkdir -p "$CONFDIR" "$PIDDIR" "$DATADIR" "$LOGDIR"
+chown $USER "$CONFDIR" "$PIDDIR" "$DATADIR" "$LOGDIR"
 
 start() {
         [ -x $exec ] || exit 5
@@ -34,19 +40,19 @@ start() {
         umask 077
 
         echo -n $"Starting $prog: "
-        daemon --pidfile="$PIDFILE" --user="$USER" $exec --pidfile="$PIDFILE"
-        RETVAL=$?
+        daemon --pidfile="$PIDFILE" --user="$USER" $exec --pidfile="$PIDFILE" --config="$CONFIG" --daemon
+        retval=$?
         echo
-        [ $RETVAL -eq 0 ] && touch $lockfile
-        return $RETVAL
+        [ $retval -eq 0 ] && touch $lockfile
+        return $retval
 }
 stop() {
         echo -n $"Shutting down $prog: "
         killproc -p "$PIDFILE" $exec
-        RETVAL=$?
+        retval=$?
         echo
-        [ $RETVAL -eq 0 ] && rm -f $lockfile
-        return $RETVAL
+        [ $retval -eq 0 ] && rm -f $lockfile
+        return $retval
 }
 rhstatus() {
         status -p "$PIDFILE" -l $prog $exec
