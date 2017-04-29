@@ -12,11 +12,11 @@ var async = require('async');
 var moment = require('moment');
 
 
-module.exports = function(ummon){
+module.exports = ummon => {
   var api = {};
 
 
-  api.doesCollectionExist = function(req, res, next) {
+  api.doesCollectionExist = (req, res, next) => {
     var collection = req.params.collection
 
     if (collection && collection in ummon.config.collections) {
@@ -27,7 +27,7 @@ module.exports = function(ummon){
   };
 
 
-  api.doesTaskExist = function(req, res, next) {
+  api.doesTaskExist = (req, res, next) => {
     if (!(req.params.taskid in ummon.tasks)) {
       return next(new restify.ResourceNotFoundError('Task not found! Consider broadening your search to a collection'));
     } else {
@@ -38,7 +38,7 @@ module.exports = function(ummon){
   /**
    * Return the configuration object
    */
-  api.getConfig = function(req, res, next) {
+  api.getConfig = (req, res, next) => {
     res.json(200, ummon.config);
     next();
   };
@@ -50,8 +50,8 @@ module.exports = function(ummon){
    * Currently limited to only top level of config. So
    * changing log.path won't work just yet
    */
-  api.setConfig = function(req, res, next) {
-    _.each(req.query, function(value, key) {
+  api.setConfig = (req, res, next) => {
+    _.each(req.query, (value, key) => {
       // Convert strings for true and false to boolean
       if (value == "true" || value == "false") {
         value = (value == "true") ? true : false;
@@ -71,7 +71,7 @@ module.exports = function(ummon){
   /**
    * What tasks are running
    */
-  api.ps = function(req, res, next){
+  api.ps = (req, res, next) => {
     var pids = Object.keys(ummon.workers);
 
     res.json(200, {
@@ -93,7 +93,7 @@ module.exports = function(ummon){
    *     "port": 8888
    *   }
    */
-  api.getInfo = function(req, res, next) {
+  api.getInfo = (req, res, next) => {
     var pkg = require('./package.json');
     res.json(200, {
       ok: true,
@@ -118,11 +118,11 @@ module.exports = function(ummon){
    *     "totalTasks":
    *   }
    */
-  api.getStatus = function(req, res, next){
+  api.getStatus = (req, res, next) => {
     var pids = Object.keys(ummon.workers);
 
     var workers = (_.size(ummon.workers))
-      ? _.map(ummon.workers, function(worker) {return worker.run.task.id})
+      ? _.map(ummon.workers, worker => worker.run.task.id)
       : [];
 
     res.json(200, {
@@ -138,12 +138,12 @@ module.exports = function(ummon){
   };
 
 
-  api.getQueue = function(req, res, next) {
+  api.getQueue = (req, res, next) => {
     res.json(200, {"queue": ummon.queue.getPresentTaskIds()});
   }
 
 
-  api.clearQueue = function(req, res, next) {
+  api.clearQueue = (req, res, next) => {
     var task = req.params.task || false;
     ummon.queue.clear(task);
     res.json(200)
@@ -167,10 +167,10 @@ module.exports = function(ummon){
    * @param  {Function} next The callback
    * @return {[type]}        Heavily structured object. See above
    */
-  api.getTasks = function(req, res, next) {
+  api.getTasks = (req, res, next) => {
     var filter = req.params.collection || req.params.taskid || false;
 
-    ummon.getTasks(filter, function(err, collections){
+    ummon.getTasks(filter, (err, collections) => {
       if (err) {
         if (err.message === "There is no tasks or collections that match the provided filter") {
           return next(new restify.ResourceNotFoundError(err.message));
@@ -184,8 +184,8 @@ module.exports = function(ummon){
   };
 
 
-  api.getCollection = function (req, res, next) {
-    ummon.getTasks(req.params.collection, function (err, results) {
+  api.getCollection = (req, res, next) => {
+    ummon.getTasks(req.params.collection, (err, results) => {
       if (err) return next(err);
       // Collection object should always be the only member of the results array
       var col = results[0];
@@ -213,7 +213,7 @@ module.exports = function(ummon){
   };
 
 
-  api.setCollection = function(req, res, next) {
+  api.setCollection = (req, res, next) => {
     var config = req.body;
     // Modify config for feeding to createCollectionAndTasks
     // TODO Simplify stored object
@@ -221,10 +221,10 @@ module.exports = function(ummon){
     if (config.hasOwnProperty('enabled')) {
       config.config = {enabled: config.enabled};
     }
-    ummon.updateCollectionAndTasks(config, function(err){
+    ummon.updateCollectionAndTasks(config, err => {
       if (err) return next(new restify.InvalidContentError(err.message));
 
-      ummon.getTasks(req.params.collection, function(err, collection){
+      ummon.getTasks(req.params.collection, (err, collection) => {
         res.json(200, { 'collections': collection } );
         next();
       })
@@ -232,8 +232,8 @@ module.exports = function(ummon){
   };
 
 
-  api.getTask = function(req, res, next){
-    ummon.getTask(req.params.taskid, function(err, task){
+  api.getTask = (req, res, next) => {
+    ummon.getTask(req.params.taskid, (err, task) => {
       if (err) {
         return next(err);
       }
@@ -250,11 +250,11 @@ module.exports = function(ummon){
    * @param {[type]}   res  [description]
    * @param {Function} next [description]
    */
-  api.setTasks = function(req, res, next) {
-    ummon.createCollectionAndTasks(req.body, function(err){
+  api.setTasks = (req, res, next) => {
+    ummon.createCollectionAndTasks(req.body, err => {
       if (err) return next(new restify.InvalidContentError(err.message));
 
-      ummon.getTasks(req.params.collection, function(err, collection){
+      ummon.getTasks(req.params.collection, (err, collection) => {
         res.json(200, { 'collections': collection } );
         next();
       })
@@ -275,8 +275,8 @@ module.exports = function(ummon){
    *        }
    *      }
    */
-  api.createTask = function(req, res, next){
-    var task = ummon.createTask(req.body, function(err, task){
+  api.createTask = (req, res, next) => {
+    var task = ummon.createTask(req.body, (err, task) => {
       if (err) {
         // Assume it's a duplicate task id error
         return next(new restify.ConflictError(err.message));
@@ -288,18 +288,18 @@ module.exports = function(ummon){
   };
 
 
-  api.updateTask = function(req, res, next){
-    var task = ummon.updateTask(req.params.taskid, req.body, function(err, task){
+  api.updateTask = (req, res, next) => {
+    var task = ummon.updateTask(req.params.taskid, req.body, (err, task) => {
       res.json(200, {"message":"Task "+task.id+" successfully updated", "task":task});
       next();
     });
   };
 
 
-  api.deleteTask = function(req, res, next){
+  api.deleteTask = (req, res, next) => {
     var p = req.params;
 
-    ummon.deleteTask(p.taskid, function(err){
+    ummon.deleteTask(p.taskid, err => {
       if (err) {
         return next(err);
       }
@@ -310,7 +310,7 @@ module.exports = function(ummon){
   };
 
 
-  api.enableTask = function(req, res, next) {
+  api.enableTask = (req, res, next) => {
     var task = ummon.tasks[req.params.taskid];
 
     // Don't enable a task that is in a disabled collection
@@ -329,7 +329,7 @@ module.exports = function(ummon){
   }
 
 
-  api.disableTask = function(req, res, next) {
+  api.disableTask = (req, res, next) => {
     var taskid = req.params.taskid;
 
     ummon.tasks[taskid].enabled = false;
@@ -343,24 +343,24 @@ module.exports = function(ummon){
 
 
   // Run a task or one-off command
-  api.run = function(req, res, next) {
+  api.run = (req, res, next) => {
     var task = req.body.task;
 
-    ummon.runTask(task, function (err, run) {
+    ummon.runTask(task, (err, run) => {
       res.json(200, { message: 'Added "' + task + '" to the queue' });
       next();
     });
   };
 
 
-  api.getCollectionDefaults = function(req, res, next) {
+  api.getCollectionDefaults = (req, res, next) => {
     var collection = req.params.collection;
     res.json(200, { "collection":  collection, "defaults": ummon.defaults[collection]} );
     next();
   }
 
 
-  api.setCollectionDefaults = function(req, res, next) {
+  api.setCollectionDefaults = (req, res, next) => {
     var collection = req.params.collection;
 
     var message = (ummon.defaults[collection])
@@ -376,7 +376,7 @@ module.exports = function(ummon){
   }
 
 
-  api.enableCollection = function(req, res, next) {
+  api.enableCollection = (req, res, next) => {
     var collection = req.params.collection;
     var tasksEnabled = [];
 
@@ -400,7 +400,7 @@ module.exports = function(ummon){
   }
 
 
-  api.disableCollection = function(req, res, next) {
+  api.disableCollection = (req, res, next) => {
     var collection = req.params.collection;
     var tasksDisabled = [];
 
@@ -424,7 +424,7 @@ module.exports = function(ummon){
   }
 
 
-  api.deleteCollection = function(req, res, next) {
+  api.deleteCollection = (req, res, next) => {
     var collection = req.params.collection;
 
     delete ummon.config.collections[collection];
@@ -437,7 +437,7 @@ module.exports = function(ummon){
 
     var taskIds = ummon.getTaskIds(collection+'*');
 
-    async.each(taskIds, ummon.deleteTask.bind(ummon), function(err){
+    async.each(taskIds, ummon.deleteTask.bind(ummon), err => {
       ummon.emit('task.deleted', collection); // Task.updated because this effect existing tasks
 
       res.json(200, { "message":  "Collection " + collection + " successfully deleted" } );
@@ -446,7 +446,7 @@ module.exports = function(ummon){
   }
 
 
-  api.showLog = function(req, res, next){
+  api.showLog = (req, res, next) => {
     delete req.params.lines; // Not sure why this is here but deleting it simplifies the code below
 
     var filter = req.query.filter || false;
@@ -457,7 +457,9 @@ module.exports = function(ummon){
 
     // Figure out the filter
     if (filter) {
-      var runid = false, collection = false, taskid = false;
+      var runid = false;
+      var collection = false;
+      var taskid = false;
       if (/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/.test(filter)) {
         runid = filter;
       } else if (filter.indexOf('.') !== -1) {
@@ -469,18 +471,18 @@ module.exports = function(ummon){
 
     var d = require('domain').create();
 
-    d.on('error', function(er) {
+    d.on('error', er => {
       console.log(er.stack)
     })
 
-    d.run(function() {
+    d.run(() => {
       es.pipeline(
         fs.createReadStream(ummon.config.log.path, {encoding: 'utf8'}),
         es.split(), // Split on new lines
         es.parse(), // JSON.parse()
 
         // Start by filtering by date
-        es.map(function (data, callback) {
+        es.map((data, callback) => {
           if ((!from || data.time >= from) && (!to || data.time <= to)) {
             return callback(null, data)
           }
@@ -488,7 +490,7 @@ module.exports = function(ummon){
         }),
 
         // Filter on content
-        es.map(function (data, callback) {
+        es.map((data, callback) => {
           if (runid || taskid || collection) {
             if ((runid && runid === data.runid) ||
               (taskid && taskid === data.taskid) ||
@@ -503,7 +505,7 @@ module.exports = function(ummon){
         }),
 
         // filter on runs only
-        es.map(function (data, callback) {
+        es.map((data, callback) => {
           if (runsOnly) {
             if (("run" in data)) {
               return callback(null, data)

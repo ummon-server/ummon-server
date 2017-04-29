@@ -7,7 +7,7 @@ var run = require('../lib/run.js');
 var testRun;
 //                    Construct!
 // - - - - - - - - - - - - - - - - - - - - - - - - - 
-test('Test successfully creating a run', function(t){
+test('Test successfully creating a run', t => {
   t.plan(4);
 
   testRun = run({
@@ -21,7 +21,7 @@ test('Test successfully creating a run', function(t){
   t.equal(testRun.completed, null, 'The run should not have an completed time');
 });
 
-test('Test successfully starting a run', function(t){
+test('Test successfully starting a run', t => {
   t.plan(3);
   t.equal(testRun.started, null, 'The run should not have an started time');
   t.type(testRun.duration(), 'number', 'The run lenght should be a number');
@@ -29,7 +29,7 @@ test('Test successfully starting a run', function(t){
   t.type(testRun.started, 'number', 'The run should have an started time');
 });
 
-test('Test successfully completing a run', function(t){
+test('Test successfully completing a run', t => {
   t.plan(4);
   t.equal(testRun.completed, null, 'The run should not have an completed time');
   testRun.complete(0);

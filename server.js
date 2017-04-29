@@ -53,17 +53,17 @@ var ummon = require('./lib/ummon')(ummonOptions);
  * Watch for and properly respond to signals
  */
 
-ON_DEATH(function(signal, err) {
+ON_DEATH((signal, err) => {
   if (!ummon.pause) {
     ummon.pause = true;
 
     ummon.log.info("Kill (%s) signal received. Waiting for workers to finish", signal);
 
-    _.each(ummon.workers, function(run){
+    _.each(ummon.workers, run => {
       run.worker.kill(signal);
     })
 
-    setInterval(function(){
+    setInterval(() => {
       var count = _.size(ummon.workers);
 
       if (0 === count) {
@@ -76,7 +76,7 @@ ON_DEATH(function(signal, err) {
 });
 
 // Don't explode if your're piping and it stops
-process.stdout.on('error', function( err ) {
+process.stdout.on('error', err => {
   if (err.code == "EPIPE") {
     process.exit(0);
   }
@@ -93,7 +93,7 @@ var server = restify.createServer({
   log: ummon.log
 });
 
-server.on('after', function(req, res, route, error) {
+server.on('after', (req, res, route, error) => {
   if (route) {
     ummon.log.info({apiUrl:req.url},'%s - %s (matched by route %s)', res.statusCode, req.url, route.spec.path);
   } else {
@@ -117,7 +117,7 @@ server.use(restify.authorizationParser());
 server.pre(restify.pre.sanitizePath());
 server.use(restify.fullResponse());
 
-server.use(function (req, res, next){
+server.use((req, res, next) => {
   var creds = ummon.config.credentials;
   // Don't check credentials if not in config
   if (!creds || !creds.length || creds.indexOf(req.authorization.credentials) !== -1){
@@ -160,11 +160,11 @@ server.post('/run', api.run);
 server.get('/log', api.showLog);
 
 
-var getRuns = _.throttle(function(){ return ummon.getRuns(); }, '500');
+var getRuns = _.throttle(() => ummon.getRuns(), '500');
 
 var d = domain.create();
 
-d.on('error', function(err) {
+d.on('error', err => {
   if (err.code === 'EADDRINUSE') {
     server.log.error(err, 'The address you\'re trying to bind to is already in use');
   } else {
@@ -174,8 +174,8 @@ d.on('error', function(err) {
   process.exit(1);
 })
 
-d.run(function(){
-  server.listen(ummon.config.port, function() {
+d.run(() => {
+  server.listen(ummon.config.port, () => {
     console.log("               _  __              _       _ ");
     console.log("              | |/ __      ____ _| |_ ___| |");
     console.log("              | ' /\\ \\ /\\ / / _` | __|_  | |");
@@ -185,18 +185,18 @@ d.run(function(){
     server.log.info({addr: server.address()}, 'listening');
 
     var io = socketio.listen(server);
-    io.on('error', function(test){
+    io.on('error', test => {
       console.log('ERRROROROROR', test)
     })
     io.set('log level', 1);
-    io.sockets.on('connection', function (socket) {
+    io.sockets.on('connection', socket => {
         socket.emit('send:tasks', ummon.getTasks());
 
         // Send runs
         // TODO: Is there a way to bind to multiple events with one listener?
-        ummon.on('worker.start', function(){ socket.emit('send:runs', getRuns()); });
-        ummon.on('worker.complete', function(){ socket.emit('send:runs', getRuns()); });
-        ummon.on('queue.new', function(){ socket.emit('send:runs', getRuns()); });
+        ummon.on('worker.start', () => { socket.emit('send:runs', getRuns()); });
+        ummon.on('worker.complete', () => { socket.emit('send:runs', getRuns()); });
+        ummon.on('queue.new', () => { socket.emit('send:runs', getRuns()); });
     });
   });
 })

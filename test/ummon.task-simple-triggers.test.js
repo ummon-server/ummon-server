@@ -6,14 +6,14 @@ var async = require("async");
 
 var ummon = require('..')({pause:true, autoSave:false});
 
-test('Create a tasks with simplified trigger', function(t) {
+test('Create a tasks with simplified trigger', t => {
   t.plan(8);
 
   ummon.createTask({
     "name":"everyminute",
     "command": "echo Hello;",
     "trigger": "* 5 * * *"
-  }, function(err, task){
+  }, (err, task) => {
     t.ok(task, 'The callback returns a task');
     t.ok(ummon.tasks['ummon.everyminute'], 'There is a everyminute task');
     t.ok(ummon.tasks['ummon.everyminute'].trigger.time, 'There is a timed trigger');
@@ -24,7 +24,7 @@ test('Create a tasks with simplified trigger', function(t) {
     "name":"aftereveryminute",
     "command": "echo Hello;",
     "trigger": "everyminute"
-  }, function(err, task){
+  }, (err, task) => {
     t.ok(task, 'The callback returns a task');
     t.ok(ummon.tasks['ummon.aftereveryminute'], 'There is a aftereveryminute task');
     t.ok(ummon.tasks['ummon.aftereveryminute'].trigger.after, 'There is a trigger');
@@ -34,8 +34,8 @@ test('Create a tasks with simplified trigger', function(t) {
 });
 
 
-test('teardown', function(t){
-  setImmediate(function() {
+test('teardown', t => {
+  setImmediate(() => {
     process.exit();
   });
   t.end();

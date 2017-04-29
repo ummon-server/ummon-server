@@ -26,14 +26,14 @@ var collection = {
   }
 }
 
-test('Create a collection from an object', function(t){
+test('Create a collection from an object', t => {
   t.plan(7);
-  ummon.createCollectionAndTasks(collection, function(err){
+  ummon.createCollectionAndTasks(collection, err => {
     t.equal(ummon.defaults.barankay.cwd, '/Users/matt/tmp/', 'Defaults were set')
     t.equal(ummon.tasks['barankay.send-text-messages'].command, 'sh test.sh', 'Tasks were set')
     t.ok(ummon.timers['barankay.send-text-messages'], 'Timers were setup')
     t.equal(ummon.config.collections.barankay.enabled, true, 'Settings were set')
-    ummon.getTasks(collection.collection, function(err, tasks){
+    ummon.getTasks(collection.collection, (err, tasks) => {
       t.equal(tasks[0].collection, 'barankay');
       t.equal(tasks[0].defaults.cwd, '/Users/matt/tmp/');
       t.equal(tasks[0].config.enabled, true);
@@ -62,14 +62,14 @@ var disabledCollection = {
   }
 }
 
-test('Create a collection that is disabled', function(t){
+test('Create a collection that is disabled', t => {
   t.plan(7);
-  ummon.createCollectionAndTasks(disabledCollection, function(err){
+  ummon.createCollectionAndTasks(disabledCollection, err => {
     t.equal(ummon.defaults.disabledCollection.cwd, '/Users/matt/tmp/', 'Defaults were set')
     t.equal(ummon.tasks['disabledCollection.send-text-messages'].command, 'sh test.sh', 'Tasks were set')
     t.notOk(ummon.timers['disabledCollection.send-text-messages'], 'Timers were not setup')
     t.equal(ummon.config.collections.disabledCollection.enabled, false, 'Settings were set')
-    ummon.getTasks(disabledCollection.collection, function(err, tasks){
+    ummon.getTasks(disabledCollection.collection, (err, tasks) => {
       t.equal(tasks[0].collection, 'disabledCollection');
       t.equal(tasks[0].defaults.cwd, '/Users/matt/tmp/');
       t.equal(tasks[0].config.enabled, false);
@@ -77,8 +77,8 @@ test('Create a collection that is disabled', function(t){
   });
 })
 
-test('teardown', function(t){
-  setImmediate(function() {
+test('teardown', t => {
+  setImmediate(() => {
     process.exit();
   });
   t.end();

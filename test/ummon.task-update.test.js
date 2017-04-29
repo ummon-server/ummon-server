@@ -4,7 +4,7 @@ var ummon = require('..')({pause:true, autoSave:false});
 
 var timer;
 
-test('Create a task', function (t) {
+test('Create a task', t => {
   t.plan(3);
 
   ummon.createTask({
@@ -12,7 +12,7 @@ test('Create a task', function (t) {
     name: 'nye', 
     command: 'echo "The science guy!"',
     trigger: '* * * * *'
-  }, function (err, task) {
+  }, (err, task) => {
     t.ifError(err, 'No error returned to task creation callback');
     t.equal(task.trigger.time, '* * * * *', 'Task trigger set as it should be');
 
@@ -22,12 +22,12 @@ test('Create a task', function (t) {
   });
 });
 
-test('Update a task', function (t) {
+test('Update a task', t => {
   t.plan(4);
 
   ummon.updateTask('science.nye', {
     trigger: '5 * * * *'
-  }, function (err, task) {
+  }, (err, task) => {
     t.ifError(err, 'No error returned to task update callback');
     t.equal(task.trigger.time, '5 * * * *', 'Task trigger set as it should be');
     t.equal(ummon.timers['science.nye'].cronTime.source, '5 * * * *', 'Timer matches trigger');
@@ -38,8 +38,8 @@ test('Update a task', function (t) {
 });
 
 
-test('teardown', function(t){
-  setImmediate(function() {
+test('teardown', t => {
+  setImmediate(() => {
     process.exit();
   });
   t.end();
