@@ -7,7 +7,7 @@ var api = require('../api')(ummon);
 
 //                    Construct!
 // - - - - - - - - - - - - - - - - - - - - - - - - -
-test('Test successfully create the api object', function(t){
+test('Test successfully create the api object', t => {
   t.ok(api, 'The api object should exist');
   t.ok(api.ps, 'The ps function should exist');
   t.ok(api.createTask, 'The createTask function should exist');
@@ -15,14 +15,14 @@ test('Test successfully create the api object', function(t){
   t.end();
 });
 
-test('Show processes', function(t){
+test('Show processes', t => {
   t.plan(2);
 
   var req = {};
   var res = {};
-  var next = function(){};
+  var next = () => {};
 
-  res.json = function(status, json) {
+  res.json = (status, json) => {
     t.type(json.count, 'number', 'The count should be a number');
     t.type(json.runs, 'object', 'The workers should be an object');
   };
@@ -30,14 +30,14 @@ test('Show processes', function(t){
   api.ps(req, res, next);
 });
 
-test('Get server info', function(t){
+test('Get server info', t => {
   t.plan(4);
 
   var req = {};
   var res = {};
-  var next = function(){};
+  var next = () => {};
 
-  res.json = function(status, json) {
+  res.json = (status, json) => {
     t.ok(json.ok, 'Server should return {"ok": true} for connection checking');
     t.equal(json.version, require('../package.json').version, 'Version should be the one in package.json');
     t.equal(json.name, ummon.config.name, 'Name should be set in config');
@@ -47,17 +47,17 @@ test('Get server info', function(t){
   api.getInfo(req, res, next);
 });
 
-test('get server status', function(t){
+test('get server status', t => {
   t.plan(7);
 
   var req = {};
   var res = {};
-  var next = function(){};
+  var next = () => {};
 
   ummon.workers = {123:{run:{task: {id: 123}}}}
   ummon.queue.items = [{task: {id: 321}}]
 
-  res.json = function(status, json) {
+  res.json = (status, json) => {
     console.log(json.workers, json.queue)
     t.similar(json.workers, [123], 'workers should be an object');
     t.similar(json.queue, [321], 'queue should be an array');
@@ -71,30 +71,30 @@ test('get server status', function(t){
   api.getStatus(req, res, next);
 });
 
-test('Get the ummon queue', function(t){
+test('Get the ummon queue', t => {
   t.plan(1);
 
   var req = {};
   var res = {};
-  var next = function(){};
+  var next = () => {};
 
   ummon.queue.items = [{task: {id: 321}}]
 
-  res.json = function(status, json) {
+  res.json = (status, json) => {
     t.similar(json.queue, [321], 'queue should be an array');
   };
 
   api.getQueue(req, res, next);
 });
 
-test('get server config', function(t){
+test('get server config', t => {
   t.plan(3);
 
   var req = {};
   var res = {};
-  var next = function(){};
+  var next = () => {};
 
-  res.json = function(status, json) {
+  res.json = (status, json) => {
     t.type(json.name, 'string', 'name should be an object');
     t.type(json.createWorkerPollInterval, 'number', 'createWorkerPollInterval should be a number');
     t.type(json.log.path, 'string', 'log.path should be a string');
@@ -104,14 +104,14 @@ test('get server config', function(t){
 });
 
 
-test('set server config', function(t){
+test('set server config', t => {
   t.plan(3);
 
   var req = {query: {name:"science", workerToCpuRatio: "1.50", pause:"true"}};
   var res = {};
-  var next = function(){};
+  var next = () => {};
 
-  res.json = function(status, json) {
+  res.json = (status, json) => {
     t.equal(json.name, 'science', 'name should be science');
     t.equal(json.workerToCpuRatio, 1.50, 'createWorkerPollInterval should be a number');
     t.equal(json.pause, true, 'pause should be false');
@@ -121,14 +121,14 @@ test('set server config', function(t){
 });
 
 
-test('Create a task', function(t){
+test('Create a task', t => {
   t.plan(2);
 
   var req = { body: {"name":"test", "command":"echo hello", "trigger": {"time":"* * * * *"}}};
   var res = {};
-  var next = function(){};
+  var next = () => {};
 
-  res.json = function(status, json) {
+  res.json = (status, json) => {
     t.equal(status, 200, 'The status should be 200');
     t.equal(json.message, 'Task ummon.test successfully created', 'The message should be correct');
   };
@@ -137,14 +137,14 @@ test('Create a task', function(t){
 });
 
 
-test('Show a single task', function(t){
+test('Show a single task', t => {
   t.plan(3);
 
   var req = { params: { "taskid":"ummon.test" } };
   var res = {};
-  var next = function(){};
+  var next = () => {};
 
-  res.json = function(status, json) {
+  res.json = (status, json) => {
     t.equal(status, 200, 'The status should be 200');
     t.equal(json.task.name, 'test', 'The task name should be test');
     t.equal(json.task.command, 'echo hello', 'The task command should be echo');
@@ -154,14 +154,14 @@ test('Show a single task', function(t){
 });
 
 
-test('Show multiple tasks', function(t){
+test('Show multiple tasks', t => {
   t.plan(4);
 
   var req = { params: {} };
   var res = {};
-  var next = function(){};
+  var next = () => {};
 
-  res.json = function(status, json) {
+  res.json = (status, json) => {
     t.equal(status, 200, 'The status should be 200');
     t.equal(json.collections.length, 1, 'showTasks returns 1 collection');
     t.ok(json.collections[0], 'There is an ummon collection');
@@ -173,14 +173,14 @@ test('Show multiple tasks', function(t){
 });
 
 
-test('Update a task', function(t){
+test('Update a task', t => {
   t.plan(3);
 
   var req = { params: { "taskid":"ummon.test"}, body: {"name":"test", "collection":"ummon", "command":"echo goodbye", "trigger": {"time":"* * * * *"}} };
   var res = {};
-  var next = function(){};
+  var next = () => {};
 
-  res.json = function(status, json) {
+  res.json = (status, json) => {
     t.equal(status, 200, 'The status should be 200');
     t.equal(json.task.name, 'test', 'The task name should be test');
     t.equal(json.task.command, 'echo goodbye', 'The task command should be echo');
@@ -190,14 +190,14 @@ test('Update a task', function(t){
 });
 
 
-test('Disable a task', function(t){
+test('Disable a task', t => {
   t.plan(4);
 
   var req = { params: { "taskid":"ummon.test"} };
   var res = {};
-  var next = function(){};
+  var next = () => {};
 
-  res.json = function(status, json) {
+  res.json = (status, json) => {
     t.equal(status, 200, 'The status should be 200');
     t.equal(json.message, "Task ummon.test disabled", 'The message should be correct');
     t.equal(ummon.tasks["ummon.test"].enabled, false, 'The task should be marked as disabled');
@@ -208,14 +208,14 @@ test('Disable a task', function(t){
 });
 
 
-test('Enable a task', function(t){
+test('Enable a task', t => {
   t.plan(4);
 
   var req = { params: { "taskid":"ummon.test"} };
   var res = {};
-  var next = function(){};
+  var next = () => {};
 
-  res.json = function(status, json) {
+  res.json = (status, json) => {
     t.equal(status, 200, 'The status should be 200');
     t.equal(json.message, "Task ummon.test enabled", 'The message should be correct');
     t.equal(ummon.tasks["ummon.test"].enabled, true, 'The task should be marked as enabled');
@@ -226,14 +226,14 @@ test('Enable a task', function(t){
 });
 
 
-test('Run a task manually', function(t){
+test('Run a task manually', t => {
   t.plan(2);
 
   var req = {body: {task: "ummon.test"}};
   var res = {};
-  var next = function(){};
+  var next = () => {};
 
-  res.json = function(status, json) {
+  res.json = (status, json) => {
     t.equal(status, 200, 'The status should be 200');
     t.equal(json.message, 'Added "ummon.test" to the queue', 'The message should be correct');
   };
@@ -242,14 +242,14 @@ test('Run a task manually', function(t){
 });
 
 
-test('Delete a collection task', function(t){
+test('Delete a collection task', t => {
   t.plan(5);
 
   var req = { params: { "collection":"ummon"} };
   var res = {};
-  var next = function(){};
+  var next = () => {};
 
-  res.json = function(status) {
+  res.json = status => {
     t.equal(status, 200, 'The status should be 200');
     t.notOk(ummon.defaults["ummon"], 'There is no defaults');
     t.notOk(ummon.config.collections["ummon"], 'There is no settings');
@@ -261,13 +261,13 @@ test('Delete a collection task', function(t){
 });
 
 
-test('Update a collection', function(t) {
+test('Update a collection', t => {
   t.plan(4);
 
   // First create foo.delete-me
   var req1 = { body: {"name":"foo.delete-me", "command":"echo hello", "trigger": {"time":"* * * * *"}}};
-  var res = { json: function(){} };
-  var next = function(){};
+  var res = { json() {} };
+  var next = () => {};
   api.createTask(req1, res, next);
 
   // Now create foo.change-me
@@ -286,7 +286,7 @@ test('Update a collection', function(t) {
     }
   };
 
-  res.json = function(status) {
+  res.json = status => {
     t.equal(status, 200, 'The status should be 200');
     t.ok(ummon.tasks["foo.create-me"], 'The foo.create-me task should now exist');
     t.equal(ummon.tasks["foo.change-me"]['command'], 'echo new-version', 'The foo.change-me task should be updated');
@@ -301,14 +301,14 @@ test('Update a collection', function(t) {
 
 
 
-test('Run a one-off command', function(t){
+test('Run a one-off command', t => {
   t.plan(2);
 
   var req = {body: {task: "echo hello"}};
   var res = {};
-  var next = function(){};
+  var next = () => {};
 
-  res.json = function(status, json) {
+  res.json = (status, json) => {
     t.equal(status, 200, 'The status should be 200');
     t.equal(json.message, 'Added "echo hello" to the queue', 'The message should be correct');
   };
@@ -317,18 +317,18 @@ test('Run a one-off command', function(t){
 });
 
 
-test('Return a log', function(t){
+test('Return a log', t => {
   t.plan(1);
   var x = 0;
   var req = { params: { collection: 'default' }, query: { lines: 5} };
   var res = stream.PassThrough();
-  var next = function(){};
+  var next = () => {};
 
-  res.on('data', function(){
+  res.on('data', () => {
     x++; // This isn't incremented with empty logs ie: Travis
   });
 
-  res.on('end', function(){
+  res.on('end', () => {
     t.ok(true, 'The end event was emitted');
   });
 
@@ -336,8 +336,8 @@ test('Return a log', function(t){
 });
 
 
-test('teardown', function(t){
-  setImmediate(function() {
+test('teardown', t => {
+  setImmediate(() => {
     process.exit();
   });
   t.end();

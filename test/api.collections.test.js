@@ -23,14 +23,14 @@ var collection = {
 }
 
 
-test('Create new collection', function(t){
+test('Create new collection', t => {
   t.plan(4);
 
   var req = { params: { collection: collection.collection}, body: collection };
   var res = {};
-  var next = function(){};
+  var next = () => {};
 
-  res.json = function(status, json) {
+  res.json = (status, json) => {
     t.equal(status, 200, 'The status should be 200');
     t.equal(json.collections.length, 1, 'showTasks returns 1 collection');
     t.equal(json.collections[0].collection, "barankay", 'There is an ummon collection');
@@ -41,14 +41,14 @@ test('Create new collection', function(t){
 });
 
 
-test('Set a collections default settings', function(t){
+test('Set a collections default settings', t => {
   t.plan(3);
 
   var req = { params: { "collection":"ummon" }, body: {"cwd":"/home/matt"} };
   var res = {};
-  var next = function(){};
+  var next = () => {};
 
-  res.json = function(status, json) {
+  res.json = (status, json) => {
     t.equal(status, 200, 'The status should be 200');
     t.equal(json.collection, 'ummon', 'The collection returned should be ummon');
     t.equal(json.defaults.cwd, '/home/matt', 'The task command should be echo');
@@ -58,14 +58,14 @@ test('Set a collections default settings', function(t){
 });
 
 
-test('Show a collections default settings', function(t){
+test('Show a collections default settings', t => {
   t.plan(3);
 
   var req = { params: { "collection":"ummon" } };
   var res = {};
-  var next = function(){};
+  var next = () => {};
 
-  res.json = function(status, json) {
+  res.json = (status, json) => {
     t.equal(status, 200, 'The status should be 200');
     t.equal(json.collection, 'ummon', 'The collection returned should be ummon');
     t.equal(json.defaults.cwd, '/home/matt', 'The task command should be echo');
@@ -75,14 +75,14 @@ test('Show a collections default settings', function(t){
 });
 
 
-test('Disable a collection', function(t){
+test('Disable a collection', t => {
   t.plan(2);
 
   var req = { params: { "collection":"barankay" } };
   var res = {};
-  var next = function(){};
+  var next = () => {};
 
-  res.json = function(status, json) {
+  res.json = (status, json) => {
     t.equal(status, 200, 'The status should be 200');
     t.similar(json.tasksDisabled, ['barankay.send-text-messages'], 'Specific tasks should of been disabled');
   };
@@ -91,14 +91,14 @@ test('Disable a collection', function(t){
 });
 
 
-test('Enable a collection', function(t){
+test('Enable a collection', t => {
   t.plan(2);
 
   var req = { params: { "collection":"barankay" } };
   var res = {};
-  var next = function(){};
+  var next = () => {};
 
-  res.json = function(status, json) {
+  res.json = (status, json) => {
     t.equal(status, 200, 'The status should be 200');
     t.similar(json.tasksEnabled, ['barankay.send-text-messages'], 'Specific tasks should of been enabled');
   };
@@ -107,8 +107,8 @@ test('Enable a collection', function(t){
 });
 
 
-test('teardown', function(t){
-  setImmediate(function() {
+test('teardown', t => {
+  setImmediate(() => {
     process.exit();
   });
   t.end();

@@ -15,14 +15,14 @@ var sampleTask = run({
   "env": {"TERM":"dumb"}
 });
  
-test('Test successfully running code with a worker', function(t){
+test('Test successfully running code with a worker', t => {
   t.plan(2);
 
   var sleep = worker(sampleTask, ummon);
 
   t.type(sleep.pid, "number", 'There is a pid that is a number');
 
-  ummon.once('worker.complete', function(run){
+  ummon.once('worker.complete', run => {
     t.equal(run.exitCode, 0, 'The task runs and returns it\'s exit code of 0');
     t.end();
   });
@@ -30,8 +30,8 @@ test('Test successfully running code with a worker', function(t){
 
 
 // The test doesn't exit because of something the worker is doing. 
-test('teardown', function(t){
-  setImmediate(function() {
+test('teardown', t => {
+  setImmediate(() => {
     process.exit();
   });
   t.end();
