@@ -24,7 +24,7 @@ test('Create a task with a timed trigger and wait for it to add to the queue', f
       "TERM":"dummy"
     },
     "trigger": {
-      "time": moment().add('ms', 100).toDate()
+      "time": moment().add(100, 'ms').toDate()
     }
   }, function(err, task){
     t.ok(task, 'The callback returns a task');

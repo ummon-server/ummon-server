@@ -23,7 +23,7 @@
   "dependencies": {
     "colors": "~0.6.0-1",
     "underscore": "~1.5.1",
-    "moment": "~2.4.0",
+    "moment": "~2.11",
     "dependency-foo": "~0.1.1",
     "cron": "~1.0.9",
     "eventemitter2": "~0.4.11",
