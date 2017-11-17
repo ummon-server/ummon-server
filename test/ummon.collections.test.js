@@ -1,8 +1,6 @@
 'use strict';
 
 var test = require("tap").test;
-var moment = require("moment");
-var async = require("async");
 
 var ummon = require('..')({pause:true, autoSave:false});
 
