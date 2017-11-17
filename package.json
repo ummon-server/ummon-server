@@ -17,28 +17,28 @@
     "test": "tap test"
   },
   "devDependencies": {
-    "tap": "~0.4.1",
-    "rimraf": "~2.2.0"
+    "rimraf": "^2.6.2",
+    "tap": "~0.4.1"
   },
   "dependencies": {
     "async": "~0.2.9",
-    "bunyan": "~0.22.0",
-    "colors": "~0.6.0-1",
+    "bunyan": "^1.8.12",
     "cron": "~1.0.9",
     "daemon": "~1.1.0",
-    "death": "~0.1.0",
+    "death": "^1.1.0",
     "dependency-foo": "~0.1.1",
     "event-stream": "~3.0.14",
     "eventemitter2": "~0.4.11",
-    "glob": "~3.2.1",
-    "mkdirp": "~0.3.5",
-    "moment": "~2.11",
-    "npid": "~0.3.2",
+    "glob": "^7.1.2",
+    "mkdirp": "^0.5.1",
+    "moment": "^2.19.2",
+    "mv": "^2.1.1",
+    "npid": "^0.4.0",
     "optimist": "~0.6.0",
     "request": "*",
     "restify": "~2.6.0",
     "socket.io": "~0.9.14",
-    "underscore": "~1.5.1",
-    "uuid": "~1.4.1"
+    "underscore": "^1.8.3",
+    "uuid": "^3.1.0"
   }
 }

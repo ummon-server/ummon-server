@@ -11,7 +11,6 @@ var npid = require('npid');
 var path = require('path');
 var restify = require('restify');
 var socketio = require('socket.io');
-var bunyan = require('bunyan');
 var _ = require('underscore');
 var ON_DEATH = require('death')({uncaughtException: true});
 
