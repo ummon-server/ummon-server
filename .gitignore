@@ -1,22 +1,9 @@
 node_modules
 lib-cov
-*.seed
-*.log
-*.csv
-*.dat
-*.out
-*.pid
-*.gz
 
-pids
 logs
-results
 
 npm-debug.log
-
-docs
-test.js
-test.sh
 
 config/tasks/*
 config/config.json
