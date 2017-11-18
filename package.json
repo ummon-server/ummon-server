@@ -36,7 +36,7 @@
     "npid": "^0.4.0",
     "optimist": "~0.6.0",
     "request": "*",
-    "restify": "~2.6.0",
+    "restify": "^6.3.2",
     "socket.io": "~0.9.14",
     "underscore": "^1.8.3",
     "uuid": "^3.1.0"
