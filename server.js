@@ -38,7 +38,7 @@ var argv = optimist.usage('Ummon and stuff', {
 if (argv.daemon) require('daemon')();
 
 // Create the pid file, throwing on failure
-npid.create(argv.pidfile);
+npid.create(argv.pidfile).removeOnExit();
 
 // It's possible to pass a string that will be the config path. Catch it here:
 var ummonOptions = (argv.config)
@@ -53,6 +53,9 @@ var ummon = require('./lib/ummon')(ummonOptions);
  */
 
 ON_DEATH(function(signal, err) {
+  if (err) {
+    console.log(err);
+  }
   if (!ummon.pause) {
     ummon.pause = true;
 
@@ -101,20 +104,15 @@ server.on('after', function(req, res, route, error) {
 });
 
 // Middlewarez
-server.use(restify.acceptParser(server.acceptable));
-server.use(restify.requestLogger());
-server.use(restify.bodyParser());
-server.use(restify.queryParser());
-server.use(restify.gzipResponse());
-server.use(restify.CORS({
-        origins: ['localhost', 'localhost:8888', 'localhost:3000'],   // defaults to ['*']
-        // credentials: true                  // defaults to false
-        // headers: ['x-foo']                 // sets expose-headers
-    }));
-server.use(restify.authorizationParser());
+server.use(restify.plugins.acceptParser(server.acceptable));
+server.use(restify.plugins.requestLogger());
+server.use(restify.plugins.bodyParser());
+server.use(restify.plugins.queryParser());
+server.use(restify.plugins.gzipResponse());
+server.use(restify.plugins.authorizationParser());
 
 server.pre(restify.pre.sanitizePath());
-server.use(restify.fullResponse());
+server.use(restify.plugins.fullResponse());
 
 server.use(function (req, res, next){
   var creds = ummon.config.credentials;

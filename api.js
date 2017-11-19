@@ -10,6 +10,7 @@ var es = require('event-stream');
 var _ = require('underscore');
 var async = require('async');
 var moment = require('moment');
+var errors = require('restify-errors');
 
 
 module.exports = function(ummon){
@@ -22,14 +23,14 @@ module.exports = function(ummon){
     if (collection && collection in ummon.config.collections) {
       next();
     } else {
-      return next(new restify.ResourceNotFoundError('No collection of name '+collection+' found'));
+      return next(new errors.ResourceNotFoundError('No collection of name '+collection+' found'));
     }
   };
 
 
   api.doesTaskExist = function(req, res, next) {
     if (!(req.params.taskid in ummon.tasks)) {
-      return next(new restify.ResourceNotFoundError('Task not found! Consider broadening your search to a collection'));
+      return next(new errors.ResourceNotFoundError('Task not found! Consider broadening your search to a collection'));
     } else {
       next();
     }
@@ -173,7 +174,7 @@ module.exports = function(ummon){
     ummon.getTasks(filter, function(err, collections){
       if (err) {
         if (err.message === "There is no tasks or collections that match the provided filter") {
-          return next(new restify.ResourceNotFoundError(err.message));
+          return next(new errors.ResourceNotFoundError(err.message));
         } else {
           return next(err);
         }
@@ -222,7 +223,7 @@ module.exports = function(ummon){
       config.config = {enabled: config.enabled};
     }
     ummon.updateCollectionAndTasks(config, function(err){
-      if (err) return next(new restify.InvalidContentError(err.message));
+      if (err) return next(new errors.InvalidContentError(err.message));
 
       ummon.getTasks(req.params.collection, function(err, collection){
         res.json(200, { 'collections': collection } );
@@ -252,7 +253,7 @@ module.exports = function(ummon){
    */
   api.setTasks = function(req, res, next) {
     ummon.createCollectionAndTasks(req.body, function(err){
-      if (err) return next(new restify.InvalidContentError(err.message));
+      if (err) return next(new errors.InvalidContentError(err.message));
 
       ummon.getTasks(req.params.collection, function(err, collection){
         res.json(200, { 'collections': collection } );
@@ -279,7 +280,7 @@ module.exports = function(ummon){
     var task = ummon.createTask(req.body, function(err, task){
       if (err) {
         // Assume it's a duplicate task id error
-        return next(new restify.ConflictError(err.message));
+        return next(new errors.ConflictError(err.message));
       }
 
       res.json(200, {"message":"Task "+task.id+" successfully created", "task":task});
