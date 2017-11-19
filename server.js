@@ -185,7 +185,6 @@ d.run(function(){
     io.on('error', function(test){
       console.log('ERRROROROROR', test)
     })
-    io.set('log level', 1);
     io.sockets.on('connection', function (socket) {
         socket.emit('send:tasks', ummon.getTasks());
 
