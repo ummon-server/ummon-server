@@ -28,17 +28,17 @@
     "death": "^1.1.0",
     "dependency-foo": "~0.1.1",
     "event-stream": "^3.3.4",
-    "eventemitter2": "^4.1.2",
+    "eventemitter2": "^5.0.1",
     "glob": "^7.1.2",
     "mkdirp": "^0.5.1",
-    "moment": "^2.19.2",
+    "moment": "^2.21.0",
     "npid": "^0.4.0",
     "optimist": "~0.6.0",
     "request": "*",
-    "restify": "^6.3.2",
-    "restify-errors": "^5.0.0",
+    "restify": "^6.3.4",
+    "restify-errors": "^6.0.0",
     "socket.io": "^2.0.4",
     "underscore": "^1.8.3",
-    "uuid": "^3.1.0"
+    "uuid": "^3.2.1"
   }
 }
