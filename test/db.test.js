@@ -52,8 +52,7 @@ test('Load tasks from tasks dir', function(t){
 
       t.ok(ummon.tasks['palace.pizza'], 'Second config file loaded and first collection loaded');
 
-      // t.equal(ummon.dependencies["success"].subject('autosample.task1').references[0],'autosample.task2', 'Task dependencies were setup properly');
-      t.equal(ummon.getTaskReferences('autosample.task1')[0],'autosample.task2', 'Task dependencies were setup properly');
+      t.notEqual(ummon.getTaskReferences('autosample.task1').indexOf('autosample.task2'), -1, 'Task dependencies were setup properly');
     });
   });
 });
