@@ -241,6 +241,21 @@ test('Run a task manually', function(t){
   api.run(req, res, next);
 });
 
+test('Run a non-existent task manually', function(t){
+  t.plan(2);
+
+  var req = {body: {task: "ummon.fake"}};
+  var res = {};
+  var next = function(){};
+
+  res.json = function(status, json) {
+    t.equal(status, 200, 'The status should be 200');
+    t.equal(json.message, 'Added "ummon.fake" to the queue', 'The message should be correct');
+  };
+
+  api.run(req, res, next);
+});
+
 
 test('Delete a collection task', function(t){
   t.plan(5);
