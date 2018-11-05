@@ -20,13 +20,19 @@
     "task3": {
       "command": "./process-data",
       "trigger": {
-        "after": "autosample.task2"
+        "after": "autosample.*"
       }
     },
     "task4": {
       "command": "./process-data",
       "trigger": {
-        "after": "autosample.task3"
+        "after": "*"
+      }
+    },
+    "task5": {
+      "command": "echo This trigger is a non-existent task. It shouldn't show as a dependency of real tasks",
+      "trigger": {
+        "after": "othercollection.*"
       }
     }
   }

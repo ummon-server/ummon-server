@@ -37,7 +37,7 @@ test('Attempt to load collection with configuration error', function(t){
 });
 
 test('Load tasks from tasks dir', function(t){
-  t.plan(7);
+  t.plan(10);
 
   ummon.config.tasksPath = __dirname+'/fixtures/tasks/';
 
@@ -53,6 +53,10 @@ test('Load tasks from tasks dir', function(t){
       t.ok(ummon.tasks['palace.pizza'], 'Second config file loaded and first collection loaded');
 
       t.notEqual(ummon.getTaskReferences('autosample.task1').indexOf('autosample.task2'), -1, 'Task dependencies were setup properly');
+
+      t.notEqual(ummon.getTaskReferences('autosample.task1').indexOf('autosample.task3'), -1, 'Task dependencies defined with collection.* were setup properly');
+      t.notEqual(ummon.getTaskReferences('autosample.task1').indexOf('autosample.task4'), -1, 'Task dependencies defined with * were setup properly');
+      t.equal(ummon.getTaskReferences('autosample.task1').indexOf('autosample.task5'), -1, 'Task dependencies defined with a non-existent trigger aren\'t erroneously linked');
     });
   });
 });
