@@ -11,7 +11,7 @@
     "ummon-notify": "./bin/ummon-notify"
   },
   "engines": {
-    "node": ">= 0.10.0"
+    "node": ">= 6"
   },
   "scripts": {
     "test": "tap test"
