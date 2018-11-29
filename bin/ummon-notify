@@ -11,10 +11,6 @@ var argv = require('optimist')
     demand: true,
     describe: 'The Run id to notify for'
   })
-  .options('e', {
-    alias: 'email',
-    describe: 'Generate an email with out the output of the provided Run    (coming soon)'
-  })
   .options('campfire', {
     boolean: true,
     describe: 'Send a message to your configured campfire chatroom'
