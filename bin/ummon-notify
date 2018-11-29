@@ -3,6 +3,7 @@
 var fs = require('fs')
 var es = require('event-stream')
 var request = require('request')
+const Sentry = require('@sentry/node');
 
 var argv = require('optimist')
   .usage('Send the status of a run to an outside server. Typically triggered by other tasks.\nUsage: $0')
@@ -10,10 +11,6 @@ var argv = require('optimist')
     alias: 'run',
     demand: true,
     describe: 'The Run id to notify for'
-  })
-  .options('e', {
-    alias: 'email',
-    describe: 'Generate an email with out the output of the provided Run    (coming soon)'
   })
   .options('campfire', {
     boolean: true,
@@ -82,6 +79,29 @@ es.pipeline(
         json: true
       })
     }
+    if (argv.sentry) {
+      if (!config.sentry || !config.sentry.dsn) {
+        console.error('Your configuration doesn\'t have a sentry section or is missing the dsn. Please add it!')
+        process.exit(1);
+      }
+
+      Sentry.init({
+        dsn: config.sentry.dsn,
+        environment: config.sentry.environment || "unknown",
+        debug: true
+      });
+      Sentry.captureEvent({
+        // Sentry uses the first line of the message as the title of the event/issue
+        message: [header + "\n"] + data,
+        tags: {
+          task: run.task.id,
+          exitStatus: run.exitCode,
+          runID,
+          host: require('os').hostname()
+        }
+      });
+
+    }
     if (argv.slack) {
       if (!config.slack) {
         console.error('Your configuration doesn\'t have slack section. Please add it!')
@@ -129,10 +149,9 @@ es.pipeline(
         url: config.slack.webhook_url,
         body: JSON.stringify(payload)
       },function(e,r,body) {
-        console.log(body);
+        // console.log(body);
       });
 
     }
-    console.log(data)
   })
 )
