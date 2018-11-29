@@ -1,0 +1,11 @@
+{
+  "slack": {
+    "username": "ummonbot",
+    "webhook_url": "http://whatever",
+    "icon_emoji": "ghost"
+  },
+  "sentry": {
+    "dsn": "https://xxxxxxxxx@sentry.io/1234567",
+    "environment": "prod"
+  }
+}
