@@ -149,10 +149,9 @@ es.pipeline(
         url: config.slack.webhook_url,
         body: JSON.stringify(payload)
       },function(e,r,body) {
-        console.log(body);
+        // console.log(body);
       });
 
     }
-    console.log(data)
   })
 )
