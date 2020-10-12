@@ -39,6 +39,23 @@ test('Create a collection from an object', function(t){
   });
 })
 
+test('Try to load an empty collection', function(t){
+  t.plan(2);
+
+  var emptyCollection = {
+    "collection": "empty",
+    "config": {
+      "enabled": false
+    },
+    "tasks": {}
+  }
+
+  ummon.createCollectionAndTasks(emptyCollection, function(err){
+    t.pass('Whew! It did get to the callback')
+    t.type(err, Error, '... and passed an error to the callback');
+  });
+})
+
 
 
 var disabledCollection = {
