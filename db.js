@@ -3,7 +3,7 @@
 'use strict';
 
 /*!
- * Module dependancies
+ * Module dependencies
  */
 var fs = require('fs');
 var path = require('path');
@@ -13,13 +13,13 @@ var async = require('async');
 var mkdirp = require('mkdirp');
 
 
-module.exports = function(ummon) {
+module.exports = function (ummon) {
   var db = {};
 
   /**
    * Load tasks out of a config file. This is a mess. Sorry
    */
-  db.loadTasks = function(callback) {
+  db.loadTasks = function (callback) {
     var self = this;
     glob(ummon.config.tasksPath + '*.json', function (err, files) {
       if (err || !files) {
@@ -27,20 +27,20 @@ module.exports = function(ummon) {
       }
 
       ummon.log.info("Load tasks from %s", ummon.config.tasksPath);
-      async.each(files, self.loadCollectionFromFile.bind(self), function(err){
+      async.each(files, self.loadCollectionFromFile.bind(self), function (err) {
         callback(err);
       });
     });
   };
 
 
-  db.loadCollectionFromFile = function(file, callback) {
+  db.loadCollectionFromFile = function (file, callback) {
     var self = this;
     var config;
 
     try {
       config = require(path.resolve(file));
-    } catch(e) {
+    } catch (e) {
       return callback(e);
     }
 
@@ -51,13 +51,13 @@ module.exports = function(ummon) {
       return callback(new Error('Malformed tasks config file'));
     }
 
-    ummon.createCollectionAndTasks(config, function(err){
+    ummon.createCollectionAndTasks(config, function (err) {
       callback(err);
     });
   };
 
 
-  db.saveTasks = function(callback) {
+  db.saveTasks = function (callback) {
     if (ummon.config.tasksPath) {
       var collections = ummon.getCollections();
 
@@ -67,7 +67,7 @@ module.exports = function(ummon) {
 
       // Keep track of the last save time
       ummon.lastSave = new Date().getTime();
-      ummon.log.info("Saving "+collections.length+" collection(s) to file", collections)
+      ummon.log.info("Saving " + collections.length + " collection(s) to file", collections);
       async.each(collections, db.saveCollection, callback);
     }
   };
@@ -79,7 +79,7 @@ module.exports = function(ummon) {
    * @param  {[type]} collection [description]
    * @return {[type]}            [description]
    */
-  db.cleanCollectionMetaData = function(collection) {
+  db.cleanCollectionMetaData = function (collection) {
     // This is gross but deep clone code feels gross too
     // TODO: Steam the json to the file and modify the stream
     collection = JSON.stringify(collection);
@@ -87,17 +87,18 @@ module.exports = function(ummon) {
     for (var index = 0; index < collection.length; index++) {
       for (var task in collection[index].tasks) {
         // Clean up duplicate data we don't need for this
-        ['id', 'name', 'collection', 'recentExitCodes'].forEach(function(key){
-          delete collection[index].tasks[task][key]
+        ['id', 'name', 'collection', 'recentExitCodes'].forEach(function (key) {
+          delete collection[index].tasks[task][key];
         });
       }
-    };
+    }
+    ;
 
     return collection;
   };
 
-  db.saveCollection = function(collection, callback) {
-    ummon.getTasks(collection, function(err, result){
+  db.saveCollection = function (collection, callback) {
+    ummon.getTasks(collection, function (err, result) {
       if (err) {
         return callback(err);
       }
@@ -106,7 +107,7 @@ module.exports = function(ummon) {
 
       var resultStringified = JSON.stringify(result[0], null, '\t');
 
-      fs.writeFile(ummon.config.tasksPath+'/'+collection+'.tasks.json', resultStringified, function (err) {
+      fs.writeFile(ummon.config.tasksPath + '/' + collection + '.tasks.json', resultStringified, function (err) {
         callback(err);
       });
     });

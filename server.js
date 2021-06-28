@@ -35,15 +35,17 @@ var argv = optimist.usage('Ummon and stuff', {
 }).argv;
 
 // Daemonize if asked
-if (argv.daemon) require('daemon')();
+if (argv.daemon) {
+  require('daemon')();
+}
 
 // Create the pid file, throwing on failure
 npid.create(argv.pidfile).removeOnExit();
 
 // It's possible to pass a string that will be the config path. Catch it here:
 var ummonOptions = (argv.config)
-      ? {configPath: argv.config}
-      : {};
+  ? {configPath: argv.config}
+  : {};
 
 var ummon = require('./lib/ummon')(ummonOptions);
 
@@ -52,7 +54,7 @@ var ummon = require('./lib/ummon')(ummonOptions);
  * Watch for and properly respond to signals
  */
 
-ON_DEATH(function(signal, err) {
+ON_DEATH(function (signal, err) {
   if (err) {
     console.log(err);
   }
@@ -61,11 +63,11 @@ ON_DEATH(function(signal, err) {
 
     ummon.log.info("Kill (%s) signal received. Waiting for workers to finish", signal);
 
-    _.each(ummon.workers, function(run){
+    _.each(ummon.workers, function (run) {
       run.worker.kill(signal);
-    })
+    });
 
-    setInterval(function(){
+    setInterval(function () {
       var count = _.size(ummon.workers);
 
       if (0 === count) {
@@ -73,12 +75,12 @@ ON_DEATH(function(signal, err) {
         process.exit(0);
       }
       ummon.log.info("Still waiting for %s workers to finish", count);
-    }, 250)
+    }, 250);
   }
 });
 
 // Don't explode if your're piping and it stops
-process.stdout.on('error', function( err ) {
+process.stdout.on('error', function (err) {
   if (err.code == "EPIPE") {
     process.exit(0);
   }
@@ -95,11 +97,11 @@ var server = restify.createServer({
   log: ummon.log
 });
 
-server.on('after', function(req, res, route, error) {
+server.on('after', function (req, res, route, error) {
   if (route) {
-    ummon.log.info({apiUrl:req.url},'%s - %s (matched by route %s)', res.statusCode, req.url, route.spec.path);
+    ummon.log.info({apiUrl: req.url}, '%s - %s (matched by route %s)', res.statusCode, req.url, route.spec.path);
   } else {
-    ummon.log.info({apiUrl:req.url}, '%s - %s', res.statusCode, req.url);
+    ummon.log.info({apiUrl: req.url}, '%s - %s', res.statusCode, req.url);
   }
 });
 
@@ -114,15 +116,15 @@ server.use(restify.plugins.authorizationParser());
 server.pre(restify.pre.sanitizePath());
 server.use(restify.plugins.fullResponse());
 
-server.use(function (req, res, next){
+server.use(function (req, res, next) {
   var creds = ummon.config.credentials;
   // Don't check credentials if not in config
-  if (!creds || !creds.length || creds.indexOf(req.authorization.credentials) !== -1){
+  if (!creds || !creds.length || creds.indexOf(req.authorization.credentials) !== -1) {
     next();
   } else {
-    res.json(401, "You need credentials, dummy. KWATZ!")
+    res.json(401, "You need credentials, dummy. KWATZ!");
   }
-})
+});
 
 // Set up the api
 var api = require('./api')(ummon);
@@ -157,22 +159,24 @@ server.post('/run', api.run);
 server.get('/log', api.showLog);
 
 
-var getRuns = _.throttle(function(){ return ummon.getRuns(); }, '500');
+var getRuns = _.throttle(function () {
+  return ummon.getRuns();
+}, '500');
 
 var d = domain.create();
 
-d.on('error', function(err) {
+d.on('error', function (err) {
   if (err.code === 'EADDRINUSE') {
     server.log.error(err, 'The address you\'re trying to bind to is already in use');
   } else {
-    server.log.error('ERROR',err);
+    server.log.error('ERROR', err);
   }
 
   process.exit(1);
-})
+});
 
-d.run(function(){
-  server.listen(ummon.config.port, function() {
+d.run(function () {
+  server.listen(ummon.config.port, function () {
     console.log("               _  __              _       _ ");
     console.log("              | |/ __      ____ _| |_ ___| |");
     console.log("              | ' /\\ \\ /\\ / / _` | __|_  | |");
@@ -182,17 +186,23 @@ d.run(function(){
     server.log.info({addr: server.address()}, 'listening');
 
     var io = socketio.listen(server);
-    io.on('error', function(test){
-      console.log('ERRROROROROR', test)
-    })
+    io.on('error', function (test) {
+      console.log('ERRROROROROR', test);
+    });
     io.sockets.on('connection', function (socket) {
-        socket.emit('send:tasks', ummon.getTasks());
+      socket.emit('send:tasks', ummon.getTasks());
 
-        // Send runs
-        // TODO: Is there a way to bind to multiple events with one listener?
-        ummon.on('worker.start', function(){ socket.emit('send:runs', getRuns()); });
-        ummon.on('worker.complete', function(){ socket.emit('send:runs', getRuns()); });
-        ummon.on('queue.new', function(){ socket.emit('send:runs', getRuns()); });
+      // Send runs
+      // TODO: Is there a way to bind to multiple events with one listener?
+      ummon.on('worker.start', function () {
+        socket.emit('send:runs', getRuns());
+      });
+      ummon.on('worker.complete', function () {
+        socket.emit('send:runs', getRuns());
+      });
+      ummon.on('queue.new', function () {
+        socket.emit('send:runs', getRuns());
+      });
     });
   });
-})
+});
