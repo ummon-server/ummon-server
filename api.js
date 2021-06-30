@@ -113,7 +113,7 @@ module.exports = function (ummon) {
    *     "workers": [...],
    *     "queue": [...],
    *     "activeTimers": 1,
-   *     "isPaused": falase,
+   *     "isPaused": false,
    *     "maxWorkers": 10,
    *     "collections": 2,
    *     "totalTasks":
